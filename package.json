@@ -37,6 +37,7 @@
   "name": "nojs-react",
   "scripts": {
     "start": "node ./server.js",
+    "build" : "webpack --config ./wp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "version": "1.0.31"
