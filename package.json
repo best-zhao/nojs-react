@@ -1,37 +1,4 @@
 {
-  "_args": [
-    [
-      "nojs-react@latest",
-      "e:\\work\\daigou\\daigou"
-    ]
-  ],
-  "_from": "nojs-react@latest",
-  "_id": "nojs-react@1.0.1",
-  "_inCache": true,
-  "_location": "/nojs-react",
-  "_nodeVersion": "5.0.0",
-  "_npmUser": {
-    "email": "nolure@vip.qq.com",
-    "name": "nolure"
-  },
-  "_npmVersion": "3.3.6",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "nojs-react",
-    "raw": "nojs-react@latest",
-    "rawSpec": "latest",
-    "scope": null,
-    "spec": "latest",
-    "type": "tag"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_shasum": "c3a56a8b27aa517c5cbd9a4419bf15b9229b96b8",
-  "_shrinkwrap": null,
-  "_spec": "nojs-react@latest",
-  "_where": "e:\\work\\daigou\\daigou",
-  "author": "",
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^1.8.3",
@@ -68,9 +35,9 @@
     }
   ],
   "name": "nojs-react",
-  "optionalDependencies": {},
   "scripts": {
     "start": "node ./server.js",
+    "build" : "webpack --config ./wp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "version": "1.0.31"

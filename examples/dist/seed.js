@@ -22,6 +22,7 @@
 /******/ 			return __webpack_require__(0);
 /******/ 		}
 /******/ 	};
+<<<<<<< HEAD
 /******/ 	var parentHotUpdateCallback = this["webpackHotUpdate"];
 /******/ 	this["webpackHotUpdate"] = 
 /******/ 	function webpackHotUpdateCallback(chunkId, moreModules) { // eslint-disable-line no-unused-vars
@@ -519,6 +520,8 @@
 /******/ 		hotSetStatus("idle");
 /******/ 		callback(null, outdatedModules);
 /******/ 	}
+=======
+>>>>>>> gh-pages
 
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -541,6 +544,7 @@
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
+<<<<<<< HEAD
 /******/ 			loaded: false,
 /******/ 			hot: hotCreateModule(moduleId),
 /******/ 			parents: hotCurrentParents,
@@ -549,6 +553,13 @@
 
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
+=======
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+>>>>>>> gh-pages
 
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
@@ -589,9 +600,12 @@
 
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/examples/dist/";
+<<<<<<< HEAD
 
 /******/ 	// __webpack_hash__
 /******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
+=======
+>>>>>>> gh-pages
 /******/ })
 /************************************************************************/
 /******/ ([]);
