@@ -1,0 +1,16 @@
+/*tree*/
+.nj-tree li{width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;clear:both}
+.nj-tree .item{display:block;color:#333;margin:0 0 1px;transition:background .1s;padding:0 1.2em;height:24px;line-height:2;cursor:default;}
+.nj-tree .item:hover{background:#f4f4f4;text-decoration:none}
+.nj-tree ._icon,.nj-tree ._line{float:left;width:17px;height:100%;overflow:hidden;color:#888;line-height:1.8;font-size:14px;}
+.nj-tree ._icon{width:15px;}
+.nj-tree ._icon:before{content:'\e602';font-family:'njicon'}
+.nj-tree .open ._icon:before{content:'\e601';}
+.nj-tree .pending ._icon:before{content:'\e604';animation:njRotate 1s linear infinite;color:#999;}
+.nj-tree .no-child ._icon{font-size:13px;color:#aaa;}
+.nj-tree .no-child ._icon:before{content:'\e603';}
+.nj-tree .selected ._text{font-weight:800}
+.nj-tree .selected,.nj_tree .selected:hover{color:#f30;background:#f0f0f0;}
+.nj-tree ._checkbox input{float:left;margin:6px 4px 0 2px}
+.nj-tree .more{position:relative;overflow:visible}
+.nj-tree .more a{color:#bbb}

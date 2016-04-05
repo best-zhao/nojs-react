@@ -1,0 +1,28 @@
+/*form*/
+nj-form,nj-input{display:inline-block;}
+.nj-form li.item{padding:0 15px 15px 0;clear:both;}
+.nj-form .fields{margin-left:97px}
+.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}
+.nj-form .short-text{width:90px;}
+.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}
+.nj-form textarea.text[rows]{height:auto}
+.nj-form textarea.text[cols]{width:auto}
+.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}
+.nj-form .lab i{color:#f06;margin-right:7px}
+.nj-form .date{display:inline-block;vertical-align:top;}
+.nj-form .date .text{width:90px;background-color:transparent}
+.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{
+  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}
+.nj-form select.text{width:auto;height:auto;}
+.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}
+.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}
+
+.nj-form .input-ok{border-color:#00B700;}
+.nj-form .input-pending{border-color:#f90;}
+.nj-form .input-error{border-color:red;}
+
+.nj-form-msg-ok:before{content:'\e606';color:#00BE00;font:16px 'njicon';}
+.nj-form-msg-error:before{content:'\e60a';color:red;font:16px 'njicon';}
+.nj-form-msg-error{color:red;}
+.nj-form-msg-pending:before{content:'\e604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}
+.nj-form-msg-pending{color:#f90;}
