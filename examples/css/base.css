@@ -1,0 +1,26 @@
+@import url('./prism.css');
+@import url('./gfont.css');
+
+body{font:12px/1.6 arial,'microsoft yahei';color:#666;}
+*{margin:0;padding:0;}
+ul,li{list-style:none;}
+
+ h1,h2,h3,h4{font:600 26px 'Open Sans', 'sans-serif','microsoft yahei';margin:0 0 15px;color:#000;}
+h2,h3{font-size:26px;border-bottom:1px solid #e4e4e4;padding:0 0 9px;}
+h3{font-size:20px;}
+h4{font-size:16px;margin:0 0 9px;}
+h4 span{font-size:14px;font-weight:100;}
+
+.mb15,p{margin:0 0 15px;}
+.nj-frame-content pre{padding:0 1em;margin:0 0 15px;border-radius:5px;}
+
+.pd40{padding:40px;}
+
+html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}
+.nj-frame-side{width:180px;background:#F5F2F0;height:100%;position:fixed;}
+.nj-frame-content{margin-left:180px;font-size:1.16em;color:#222;height:100%;overflow:auto}
+
+#frameMenu{padding:40px 0;}
+
+.nj-tree .item:hover{background:#EAE5E2;}
+.nj-tree .selected,.nj_tree .selected:hover{background:#E4DAD4;}
