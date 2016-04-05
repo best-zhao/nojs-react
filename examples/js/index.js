@@ -5,7 +5,6 @@ import $ from 'jquery'
 import {Frame} from './frame'
 import Demo from './Demos/'
 
-
 const frameOptions = {
     menuSource : './menu.json',
     onChange (node, container) {

@@ -9,6 +9,7 @@ const {Form, Input, InputGroup} = Verify
 </code>
 </pre>
 
+
 #### #1 React Component
 <pre><code class="language-javascript"><script type="text/code">
 var myform = ReactDOM.render((
