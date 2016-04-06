@@ -30,13 +30,5 @@ $.getJSON('./menu.json', json=>{
     render(<Frame {...frameOptions}/>, document.getElementById('frameContainer'))
 })
 
-// var test = './test'
-// setTimeout(()=>{
-//     require([test], function(){
-    
-//     })
-// }, 2000)
-
-
 
 
