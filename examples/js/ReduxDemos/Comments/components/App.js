@@ -22,9 +22,10 @@ var App = React.createClass({
         )
     }
 })
-function select(state){
+function select(state, ownProps){
     return {
         comments : state.comments
     }
 }
 module.exports = connect(select)(App)
+

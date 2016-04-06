@@ -1,6 +1,6 @@
 {
     "data" : [
-        {"id":1, "name":"Components"},
+        {"id":1, "name":"Components","open":1},
             {"id":2, "name":"Mask", "parentid":1, "link":"mask"},
             {"id":3, "name":"Popup", "parentid":1, "link":"popup"},
             {"id":4, "name":"Popover", "parentid":1, "link":"popover"},
@@ -9,7 +9,7 @@
             {"id":7, "name":"Switch", "parentid":1, "link":""},
         {"id":101, "name":"Utils"},
         {"id":201, "name":"Mixins"},
-        {"id":301, "name":"Redux Demo"},
+        {"id":301, "name":"Redux Demo","open":1},
             {"id":302, "name":"Comments", "parentid":301, "link":"app/comments", "demo":"comments"},
             {"id":303, "name":"Photo Search", "parentid":301, "link":"app/photo-search", "demo":"photos"}
 

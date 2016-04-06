@@ -1,6 +1,7 @@
 0 info it worked if it ends with ok
 1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
 1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run',
 1 verbose cli   'start' ]
 2 info using npm@3.3.6
 3 info using node@v5.0.0
@@ -27,7 +28,7 @@
 15 verbose pkgid nojs-react@1.0.31
 16 verbose cwd e:\nojs-react
 17 error Windows_NT 10.0.10586
-18 error argv "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "start"
+18 error argv "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run" "start"
 19 error node v5.0.0
 20 error npm  v3.3.6
 21 error code ELIFECYCLE

@@ -9,17 +9,16 @@ var app = new WebpackDevServer(webpack(config), {
   noInfo: false,
   historyApiFallback: true
 })
-// console.log(app.app)
-app.app.get('/ajax', function(req, res){
-    res.send({
-        status : 1,
-        data : {}
-    })
-})
+// console.log(app)
+// app.app.use(app.app._router);
+// app.app.get('/ajax', function(req, res){
+//     res.send("respond with a resource");
+// })
 app.listen(4000, '127.0.0.1', function (err, result) {
   if (err) {
     console.log(err);
   }
-  console.log('Listening at localhost:4000');
+  console.log('Listening at localhost:4000',result);
 });
+
 

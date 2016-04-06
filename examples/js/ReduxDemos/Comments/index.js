@@ -19,7 +19,6 @@ var rootReducer = require('./reducers')
 
 // const store = createStoreWithMiddleware(rootReducer)
 
-
 module.exports = (container)=>{
     const store = createStore(rootReducer, {}, applyMiddleware(thunkMiddleware, createLogger()))
 
@@ -27,7 +26,7 @@ module.exports = (container)=>{
     //     console.log(store.getState())
     // })
 
-    ReactDOM.render(
+    var app = ReactDOM.render(
         <Provider store={store}>
             <App/>
         </Provider>,

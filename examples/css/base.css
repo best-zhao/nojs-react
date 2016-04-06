@@ -14,13 +14,6 @@ h4 span{font-size:14px;font-weight:100;}
 .mb15,p{margin:0 0 15px;}
 .nj-frame-content pre{padding:0 1em;margin:0 0 15px;border-radius:5px;}
 
-.pd40{padding:40px;}
-
-html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}
-.nj-frame-side{width:180px;background:#F5F2F0;height:100%;position:fixed;}
-.nj-frame-content{margin-left:180px;font-size:1.16em;color:#222;height:100%;overflow:auto}
-
-#frameMenu{padding:40px 0;}
 
 .nj-tree .item:hover{background:#EAE5E2;}
 .nj-tree .selected,.nj_tree .selected:hover{background:#E4DAD4;}
