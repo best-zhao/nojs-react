@@ -63,6 +63,7 @@ webpackJsonp([0,1],[
 	//引入React和ReactDOM
 	var React = exports.React = __webpack_require__(9);
 	var ReactDOM = exports.ReactDOM = __webpack_require__(183);
+	exports.render = ReactDOM.render;
 
 	//工具集
 	exports.utils = __webpack_require__(184);
