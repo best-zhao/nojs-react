@@ -65,7 +65,8 @@ module.exports = (container)=>{
     var formWrap = document.getElementById('demo-form-wrap')
     formWrap && render(<FormComponent />, formWrap)
 
-    Verify.getByHandle('verify-input-group').onSubmit((e)=>{
+    var myverify = Verify.getByHandle('verify-input-group')
+    myverify && myverify.onSubmit((e)=>{
         console.log(e)
         e.preventDefault()
     })
