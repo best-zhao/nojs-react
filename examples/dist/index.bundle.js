@@ -33935,7 +33935,7 @@
 	        $.get(url, function (json) {
 	            json = typeof parseContent == 'function' ? parseContent(json, url) : json;
 	            wrap.html(json);
-	            onChange && onChange.call(_this, node, hashData, _this.refs.frameContent);
+	            onChange && onChange.call(_this, node, nj.utils.parseHash(), _this.refs.frameContent);
 	        }).error(function () {
 	            wrap.html('');
 	        });
@@ -35299,7 +35299,8 @@
 	    var formWrap = document.getElementById('demo-form-wrap');
 	    formWrap && render(React.createElement(FormComponent, null), formWrap);
 
-	    _form2.default.getByHandle('verify-input-group').onSubmit(function (e) {
+	    var myverify = _form2.default.getByHandle('verify-input-group');
+	    myverify && myverify.onSubmit(function (e) {
 	        console.log(e);
 	        e.preventDefault();
 	    });
