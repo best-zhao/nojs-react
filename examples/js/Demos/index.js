@@ -2,9 +2,10 @@
  * 文档中的demo实例
  */
 
-var components = ['popup', 'comments', 'photos']
+var components = ['popup', 'form', 'comments', 'photos']
 ;[
     require('./popup'),
+    require('./form'),
     require('../ReduxDemos/Comments'),
     require('../ReduxDemos/PhotoSearch')
 

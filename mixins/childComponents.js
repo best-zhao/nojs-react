@@ -7,6 +7,7 @@ var $ = require('jquery')
 var config = exports.config = {
     statics : {
         point : null,
+        //所有组件实例
         instances : [
             // {   
             //     //存放子组件实例

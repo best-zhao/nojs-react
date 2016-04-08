@@ -10,7 +10,7 @@ import Popup from 'nojs-react/lib/popup' //引入组件
 </pre>
 
 
-#### Popup.create
+#### Popup.create(options)
 
 <pre><code class="language-javascript">
 var mypopup = Popup.create(options).onShow(()=>{
@@ -29,7 +29,7 @@ mypopup.setDisplay(true)
 <div class="mb15"><button class="nj-button" id="showPopup">create a popup</button></div>
 
 
-#### Popup.alert 
+#### Popup.alert(options)
 
 <pre><code class="language-javascript">
 var alertpop = Popup.alert({template:'操作成功！'}) 
@@ -38,7 +38,7 @@ var alertpop = Popup.alert({template:'操作成功！'})
 <div class="mb15"><button class="nj-button" id="alertPopup">Alert</button></div>
 
 
-#### Popup.confirm 
+#### Popup.confirm(options) 
 
 <pre><code class="language-javascript">
 var alertpop = Popup.confirm({ 

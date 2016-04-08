@@ -1,6 +1,7 @@
 ## Verify
 
 表单验证组件，2种方式创建表单，React组件和html标签指令(nj-form)
+<a href="doc/form/normal.html">demos</a>
 
 ### Usage 
 <pre><code class="language-javascript">
@@ -81,3 +82,4 @@ myform.onSubmit(e=>{
 #### showicon <span>[String] 只显示此类验证图标，可取值'all'/'ok'/'error'，默认'all'</span>
 #### handle <span>[String] 指定实例名称，通过getByHandle(handle)方法可获取对应实例对象</span>
 #### noValidate <span>[Boolean] 是否禁用html5原生验证方式 默认true</span>
+

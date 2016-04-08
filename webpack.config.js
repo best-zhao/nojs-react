@@ -1,5 +1,4 @@
 var webpack = require('webpack');
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 module.exports = {
   entry:{
     index:[
@@ -13,8 +12,7 @@ module.exports = {
     publicPath: "/examples/dist/",
     filename: '[name].bundle.js'
   },
-  plugins: [ 
-    new CommonsChunkPlugin("seed.js"),
+  plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {

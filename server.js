@@ -18,7 +18,7 @@ app.listen(4000, '127.0.0.1', function (err, result) {
   if (err) {
     console.log(err);
   }
-  console.log('Listening at localhost:4000',result);
+  console.log('Listening at localhost:4000');
 });
 
 

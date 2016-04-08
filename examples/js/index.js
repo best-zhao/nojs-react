@@ -10,20 +10,21 @@ $.getJSON('./menu.json', json=>{
     const frameOptions = {
         logo : <h1>nojs-react</h1>,
         menu : json.data,
-        parseUrl (url) {
-            return 'doc/'+url+'.md'
+        parseUrl (url,node) {
+            return node ? 'doc/'+url+'.md' : url
         },
-        parseContent (html) {
-            return Marked(html)
+        parseContent (html, fromUrl) {
+            return /.md$/.test(fromUrl) ? Marked(html) : html
         },
-        onChange (node, container) {
-            var link = node.link
-            var demo = Demo[link] || Demo[node.demo]
+        onChange (node, hashData, container) {
+            node = this.state.menuFormatData[hashData.id]
+            if( node ){
+                var demo = Demo[node.link] || Demo[node.demo]  
 
-            demo && setTimeout(()=>{
-                demo(container)
-            }, 10)
-
+                demo && setTimeout(()=>{
+                    demo(container)
+                }, 10)
+            }
             Prism.highlightAll(true)
         }
     }
