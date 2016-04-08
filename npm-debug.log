@@ -1,0 +1,46 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run',
+1 verbose cli   'page' ]
+2 info using npm@3.3.6
+3 info using node@v5.0.0
+4 verbose run-script [ 'prepage', 'page', 'postpage' ]
+5 info lifecycle nojs-react@1.0.34~prepage: nojs-react@1.0.34
+6 silly lifecycle nojs-react@1.0.34~prepage: no script for prepage, continuing
+7 info lifecycle nojs-react@1.0.34~page: nojs-react@1.0.34
+8 verbose lifecycle nojs-react@1.0.34~page: unsafe-perm in lifecycle true
+9 verbose lifecycle nojs-react@1.0.34~page: PATH: c:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;e:\nojs-react\node_modules\.bin;c:\Users\nolure.zhao\bin;.;C:\Program Files (x86)\Git\local\bin;C:\Program Files (x86)\Git\mingw\bin;C:\Program Files (x86)\Git\bin;c:\ProgramData\Oracle\Java\javapath;c:\WINDOWS\system32;c:\WINDOWS;c:\WINDOWS\System32\Wbem;c:\WINDOWS\System32\WindowsPowerShell\v1.0\;c:\Program Files\TortoiseSVN\bin;d:\mongodb\bin;c:\Program Files\Java\jdk1.8.0_60\bin;d:\apache-ant-1.9.4\bin;c:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;d:\adt\sdk\tools;d:\adt\sdk\platform-tools;c:\Program Files\nodejs\;c:\Program Files (x86)\Java\jre1.8.0_45\bin;c:\Users\nolure.zhao\AppData\Roaming\npm
+10 verbose lifecycle nojs-react@1.0.34~page: CWD: e:\nojs-react
+11 silly lifecycle nojs-react@1.0.34~page: Args: [ '/d /s /c',
+11 silly lifecycle   'git add . && git commit -am \'update\' && git checkout gh-pages && git merge master && git push origin gh-pages' ]
+12 silly lifecycle nojs-react@1.0.34~page: Returned: code: 128  signal: null
+13 info lifecycle nojs-react@1.0.34~page: Failed to exec page script
+14 verbose stack Error: nojs-react@1.0.34 page: `git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git push origin gh-pages`
+14 verbose stack Exit status 128
+14 verbose stack     at EventEmitter.<anonymous> (c:\Program Files\nodejs\node_modules\npm\lib\utils\lifecycle.js:233:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (c:\Program Files\nodejs\node_modules\npm\lib\utils\spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:818:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid nojs-react@1.0.34
+16 verbose cwd e:\nojs-react
+17 error Windows_NT 10.0.10586
+18 error argv "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run" "page"
+19 error node v5.0.0
+20 error npm  v3.3.6
+21 error code ELIFECYCLE
+22 error nojs-react@1.0.34 page: `git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git push origin gh-pages`
+22 error Exit status 128
+23 error Failed at the nojs-react@1.0.34 page script 'git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git push origin gh-pages'.
+23 error This is most likely a problem with the nojs-react package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git push origin gh-pages
+23 error You can get their info via:
+23 error     npm owner ls nojs-react
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]
