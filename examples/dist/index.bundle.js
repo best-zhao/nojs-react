@@ -1,4 +1,46 @@
-webpackJsonp([0,1],[
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/examples/dist/";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -19,30 +61,50 @@ webpackJsonp([0,1],[
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _frame = __webpack_require__(188);
+	var _marked = __webpack_require__(188);
 
-	var _Demos = __webpack_require__(193);
+	var _marked2 = _interopRequireDefault(_marked);
+
+	var _frame = __webpack_require__(189);
+
+	var _Demos = __webpack_require__(195);
 
 	var _Demos2 = _interopRequireDefault(_Demos);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var React = _nj2.default.React;
-	var ReactDOM = _nj2.default.ReactDOM;
+	var render = _nj2.default.render;
 
-	var frameOptions = {
-	    menuSource: './menu.json',
-	    onChange: function onChange(node, container) {
-	        var link = node.link;
-	        var demo = _Demos2.default[link] || _Demos2.default[node.demo];
+	_jquery2.default.getJSON('./menu.json', function (json) {
+	    var frameOptions = {
+	        logo: React.createElement(
+	            'h1',
+	            null,
+	            'nojs-react'
+	        ),
+	        menu: json.data,
+	        parseUrl: function parseUrl(url, node) {
+	            return node ? 'doc/' + url + '.md' : url;
+	        },
+	        parseContent: function parseContent(html, fromUrl) {
+	            return (/.md$/.test(fromUrl) ? (0, _marked2.default)(html) : html
+	            );
+	        },
+	        onChange: function onChange(node, hashData, container) {
+	            node = this.state.menuFormatData[hashData.id];
+	            if (node) {
+	                var demo = _Demos2.default[node.link] || _Demos2.default[node.demo];
 
-	        demo && setTimeout(function () {
-	            demo(container);
-	        }, 10);
-	    }
-	};
-
-	var frame = ReactDOM.render(React.createElement(_frame.Frame, frameOptions), document.getElementById('frameContainer'));
+	                demo && setTimeout(function () {
+	                    demo(container);
+	                }, 10);
+	            }
+	            Prism.highlightAll(true);
+	        }
+	    };
+	    render(React.createElement(_frame.Frame, frameOptions), document.getElementById('frameContainer'));
+	});
 
 /***/ },
 /* 2 */
@@ -73,7 +135,7 @@ webpackJsonp([0,1],[
 	    childComponents: __webpack_require__(187)
 	};
 
-	var components = [];
+	// var components = []
 
 	// components.forEach(function(name){
 	//     var selector = '[nj-'+name+']'
@@ -32393,6 +32455,7 @@ webpackJsonp([0,1],[
 	var config = exports.config = {
 	    statics: {
 	        point: null,
+	        //所有组件实例
 	        instances: [
 	            // {  
 	            //     //存放子组件实例
@@ -32470,736 +32533,6 @@ webpackJsonp([0,1],[
 
 /***/ },
 /* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	/**
-	 * 框架组件
-	 */
-	var nj = __webpack_require__(3);
-	var React = nj.React;
-	var ReactDOM = nj.ReactDOM;
-
-	var $ = __webpack_require__(185);
-	var Tree = __webpack_require__(189);
-	var Marked = __webpack_require__(192);
-
-	exports.Frame = React.createClass({
-	    displayName: 'Frame',
-	    getInitialState: function getInitialState() {
-	        return {};
-	    },
-	    componentDidMount: function componentDidMount() {
-	        var _this = this;
-
-	        var a = 1;
-	        var self = this;
-	        var menuSource = this.props.menuSource;
-	        menuSource && $.getJSON(menuSource, function (json) {
-	            var menu = _this.state.menu = Tree.init({
-	                data: json.data,
-	                element: document.getElementById('frameMenu')
-	            }).onSelect(function (node, e) {
-	                var link = node.link;
-	                if (!link) {
-	                    e.preventDefault();
-	                    return;
-	                }
-	                self.jump(link, node);
-	            });
-
-	            _this.state.menuFormatData = menu.props.dataFormat.databyid;
-
-	            watchHash();
-
-	            var _nj$utils$parseHash = nj.utils.parseHash();
-
-	            var url = _nj$utils$parseHash.url;
-	            var id = _nj$utils$parseHash.id;
-
-	            if (!id) {
-	                menu.select(json.data[1]);
-	            }
-	        });
-
-	        function watchHash(e) {
-	            var _nj$utils$parseHash2 = nj.utils.parseHash();
-
-	            var url = _nj$utils$parseHash2.url;
-	            var id = _nj$utils$parseHash2.id;
-
-	            if (!url && !id) {
-	                return;
-	            }
-	            if (url) {
-	                self.jump(url);
-	            }
-	            if (id) {
-	                self.state.menu.select(self.state.menuFormatData[id]);
-	            }
-	        }
-	        window.onhashchange = watchHash;
-	    },
-	    jump: function jump(url, node, e) {
-	        var _this2 = this;
-
-	        if (this.jump.start || !url) {
-	            return;
-	        }
-
-	        var hashData = nj.utils.parseHash();
-
-	        var nodeId = node ? node.id : hashData.id;
-	        this.jump.start = 1;
-	        setTimeout(function () {
-	            _this2.jump.start = null;
-	        }, 10);
-
-	        var wrap = $(this.refs.frameContent);
-	        wrap.css({ 'visibility': 'hidden' }).fadeOut(100);
-	        setTimeout(function () {
-	            wrap.css('visibility', 'visible').fadeIn(100);
-	        }, 200);
-	        //nj.pageframe.destoryEvent.complete()//.end()
-	        // iframeContainer.load(url, contentInit)
-	        $.get('doc/' + url + '.md', function (json) {
-	            wrap.html(Marked(json));
-	            Prism.highlightAll(true);
-	            _this2.props.onChange && _this2.props.onChange(node, _this2.refs.frameContent);
-	        }).error(function () {
-	            wrap.html('');
-	        });
-	        this.jump.url = url;
-
-	        var hash = [];
-	        if (nodeId) {
-	            hash.push('id=' + nodeId);
-	        }
-	        if (!node && url) {
-	            hash.push('url=' + encodeURIComponent(url));
-	        }
-	        location.hash = hash.join('&');
-	    },
-	    componentWillReceiveProps: function componentWillReceiveProps() {},
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'nj-frame' },
-	            React.createElement(
-	                'div',
-	                { className: 'nj-frame-side' },
-	                React.createElement('div', { id: 'frameMenu', className: 'nj-tree' })
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'nj-frame-content' },
-	                React.createElement('div', { className: 'nj-frame-inner pd40', ref: 'frameContent' })
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	/**
-	 * 树形菜单组件
-	 */
-	__webpack_require__(190);
-	var nj = __webpack_require__(3);
-	var React = nj.React;
-	var ReactDOM = nj.ReactDOM;
-	var mixins = nj.mixins;
-
-	var $ = __webpack_require__(185);
-
-	var Tree = React.createClass({
-	    displayName: 'Tree',
-
-	    statics: {
-	        parse: function parse(options) {
-	            var arr = [];
-	            var data = options.data;
-	            var keymap = options.keymap;
-	            if (!data) {
-	                return arr;
-	            }
-	            var _data = {};
-	            data.forEach(function (item, i) {
-	                var pid = item[keymap.parentid];
-	                var level;
-	                if (!pid || pid == options.rootID) {
-	                    level = item.level = 0;
-	                } else if (_data[pid]) {
-	                    level = item.level = _data[pid].level + 1;
-	                    _data[pid].children.push(item);
-	                }
-	                item.display = true;
-	                item.children = [];
-	                arr[level] = arr[level] || [];
-	                arr[level].push(item);
-
-	                _data[item[keymap.id]] = item;
-	            });
-
-	            return {
-	                databyid: _data,
-	                databylevel: arr
-	            };
-	        },
-	        init: function init(options) {
-	            options.keymap = $.extend({
-	                'id': 'id',
-	                'name': 'name',
-	                'parentid': 'parentid'
-	            }, options.keymap);
-
-	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
-
-	            var level = options.level || 0;
-
-	            if (typeof options.data == 'string') {
-	                options.async = true;
-	                options.dataFormat = {
-	                    databyid: {},
-	                    databylevel: []
-	                };
-	                options.source = options.data;
-	                options.data = [];
-	            } else {
-	                var data = Tree.parse(options);
-	                var children = data.databylevel[level];
-	                options.data = children;
-	                options.dataFormat = data;
-	            }
-
-	            return ReactDOM.render(React.createElement(Tree, options), options.element);
-	        },
-
-	        //显示一个层级select菜单
-	        levelSelect: function levelSelect(options) {
-	            var el = options.element;
-	            if (!el || el['$$levelselect']) {
-	                return;
-	            }
-	            options.keymap = $.extend({
-	                'id': 'id',
-	                'name': 'name',
-	                'parentid': 'parentid'
-	            }, options.keymap);
-
-	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
-
-	            var data = options.dataFormat = Tree.parse(options);
-	            el['$$levelselect'] = 1;
-
-	            return ReactDOM.render(React.createElement(LevelSelect, options), options.element);
-	        },
-
-	        //显示select级联菜单
-	        treeSelect: function treeSelect(options) {
-	            options.keymap = $.extend({
-	                'id': 'id',
-	                'name': 'name',
-	                'parentid': 'parentid'
-	            }, options.keymap);
-
-	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
-
-	            var data = options.data;
-	            if (typeof data == 'string') {
-	                options.async = true;
-	            } else {
-	                options.dataFormat = Tree.parse(data);
-	            }
-
-	            return ReactDOM.render(React.createElement(TreeSelect, options), options.element);
-	        }
-	    },
-	    getDefaultProps: function getDefaultProps() {
-	        return { level: 0, allowSelect: true };
-	    },
-	    componentWillMount: function componentWillMount() {
-	        //添加事件
-	        this.toggleEvent = nj.utils.addEventQueue.call(this, 'onToggle');
-	        this.selectEvent = nj.utils.addEventQueue.call(this, 'onSelect');
-	        this.pullEvent = nj.utils.addEventQueue.call(this, 'onPull');
-
-	        this.getData(null, null, 0);
-	    },
-	    getInitialState: function getInitialState() {
-	        return { data: this.props.data || [] };
-	    },
-	    toggle: function toggle(node, event) {
-	        node.open = !node.open;
-	        var KEY_ID = this.props.keymap.id;
-	        if (node.open) {
-	            if (this.props.async) {
-	                this.getData(node, this.props.level + 1, 1);
-	            } else {
-	                node.complete = true;
-	            }
-	        }
-	        this.setState({ change: !this.state.change });
-	        this.toggleEvent.complete(node, event);
-	        //阻止事件冒泡到select事件
-	        if (event && event.stopPropagation) {
-	            event.stopPropagation();
-	        } else {
-	            window.event.cancelBubble = true;
-	        }
-	        //event.preventDefault()
-	    },
-
-	    //选中节点
-	    select: function select(node, event) {
-	        var _this = this;
-
-	        if (!node || !this.props.allowSelect) {
-	            return;
-	        }
-
-	        this.selectEvent.complete(node, event);
-
-	        if (event && event.isDefaultPrevented()) {
-	            //调用preventDefault阻止关闭弹窗事件
-	            return;
-	        }
-	        //打开所有父节点
-	        this.getParents(node).reverse().forEach(function (parent) {
-	            !parent.open && _this.toggle(parent);
-	        });
-	        if (!node.select) {
-	            var allnodes = this.props.dataFormat.databyid;
-	            for (var i in allnodes) {
-	                allnodes[i].select = null;
-	            }
-	        }
-
-	        node.select = true;
-	        this.setState({ node: node });
-	        return this;
-	    },
-
-	    //获取所有父节点
-	    getParents: function getParents(node) {
-	        var parents = [];
-	        var KEY_ID = this.props.keymap.id;
-	        var id = node[KEY_ID];
-	        var allnodes = this.props.dataFormat.databyid;
-	        if (!allnodes[id]) {
-	            return parents;
-	        }
-	        var KEY_PID = this.props.keymap.parentid;
-	        var parentNode = allnodes[node[KEY_PID]];
-	        while (parentNode) {
-	            parents.push(parentNode);
-	            parentNode = allnodes[parentNode[KEY_PID]];
-	        }
-	        return parents;
-	    },
-
-	    //设置节点显示状态
-	    setNodeDisplay: function setNodeDisplay(node, display) {
-	        if (!node) {
-	            return;
-	        }
-	        node.display = display;
-
-	        if (display) {
-	            //需要检测其父级是否为显示状态
-	            var KEY_PID = this.props.keymap.parentid;
-	            var allnodes = this.props.dataFormat.databyid;
-	            var parentNode = allnodes[node[KEY_PID]];
-	            while (parentNode) {
-	                parentNode.display = display;
-	                parentNode.open = 1;
-	                parentNode = allnodes[parentNode[KEY_PID]];
-	            }
-	        }
-	        this.setState({ change: !this.state.change });
-	    },
-	    getData: function getData(parentNode, level, from) {
-	        var _this2 = this;
-
-	        if (!this.props.async) {
-	            return;
-	        }
-	        // this.props.async && console.log(22,this.props.level)
-	        level = level || 0;
-
-	        var parentid = this.props.rootID;
-	        var KEY_ID = this.props.keymap.id;
-
-	        var databyid = this.props.dataFormat.databyid;
-	        parentNode = parentNode || this.props.parentNode;
-
-	        if (parentNode) {
-	            if (parentNode.complete) {
-	                return;
-	            }
-	            parentNode.pending = true;
-	            parentid = parentNode[KEY_ID];
-	        }
-
-	        var source = this.props.source || this.props.rootScope.source;
-	        $.getJSON(this.props.source + parentid, function (json) {
-	            //this.state.data[level] = json.data
-	            json.data.forEach(function (node) {
-	                databyid[node[KEY_ID]] = node;
-	            });
-
-	            var rootScope = _this2.props.rootScope || _this2;
-
-	            rootScope.pullEvent.complete(_this2, json.data);
-
-	            if (parentNode) {
-	                parentNode.pending = null;
-	                parentNode.children = json.data;
-	                parentNode.complete = true;
-	                _this2.setState({ change: !_this2.state.change });
-	            } else {
-	                _this2.setState({ data: json.data });
-	            }
-	        });
-	    },
-	    render: function render() {
-	        var _this3 = this;
-
-	        var async = this.props.async;
-	        var data = this[async ? 'state' : 'props'].data;
-	        var level = this.props.level;
-	        var parentNode = this.props.parentNode;
-	        var visible = !parentNode || parentNode.open ? ' d_show' : ' d_hide';
-	        var rootScope = this.props.rootScope || this;
-
-	        // if( async && parentNode ){
-	        //     data = parentNode.children
-	        // }
-	        // async && console.log(data)
-	        return data ? React.createElement(
-	            'ul',
-	            { className: 'level' + this.props.level + visible },
-
-	            //对于父节点没有打开的暂时不渲染其子节点
-	            (!parentNode || parentNode.open || parentNode.complete) && data.map(function (item, i) {
-	                if (item.display === false) {
-	                    //隐藏节点
-	                    return;
-	                }
-	                var children = item.children = item.children || [];
-
-	                if (!children) {
-	                    //return
-	                }
-	                var holder = [];
-	                for (var j = 0; j < level; j++) {
-	                    holder.push(j);
-	                }
-	                var nodeClass = ['item'];
-	                var childOptions = {};
-	                var nochild;
-
-	                if (children.length || async) {
-	                    $.extend(childOptions, _this3.props, { level: level + 1, parentNode: item, rootScope: rootScope });
-	                    childOptions.data = children;
-	                }
-	                if (async) {
-	                    if (item.complete && !children.length) {
-	                        nochild = true;
-	                    }
-	                } else if (!children.length) {
-	                    nochild = true;
-	                }
-	                nochild && nodeClass.push('no-child');
-	                // if( !async && !children.length )
-
-	                item.pending && nodeClass.push('pending');
-	                item.open && nodeClass.push('open');
-	                item.select && nodeClass.push('selected');
-
-	                //节点显示名称可以通过函数自定义
-	                var nodeName = item.name;
-	                var defineName = rootScope.props.defineName;
-	                if (typeof defineName == 'function') {
-	                    nodeName = defineName.call(rootScope, item);
-	                }
-
-	                // console.log(this.level,children,children.length,parentNode)
-
-	                var KEY_ID = _this3.props.keymap.id;
-
-	                return React.createElement(
-	                    'li',
-	                    { key: i, 'data-id': item[KEY_ID], className: 'level' + _this3.props.level + '-item' },
-	                    React.createElement(
-	                        'div',
-	                        {
-	                            onClick: rootScope.select.bind(rootScope, item),
-	                            className: nodeClass.join(' ') },
-	                        holder.map(function (h, j) {
-	                            return React.createElement('span', { key: j, className: '_line' + (j + 1 >= _this3.props.level ? ' _line_begin _line' + (j - _this3.props.level + 1) : '') });
-	                        }),
-	                        React.createElement('span', { className: '_icon', onClick: !nochild && _this3.toggle.bind(_this3, item) }),
-	                        rootScope.props.checkbox ? React.createElement(
-	                            'span',
-	                            { className: '_checkbox' },
-	                            React.createElement('input', { type: 'checkbox', name: rootScope.props.checkbox.name, defaultChecked: item.checked, value: item[KEY_ID], disabled: item.disabled })
-	                        ) : null,
-	                        React.createElement('span', { className: '_text', dangerouslySetInnerHTML: { __html: nodeName } })
-	                    ),
-	                    children.length ? React.createElement(Tree, childOptions) : null
-	                );
-	            })
-	        ) : null;
-	    }
-	});
-
-	//select级联菜单
-	var TreeSelect = React.createClass({
-	    displayName: 'TreeSelect',
-	    getInitialState: function getInitialState() {
-	        //this.state.data: Array 存放输入状态下每级的数据列表
-	        var data = [];
-	        if (!this.props.async) {
-	            var levels = this.props.dataFormat.databylevel;
-	            data.push(levels[0]);
-	        }
-	        this.state = { data: data };
-	        this.select(this.props.selected, false);
-	        return this.state;
-	    },
-	    componentWillMount: function componentWillMount() {
-	        this.getData();
-	    },
-	    getData: function getData(parentid, level) {
-	        if (!this.props.async) {
-	            return;
-	        }
-	        level = level || 0;
-	        parentid = parentid || this.props.rootID;
-	        $.getJSON(this.props.data + parentid, function (json) {
-	            this.state.data[level] = json.data;
-	            this.setState({ data: this.state.data });
-	        }.bind(this));
-	    },
-
-	    //选中节点 selected 选中的节点id
-	    select: function select(selected, update) {
-	        this.resetData(0);
-	        // console.log(selected)
-	        update = update === false ? false : true;
-	        this.state.ids = selected && selected.length ? selected : [];
-	        selected = selected || [];
-	        if (!selected.length) {}
-	        selected = selected.map(function (id) {
-	            return { id: id };
-	        });
-	        this.state.selected = selected;
-	        update && this.setState({ selected: selected, ids: this.state.ids });
-	    },
-
-	    //清空数据
-	    resetData: function resetData(fromLevel) {
-	        var _this4 = this;
-
-	        this.state.data.forEach(function (data, i) {
-	            if (i > fromLevel) {
-	                //选择空值时 清空所有下级
-	                data.length = 0;
-	                _this4.state.selected[i] = {};
-	                _this4.setState({ data: _this4.state.data });
-	            }
-	        });
-	    },
-	    handleChange: function handleChange(level, e) {
-	        var select = this.refs['select-' + level];
-
-	        var maxlevel = parseInt(this.props.maxlevel);
-	        var selected = this.state.selected;
-
-	        this.resetData(level);
-
-	        if (!select) {
-	            console.log(level);
-	            return;
-	        }
-	        var parentid = select.value;
-
-	        selected[level] = parentid ? {
-	            id: parentid,
-	            name: nj.utils.selectedOptions(select).text //e.target.selectedOptions[0].innerText
-	        } : {};
-
-	        if (!maxlevel || level + 1 < maxlevel) {
-	            parentid && this.getData(parentid, level + 1);
-	        }
-
-	        this.props.onChange && this.props.onChange.call(this, parentid, level, e);
-	    },
-	    render: function render() {
-	        var _this5 = this;
-
-	        var KEY_ID = this.props.keymap.id;
-	        var KEY_NAME = this.props.keymap.name;
-	        var maxlevel = this.props.maxlevel;
-	        var infos = this.props.infos || []; //附加信息 如name
-	        var selected = this.state.ids;
-
-	        return React.createElement(
-	            'div',
-	            { className: 'nj-tree-select' },
-	            this.state.data.map(function (level, i) {
-	                if (maxlevel && i + 1 > maxlevel) {
-	                    return;
-	                }
-	                var id = selected[i]; //默认选中节点
-	                // console.log(id,selected)
-
-	                var info = infos[i] || {};
-	                var el = level && level.length ? React.createElement(
-	                    'select',
-	                    { key: i, className: info.className, ref: 'select-' + i, value: id, name: info.name, onChange: _this5.handleChange.bind(_this5, i) },
-	                    React.createElement(
-	                        'option',
-	                        { value: '' },
-	                        '请选择'
-	                    ),
-	                    level.map(function (item, i) {
-	                        return React.createElement(
-	                            'option',
-	                            { key: i, value: item[KEY_ID] },
-	                            item[KEY_NAME]
-	                        );
-	                    })
-	                ) : null;
-
-	                if (id && el) {
-	                    selected[i] = null; //选中后清空 防止重复
-	                    setTimeout(function () {
-	                        el.props.onChange();
-	                        // this.handleChange(i)
-	                    }, 10);
-	                }
-	                return el;
-	            })
-	        );
-	    }
-	});
-
-	//显示一个层级select菜单
-	var LevelSelect = React.createClass({
-	    displayName: 'LevelSelect',
-	    handleChange: function handleChange(e) {
-	        var onChange = this.props.onChange;
-	        onChange && onChange.call(this, e.target.value);
-	    },
-	    render: function render() {
-	        var levels = this.props.dataFormat.databylevel;
-	        var items = [];
-	        var KEY_ID = this.props.keymap.id;
-	        var KEY_NAME = this.props.keymap.name;
-
-	        function getlines(level) {
-	            var line = '';
-	            while (--level >= 0) {
-	                line += '--';
-	            }
-	            return line;
-	        }
-
-	        var key = 0;
-	        var maxlevel = this.props.maxlevel;
-	        maxlevel = typeof maxlevel == 'function' ? maxlevel.call(this) : maxlevel;
-
-	        function getItems(nodes) {
-	            if (!nodes || !nodes.length) {
-	                return;
-	            }
-	            var level = nodes[0].level;
-	            if (maxlevel && level >= maxlevel) {
-	                return;
-	            }
-	            nodes.forEach(function (node, j) {
-	                items.push(React.createElement(
-	                    'option',
-	                    { value: node[KEY_ID], disabled: node.disabled, key: ++key },
-	                    getlines(node.level) + node[KEY_NAME]
-	                ));
-	                getItems(node.children);
-	            });
-	        }
-
-	        var rootNode = this.props.rootNode === false ? false : true;
-
-	        rootNode && items.push(React.createElement(
-	            'option',
-	            { value: this.props.rootID, key: ++key, className: 'root-node', style: { color: '#999' } },
-	            '----根节点----'
-	        ));
-	        getItems(levels[0]);
-
-	        return React.createElement(
-	            'select',
-	            {
-	                size: this.props.size,
-	                name: this.props.name,
-	                className: this.props.className,
-	                onChange: this.handleChange,
-	                defaultValue: this.props.defaultNode },
-	            items
-	        );
-	    }
-	});
-
-	module.exports = Tree;
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(191);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {"insertAt":"top"});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./tree.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./tree.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(6)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "/*tree*/\r\n.nj-tree li{width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;clear:both}\r\n.nj-tree .item{display:block;color:#333;margin:0 0 1px;transition:background .1s;padding:0 1.2em;height:24px;line-height:2;cursor:default;}\r\n.nj-tree .item:hover{background:#f4f4f4;text-decoration:none}\r\n.nj-tree ._icon,.nj-tree ._line{float:left;width:17px;height:100%;overflow:hidden;color:#888;line-height:1.8;font-size:14px;}\r\n.nj-tree ._icon{width:15px;}\r\n.nj-tree ._icon:before{content:'\\E602';font-family:'njicon'}\r\n.nj-tree .open ._icon:before{content:'\\E601';}\r\n.nj-tree .pending ._icon:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-tree .no-child ._icon{font-size:13px;color:#aaa;}\r\n.nj-tree .no-child ._icon:before{content:'\\E603';}\r\n.nj-tree .selected ._text{font-weight:800}\r\n.nj-tree .selected,.nj_tree .selected:hover{color:#f30;background:#f0f0f0;}\r\n.nj-tree ._checkbox input{float:left;margin:6px 4px 0 2px}\r\n.nj-tree .more{position:relative;overflow:visible}\r\n.nj-tree .more a{color:#bbb}", ""]);
-
-	// exports
-
-
-/***/ },
-/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -34491,7 +33824,799 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * 框架组件
+	 */
+	__webpack_require__(190);
+
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var Component = React.Component;
+
+	var $ = __webpack_require__(185);
+	var Tree = __webpack_require__(192);
+
+	exports.Frame = React.createClass({
+	    displayName: 'Frame',
+	    getInitialState: function getInitialState() {
+	        return {};
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var self = this;
+	        var menu = this.props.menu;
+
+	        var menuTree = this.state.menu = Tree.init({
+	            data: menu,
+	            element: document.getElementById('frameMenu')
+	        }).onSelect(function (node, e) {
+	            var link = node.link;
+	            if (!link) {
+	                e.preventDefault();
+	                return;
+	            }
+	            self.jump(link, node);
+	        });
+
+	        this.state.menuFormatData = menuTree.props.dataFormat.databyid;
+
+	        var _nj$utils$parseHash = nj.utils.parseHash();
+
+	        var url = _nj$utils$parseHash.url;
+	        var id = _nj$utils$parseHash.id;
+
+	        if (!id) {
+	            menuTree.select(menu[1]);
+	        }
+
+	        function watchHash(e) {
+	            var _nj$utils$parseHash2 = nj.utils.parseHash();
+
+	            var url = _nj$utils$parseHash2.url;
+	            var id = _nj$utils$parseHash2.id;
+
+	            if (!url && !id) {
+	                return;
+	            }
+	            if (url) {
+	                self.jump(url);
+	            }
+	            if (id) {
+	                self.state.menu.select(self.state.menuFormatData[id]);
+	            }
+	        }
+	        window.onhashchange = watchHash;
+
+	        watchHash();
+
+	        $(this.refs.frameContent).delegate('a', 'click', function () {
+	            var url = this.getAttribute('href', 4);
+	            if (url.indexOf('javascript:') < 0) {
+	                self.jump(url);
+	                return false;
+	            }
+	        });
+	    },
+	    jump: function jump(url, node, e) {
+	        var _this = this;
+
+	        if (this.jump.start || !url) {
+	            return;
+	        }
+
+	        var hashData = nj.utils.parseHash();
+
+	        var nodeId = node ? node.id : hashData.id;
+	        this.jump.start = 1;
+	        setTimeout(function () {
+	            _this.jump.start = null;
+	        }, 10);
+
+	        var wrap = $(this.refs.frameContent);
+	        wrap.css({ 'visibility': 'hidden' }).fadeOut(100);
+	        setTimeout(function () {
+	            wrap.css('visibility', 'visible').fadeIn(100);
+	        }, 200);
+
+	        var _props = this.props;
+	        var onChange = _props.onChange;
+	        var parseUrl = _props.parseUrl;
+	        var parseContent = _props.parseContent;
+
+	        url = typeof parseUrl == 'function' ? parseUrl(url, node) : url;
+
+	        //nj.pageframe.destoryEvent.complete()//.end()
+	        // iframeContainer.load(url, contentInit)
+	        $.get(url, function (json) {
+	            json = typeof parseContent == 'function' ? parseContent(json, url) : json;
+	            wrap.html(json);
+	            onChange && onChange.call(_this, node, hashData, _this.refs.frameContent);
+	        }).error(function () {
+	            wrap.html('');
+	        });
+	        this.jump.url = url;
+
+	        var hash = [];
+	        if (nodeId) {
+	            hash.push('id=' + nodeId);
+	        }
+	        if (!node && url) {
+	            hash.push('url=' + encodeURIComponent(url));
+	        }
+	        location.hash = hash.join('&');
+	    },
+	    componentWillReceiveProps: function componentWillReceiveProps() {},
+	    render: function render() {
+	        var logo = this.props.logo;
+
+	        logo = logo && React.createElement(
+	            'div',
+	            { className: 'nj-frame-logo' },
+	            logo
+	        );
+	        return React.createElement(
+	            'div',
+	            { className: 'nj-frame' },
+	            React.createElement(
+	                'div',
+	                { className: 'nj-frame-side' },
+	                logo,
+	                React.createElement('div', { id: 'frameMenu', className: 'nj-tree' })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'nj-frame-content' },
+	                React.createElement('div', { className: 'nj-frame-inner', ref: 'frameContent' })
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(191);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(8)(content, {"insertAt":"top"});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./frame.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./frame.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(6)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}\r\n.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;padding:25px 0;}\r\n.nj-frame-logo{padding:0 20px 20px;}\r\n.nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}\r\n.nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}\r\n.nj-frame-inner{padding:40px;margin:0 auto}\r\n\r\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * 树形菜单组件
+	 */
+	__webpack_require__(193);
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var mixins = nj.mixins;
+
+	var $ = __webpack_require__(185);
+
+	var Tree = React.createClass({
+	    displayName: 'Tree',
+
+	    statics: {
+	        parse: function parse(options) {
+	            var arr = [];
+	            var data = options.data;
+	            var keymap = options.keymap;
+	            if (!data) {
+	                return arr;
+	            }
+	            var _data = {};
+	            data.forEach(function (item, i) {
+	                var pid = item[keymap.parentid];
+	                var level;
+	                if (!pid || pid == options.rootID) {
+	                    level = item.level = 0;
+	                } else if (_data[pid]) {
+	                    level = item.level = _data[pid].level + 1;
+	                    _data[pid].children.push(item);
+	                }
+	                item.display = true;
+	                item.children = [];
+	                arr[level] = arr[level] || [];
+	                arr[level].push(item);
+
+	                _data[item[keymap.id]] = item;
+	            });
+
+	            return {
+	                databyid: _data,
+	                databylevel: arr
+	            };
+	        },
+	        init: function init(options) {
+	            options.keymap = $.extend({
+	                'id': 'id',
+	                'name': 'name',
+	                'parentid': 'parentid'
+	            }, options.keymap);
+
+	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
+
+	            var level = options.level || 0;
+
+	            if (typeof options.data == 'string') {
+	                options.async = true;
+	                options.dataFormat = {
+	                    databyid: {},
+	                    databylevel: []
+	                };
+	                options.source = options.data;
+	                options.data = [];
+	            } else {
+	                var data = Tree.parse(options);
+	                var children = data.databylevel[level];
+	                options.data = children;
+	                options.dataFormat = data;
+	            }
+
+	            return ReactDOM.render(React.createElement(Tree, options), options.element);
+	        },
+
+	        //显示一个层级select菜单
+	        levelSelect: function levelSelect(options) {
+	            var el = options.element;
+	            if (!el || el['$$levelselect']) {
+	                return;
+	            }
+	            options.keymap = $.extend({
+	                'id': 'id',
+	                'name': 'name',
+	                'parentid': 'parentid'
+	            }, options.keymap);
+
+	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
+
+	            var data = options.dataFormat = Tree.parse(options);
+	            el['$$levelselect'] = 1;
+
+	            return ReactDOM.render(React.createElement(LevelSelect, options), options.element);
+	        },
+
+	        //显示select级联菜单
+	        treeSelect: function treeSelect(options) {
+	            options.keymap = $.extend({
+	                'id': 'id',
+	                'name': 'name',
+	                'parentid': 'parentid'
+	            }, options.keymap);
+
+	            options.rootID = options.rootID === undefined ? '0' : options.rootID;
+
+	            var data = options.data;
+	            if (typeof data == 'string') {
+	                options.async = true;
+	            } else {
+	                options.dataFormat = Tree.parse(data);
+	            }
+
+	            return ReactDOM.render(React.createElement(TreeSelect, options), options.element);
+	        }
+	    },
+	    getDefaultProps: function getDefaultProps() {
+	        return { level: 0, allowSelect: true };
+	    },
+	    componentWillMount: function componentWillMount() {
+	        //添加事件
+	        this.toggleEvent = nj.utils.addEventQueue.call(this, 'onToggle');
+	        this.selectEvent = nj.utils.addEventQueue.call(this, 'onSelect');
+	        this.pullEvent = nj.utils.addEventQueue.call(this, 'onPull');
+
+	        this.getData(null, null, 0);
+	    },
+	    getInitialState: function getInitialState() {
+	        return { data: this.props.data || [] };
+	    },
+	    toggle: function toggle(node, event) {
+	        node.open = !node.open;
+	        var KEY_ID = this.props.keymap.id;
+	        if (node.open) {
+	            if (this.props.async) {
+	                this.getData(node, this.props.level + 1, 1);
+	            } else {
+	                node.complete = true;
+	            }
+	        }
+	        this.setState({ change: !this.state.change });
+	        this.toggleEvent.complete(node, event);
+	        //阻止事件冒泡到select事件
+	        if (event && event.stopPropagation) {
+	            event.stopPropagation();
+	        } else {
+	            window.event.cancelBubble = true;
+	        }
+	        //event.preventDefault()
+	    },
+
+	    //选中节点
+	    select: function select(node, event) {
+	        var _this = this;
+
+	        if (!node || !this.props.allowSelect) {
+	            return;
+	        }
+
+	        this.selectEvent.complete(node, event);
+
+	        if (event && event.isDefaultPrevented()) {
+	            //调用preventDefault阻止关闭弹窗事件
+	            return;
+	        }
+	        //打开所有父节点
+	        this.getParents(node).reverse().forEach(function (parent) {
+	            !parent.open && _this.toggle(parent);
+	        });
+	        if (!node.select) {
+	            var allnodes = this.props.dataFormat.databyid;
+	            for (var i in allnodes) {
+	                allnodes[i].select = null;
+	            }
+	        }
+
+	        node.select = true;
+	        this.setState({ node: node });
+	        return this;
+	    },
+
+	    //获取所有父节点
+	    getParents: function getParents(node) {
+	        var parents = [];
+	        var KEY_ID = this.props.keymap.id;
+	        var id = node[KEY_ID];
+	        var allnodes = this.props.dataFormat.databyid;
+	        if (!allnodes[id]) {
+	            return parents;
+	        }
+	        var KEY_PID = this.props.keymap.parentid;
+	        var parentNode = allnodes[node[KEY_PID]];
+	        while (parentNode) {
+	            parents.push(parentNode);
+	            parentNode = allnodes[parentNode[KEY_PID]];
+	        }
+	        return parents;
+	    },
+
+	    //设置节点显示状态
+	    setNodeDisplay: function setNodeDisplay(node, display) {
+	        if (!node) {
+	            return;
+	        }
+	        node.display = display;
+
+	        if (display) {
+	            //需要检测其父级是否为显示状态
+	            var KEY_PID = this.props.keymap.parentid;
+	            var allnodes = this.props.dataFormat.databyid;
+	            var parentNode = allnodes[node[KEY_PID]];
+	            while (parentNode) {
+	                parentNode.display = display;
+	                parentNode.open = 1;
+	                parentNode = allnodes[parentNode[KEY_PID]];
+	            }
+	        }
+	        this.setState({ change: !this.state.change });
+	    },
+	    getData: function getData(parentNode, level, from) {
+	        var _this2 = this;
+
+	        if (!this.props.async) {
+	            return;
+	        }
+	        // this.props.async && console.log(22,this.props.level)
+	        level = level || 0;
+
+	        var parentid = this.props.rootID;
+	        var KEY_ID = this.props.keymap.id;
+
+	        var databyid = this.props.dataFormat.databyid;
+	        parentNode = parentNode || this.props.parentNode;
+
+	        if (parentNode) {
+	            if (parentNode.complete) {
+	                return;
+	            }
+	            parentNode.pending = true;
+	            parentid = parentNode[KEY_ID];
+	        }
+
+	        var source = this.props.source || this.props.rootScope.source;
+	        $.getJSON(this.props.source + parentid, function (json) {
+	            //this.state.data[level] = json.data
+	            json.data.forEach(function (node) {
+	                databyid[node[KEY_ID]] = node;
+	            });
+
+	            var rootScope = _this2.props.rootScope || _this2;
+
+	            rootScope.pullEvent.complete(_this2, json.data);
+
+	            if (parentNode) {
+	                parentNode.pending = null;
+	                parentNode.children = json.data;
+	                parentNode.complete = true;
+	                _this2.setState({ change: !_this2.state.change });
+	            } else {
+	                _this2.setState({ data: json.data });
+	            }
+	        });
+	    },
+	    render: function render() {
+	        var _this3 = this;
+
+	        var async = this.props.async;
+	        var data = this[async ? 'state' : 'props'].data;
+	        var level = this.props.level;
+	        var parentNode = this.props.parentNode;
+	        var visible = !parentNode || parentNode.open ? ' d_show' : ' d_hide';
+	        var rootScope = this.props.rootScope || this;
+
+	        // if( async && parentNode ){
+	        //     data = parentNode.children
+	        // }
+	        // async && console.log(data)
+	        return data ? React.createElement(
+	            'ul',
+	            { className: 'level' + this.props.level + visible },
+
+	            //对于父节点没有打开的暂时不渲染其子节点
+	            (!parentNode || parentNode.open || parentNode.complete) && data.map(function (item, i) {
+	                if (item.display === false) {
+	                    //隐藏节点
+	                    return;
+	                }
+	                var children = item.children = item.children || [];
+
+	                if (!children) {
+	                    //return
+	                }
+	                var holder = [];
+	                for (var j = 0; j < level; j++) {
+	                    holder.push(j);
+	                }
+	                var nodeClass = ['item'];
+	                var childOptions = {};
+	                var nochild;
+
+	                if (children.length || async) {
+	                    $.extend(childOptions, _this3.props, { level: level + 1, parentNode: item, rootScope: rootScope });
+	                    childOptions.data = children;
+	                }
+	                if (async) {
+	                    if (item.complete && !children.length) {
+	                        nochild = true;
+	                    }
+	                } else if (!children.length) {
+	                    nochild = true;
+	                }
+	                nochild && nodeClass.push('no-child');
+	                // if( !async && !children.length )
+
+	                item.pending && nodeClass.push('pending');
+	                item.open && nodeClass.push('open');
+	                item.select && nodeClass.push('selected');
+
+	                //节点显示名称可以通过函数自定义
+	                var nodeName = item.name;
+	                var defineName = rootScope.props.defineName;
+	                if (typeof defineName == 'function') {
+	                    nodeName = defineName.call(rootScope, item);
+	                }
+
+	                // console.log(this.level,children,children.length,parentNode)
+
+	                var KEY_ID = _this3.props.keymap.id;
+
+	                return React.createElement(
+	                    'li',
+	                    { key: i, 'data-id': item[KEY_ID], className: 'level' + _this3.props.level + '-item' },
+	                    React.createElement(
+	                        'div',
+	                        {
+	                            onClick: rootScope.select.bind(rootScope, item),
+	                            className: nodeClass.join(' ') },
+	                        holder.map(function (h, j) {
+	                            return React.createElement('span', { key: j, className: '_line' + (j + 1 >= _this3.props.level ? ' _line_begin _line' + (j - _this3.props.level + 1) : '') });
+	                        }),
+	                        React.createElement('span', { className: '_icon', onClick: !nochild && _this3.toggle.bind(_this3, item) }),
+	                        rootScope.props.checkbox ? React.createElement(
+	                            'span',
+	                            { className: '_checkbox' },
+	                            React.createElement('input', { type: 'checkbox', name: rootScope.props.checkbox.name, defaultChecked: item.checked, value: item[KEY_ID], disabled: item.disabled })
+	                        ) : null,
+	                        React.createElement('span', { className: '_text', dangerouslySetInnerHTML: { __html: nodeName } })
+	                    ),
+	                    children.length ? React.createElement(Tree, childOptions) : null
+	                );
+	            })
+	        ) : null;
+	    }
+	});
+
+	//select级联菜单
+	var TreeSelect = React.createClass({
+	    displayName: 'TreeSelect',
+	    getInitialState: function getInitialState() {
+	        //this.state.data: Array 存放输入状态下每级的数据列表
+	        var data = [];
+	        if (!this.props.async) {
+	            var levels = this.props.dataFormat.databylevel;
+	            data.push(levels[0]);
+	        }
+	        this.state = { data: data };
+	        this.select(this.props.selected, false);
+	        return this.state;
+	    },
+	    componentWillMount: function componentWillMount() {
+	        this.getData();
+	    },
+	    getData: function getData(parentid, level) {
+	        if (!this.props.async) {
+	            return;
+	        }
+	        level = level || 0;
+	        parentid = parentid || this.props.rootID;
+	        $.getJSON(this.props.data + parentid, function (json) {
+	            this.state.data[level] = json.data;
+	            this.setState({ data: this.state.data });
+	        }.bind(this));
+	    },
+
+	    //选中节点 selected 选中的节点id
+	    select: function select(selected, update) {
+	        this.resetData(0);
+	        // console.log(selected)
+	        update = update === false ? false : true;
+	        this.state.ids = selected && selected.length ? selected : [];
+	        selected = selected || [];
+	        if (!selected.length) {}
+	        selected = selected.map(function (id) {
+	            return { id: id };
+	        });
+	        this.state.selected = selected;
+	        update && this.setState({ selected: selected, ids: this.state.ids });
+	    },
+
+	    //清空数据
+	    resetData: function resetData(fromLevel) {
+	        var _this4 = this;
+
+	        this.state.data.forEach(function (data, i) {
+	            if (i > fromLevel) {
+	                //选择空值时 清空所有下级
+	                data.length = 0;
+	                _this4.state.selected[i] = {};
+	                _this4.setState({ data: _this4.state.data });
+	            }
+	        });
+	    },
+	    handleChange: function handleChange(level, e) {
+	        var select = this.refs['select-' + level];
+
+	        var maxlevel = parseInt(this.props.maxlevel);
+	        var selected = this.state.selected;
+
+	        this.resetData(level);
+
+	        if (!select) {
+	            console.log(level);
+	            return;
+	        }
+	        var parentid = select.value;
+
+	        selected[level] = parentid ? {
+	            id: parentid,
+	            name: nj.utils.selectedOptions(select).text //e.target.selectedOptions[0].innerText
+	        } : {};
+
+	        if (!maxlevel || level + 1 < maxlevel) {
+	            parentid && this.getData(parentid, level + 1);
+	        }
+
+	        this.props.onChange && this.props.onChange.call(this, parentid, level, e);
+	    },
+	    render: function render() {
+	        var _this5 = this;
+
+	        var KEY_ID = this.props.keymap.id;
+	        var KEY_NAME = this.props.keymap.name;
+	        var maxlevel = this.props.maxlevel;
+	        var infos = this.props.infos || []; //附加信息 如name
+	        var selected = this.state.ids;
+
+	        return React.createElement(
+	            'div',
+	            { className: 'nj-tree-select' },
+	            this.state.data.map(function (level, i) {
+	                if (maxlevel && i + 1 > maxlevel) {
+	                    return;
+	                }
+	                var id = selected[i]; //默认选中节点
+	                // console.log(id,selected)
+
+	                var info = infos[i] || {};
+	                var el = level && level.length ? React.createElement(
+	                    'select',
+	                    { key: i, className: info.className, ref: 'select-' + i, value: id, name: info.name, onChange: _this5.handleChange.bind(_this5, i) },
+	                    React.createElement(
+	                        'option',
+	                        { value: '' },
+	                        '请选择'
+	                    ),
+	                    level.map(function (item, i) {
+	                        return React.createElement(
+	                            'option',
+	                            { key: i, value: item[KEY_ID] },
+	                            item[KEY_NAME]
+	                        );
+	                    })
+	                ) : null;
+
+	                if (id && el) {
+	                    selected[i] = null; //选中后清空 防止重复
+	                    setTimeout(function () {
+	                        el.props.onChange();
+	                        // this.handleChange(i)
+	                    }, 10);
+	                }
+	                return el;
+	            })
+	        );
+	    }
+	});
+
+	//显示一个层级select菜单
+	var LevelSelect = React.createClass({
+	    displayName: 'LevelSelect',
+	    handleChange: function handleChange(e) {
+	        var onChange = this.props.onChange;
+	        onChange && onChange.call(this, e.target.value);
+	    },
+	    render: function render() {
+	        var levels = this.props.dataFormat.databylevel;
+	        var items = [];
+	        var KEY_ID = this.props.keymap.id;
+	        var KEY_NAME = this.props.keymap.name;
+
+	        function getlines(level) {
+	            var line = '';
+	            while (--level >= 0) {
+	                line += '--';
+	            }
+	            return line;
+	        }
+
+	        var key = 0;
+	        var maxlevel = this.props.maxlevel;
+	        maxlevel = typeof maxlevel == 'function' ? maxlevel.call(this) : maxlevel;
+
+	        function getItems(nodes) {
+	            if (!nodes || !nodes.length) {
+	                return;
+	            }
+	            var level = nodes[0].level;
+	            if (maxlevel && level >= maxlevel) {
+	                return;
+	            }
+	            nodes.forEach(function (node, j) {
+	                items.push(React.createElement(
+	                    'option',
+	                    { value: node[KEY_ID], disabled: node.disabled, key: ++key },
+	                    getlines(node.level) + node[KEY_NAME]
+	                ));
+	                getItems(node.children);
+	            });
+	        }
+
+	        var rootNode = this.props.rootNode === false ? false : true;
+
+	        rootNode && items.push(React.createElement(
+	            'option',
+	            { value: this.props.rootID, key: ++key, className: 'root-node', style: { color: '#999' } },
+	            '----根节点----'
+	        ));
+	        getItems(levels[0]);
+
+	        return React.createElement(
+	            'select',
+	            {
+	                size: this.props.size,
+	                name: this.props.name,
+	                className: this.props.className,
+	                onChange: this.handleChange,
+	                defaultValue: this.props.defaultNode },
+	            items
+	        );
+	    }
+	});
+
+	module.exports = Tree;
+
+/***/ },
 /* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(194);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(8)(content, {"insertAt":"top"});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./tree.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./tree.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(6)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/*tree*/\r\n.nj-tree li{width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;clear:both}\r\n.nj-tree .item{display:block;color:#333;margin:0 0 1px;transition:background .1s;padding:0 1.2em;height:24px;line-height:2;cursor:default;}\r\n.nj-tree .item:hover{background:#f4f4f4;text-decoration:none}\r\n.nj-tree ._icon,.nj-tree ._line{float:left;width:17px;height:100%;overflow:hidden;color:#888;line-height:1.8;font-size:14px;}\r\n.nj-tree ._icon{width:15px;}\r\n.nj-tree ._icon:before{content:'\\E602';font-family:'njicon'}\r\n.nj-tree .open ._icon:before{content:'\\E601';}\r\n.nj-tree .pending ._icon:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-tree .no-child ._icon{font-size:13px;color:#aaa;}\r\n.nj-tree .no-child ._icon:before{content:'\\E603';}\r\n.nj-tree .selected ._text{font-weight:800}\r\n.nj-tree .selected,.nj_tree .selected:hover{color:#f30;background:#f0f0f0;}\r\n.nj-tree ._checkbox input{float:left;margin:6px 4px 0 2px}\r\n.nj-tree .more{position:relative;overflow:visible}\r\n.nj-tree .more a{color:#bbb}", ""]);
+
+	// exports
+
+
+/***/ },
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34500,12 +34625,12 @@ webpackJsonp([0,1],[
 	 * 文档中的demo实例
 	 */
 
-	var components = ['popup', 'comments', 'photos'];[__webpack_require__(194), __webpack_require__(198), __webpack_require__(231)].forEach(function (fn, i) {
+	var components = ['popup', 'form', 'comments', 'photos'];[__webpack_require__(196), __webpack_require__(200), __webpack_require__(204), __webpack_require__(237)].forEach(function (fn, i) {
 	    exports[components[i]] = fn;
 	});
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34514,7 +34639,7 @@ webpackJsonp([0,1],[
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var Popup = __webpack_require__(195);
+	var Popup = __webpack_require__(197);
 	var $ = __webpack_require__(185);
 
 	module.exports = function (container) {
@@ -34548,7 +34673,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34559,8 +34684,8 @@ webpackJsonp([0,1],[
 
 	var nj = __webpack_require__(3);
 	var $ = __webpack_require__(185);
-	var align = __webpack_require__(196);
-	var Mask = __webpack_require__(197);
+	var align = __webpack_require__(198);
+	var Mask = __webpack_require__(199);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
@@ -34820,218 +34945,215 @@ webpackJsonp([0,1],[
 	module.exports = Popup;
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	'use strict';
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
+	var $ = __webpack_require__(185);
+	var nj = __webpack_require__(3);
+	var dom = nj.utils.dom;
+	/*
+	 * 将对象对齐到某个参考元素nearby
+	 * nearby是window对象,即固定在屏幕上
+	 * relative为true可设置为类似css的背景图定位方式,只限百分比
+	 */
+	var Align = function Align(options) {
+	    this.options = options = options || {};
+	    this.element = dom(options.element);
+	    this.nearby = dom(options.nearby);
 
-	    var $ = __webpack_require__(185);
-	    var nj = __webpack_require__(3);
-	    var dom = nj.utils.dom;
-	    /*
-	     * 将对象对齐到某个参考元素nearby
-	     * nearby是window对象,即固定在屏幕上
-	     * relative为true可设置为类似css的背景图定位方式,只限百分比
-	     */
-	    var Align = function Align(options) {
-	        this.options = options = options || {};
-	        this.element = dom(options.element);
-	        this.nearby = dom(options.nearby);
+	    var screen = this.nearby && this.nearby[0] === window;
+	    //this.position = options.position || (screen ? {top:50, left:50} : {top:100, left:0});
+	    this.position = $.extend(screen ? { top: 50, left: 50 } : { top: 100, left: 0 }, options.position);
 
-	        var screen = this.nearby && this.nearby[0] === window;
-	        //this.position = options.position || (screen ? {top:50, left:50} : {top:100, left:0});
-	        this.position = $.extend(screen ? { top: 50, left: 50 } : { top: 100, left: 0 }, options.position);
+	    //relative=true 表示定位方式同css背景定位方式
+	    this.relative = options.relative != undefined ? options.relative : screen ? true : false;
 
-	        //relative=true 表示定位方式同css背景定位方式
-	        this.relative = options.relative != undefined ? options.relative : screen ? true : false;
+	    this.fixed = options.fixed === undefined && screen ? 'fixed' : options.fixed; //null fixed animate
 
-	        this.fixed = options.fixed === undefined && screen ? 'fixed' : options.fixed; //null fixed animate
+	    this.cssFixed = this.fixed == 'fixed' && screen; //可以直接使用position:fixed来定位
 
-	        this.cssFixed = this.fixed == 'fixed' && screen; //可以直接使用position:fixed来定位
+	    this.offset = options.offset || [0, 0];
+	    this.isWrap = this.nearby && (screen || this.nearby.find(this.element).length); //对象是否在参考对象内部
+	    this.autoAdjust = options.autoAdjust; //超出屏幕后是否自动调整位置
 
-	        this.offset = options.offset || [0, 0];
-	        this.isWrap = this.nearby && (screen || this.nearby.find(this.element).length); //对象是否在参考对象内部
-	        this.autoAdjust = options.autoAdjust; //超出屏幕后是否自动调整位置
+	    this.element && this.bind();
+	};
+	Align.prototype = {
+	    bind: function bind() {
+	        var self = this,
+	            ns = this.element.data('align'),
+	            type;
 
-	        this.element && this.bind();
-	    };
-	    Align.prototype = {
-	        bind: function bind() {
-	            var self = this,
-	                ns = this.element.data('align'),
-	                type;
+	        if (ns) {
+	            this.nearby.add(window).off(ns);
+	        } else {
+	            ns = '.align' + new Date().getTime();
+	            this.element.data('align', ns);
+	        }
 
-	            if (ns) {
-	                this.nearby.add(window).off(ns);
-	            } else {
-	                ns = '.align' + new Date().getTime();
-	                this.element.data('align', ns);
-	            }
-
-	            if (!this.cssFixed && this.fixed) {
-	                this.nearby.on('scroll' + ns, function () {
-	                    self.set();
-	                });
-	            }
-	            $(window).on('resize' + ns, function () {
+	        if (!this.cssFixed && this.fixed) {
+	            this.nearby.on('scroll' + ns, function () {
 	                self.set();
 	            });
+	        }
+	        $(window).on('resize' + ns, function () {
+	            self.set();
+	        });
 
-	            this.set();
+	        this.set();
+	    },
+	    get: function get(nearby) {
+	        nearby = nearby || this.nearby;
+	        var offset = nearby.offset(),
+	            size = {
+	            width: nearby.outerWidth(),
+	            height: nearby.outerHeight(),
+	            x: offset ? offset.left : 0,
+	            y: offset ? offset.top : 0,
+	            scrollLeft: this.cssFixed ? 0 : nearby.scrollLeft(),
+	            scrollTop: this.cssFixed ? 0 : nearby.scrollTop(),
+	            WIDTH: this.element.outerWidth(true),
+	            HEIGHT: this.element.outerHeight(true)
+	        };
+	        return size;
+	    },
+	    set: function set(options) {
+	        //可设置nearby position offset relative等参数覆盖初始选项
+	        if (!this.element) {
+	            return;
+	        }
+
+	        options = options || {};
+
+	        var nearby = dom(options.nearby) || this.nearby;
+
+	        if (!nearby || this.element.is(':hidden')) {
+	            return;
+	        }
+	        var position = options.position || this.position;
+	        this.element.css('position', this.cssFixed ? 'fixed' : 'absolute'); //设置在get方法之前
+
+	        var size = this.get(nearby),
+	            Attr = {
+	            x: {}, y: {}
 	        },
-	        get: function get(nearby) {
-	            nearby = nearby || this.nearby;
-	            var offset = nearby.offset(),
-	                size = {
-	                width: nearby.outerWidth(),
-	                height: nearby.outerHeight(),
-	                x: offset ? offset.left : 0,
-	                y: offset ? offset.top : 0,
-	                scrollLeft: this.cssFixed ? 0 : nearby.scrollLeft(),
-	                scrollTop: this.cssFixed ? 0 : nearby.scrollTop(),
-	                WIDTH: this.element.outerWidth(true),
-	                HEIGHT: this.element.outerHeight(true)
-	            };
-	            return size;
-	        },
-	        set: function set(options) {
-	            //可设置nearby position offset relative等参数覆盖初始选项
-	            if (!this.element) {
-	                return;
-	            }
+	            _Attr,
+	            attr,
+	            value,
+	            _value,
+	            type,
+	            direction,
+	            style = {},
+	            wrapSize;
 
-	            options = options || {};
+	        if (this.isWrap) {
+	            size.x = size.y = 0;
+	        }
+	        Attr.x.element = 'WIDTH';
+	        Attr.y.element = 'HEIGHT';
+	        Attr.x.nearby = 'width';
+	        Attr.y.nearby = 'height';
+	        Attr.x.offset = 0;
+	        Attr.y.offset = 1;
+	        Attr.x.scroll = 'scrollLeft';
+	        Attr.y.scroll = 'scrollTop';
 
-	            var nearby = dom(options.nearby) || this.nearby;
-
-	            if (!nearby || this.element.is(':hidden')) {
-	                return;
-	            }
-	            var position = options.position || this.position;
-	            this.element.css('position', this.cssFixed ? 'fixed' : 'absolute'); //设置在get方法之前
-
-	            var size = this.get(nearby),
-	                Attr = {
-	                x: {}, y: {}
-	            },
-	                _Attr,
-	                attr,
-	                value,
-	                _value,
-	                type,
-	                direction,
-	                style = {},
-	                wrapSize;
-
-	            if (this.isWrap) {
-	                size.x = size.y = 0;
-	            }
-	            Attr.x.element = 'WIDTH';
-	            Attr.y.element = 'HEIGHT';
-	            Attr.x.nearby = 'width';
-	            Attr.y.nearby = 'height';
-	            Attr.x.offset = 0;
-	            Attr.y.offset = 1;
-	            Attr.x.scroll = 'scrollLeft';
-	            Attr.y.scroll = 'scrollTop';
-
-	            for (attr in position) {
-	                value = _value = position[attr];
+	        for (attr in position) {
+	            value = _value = position[attr];
+	            type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
+	            if (type == 'function') {
+	                value = value(size);
 	                type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
-	                if (type == 'function') {
-	                    value = value(size);
-	                    type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
-	                }
-	                direction = attr == 'top' || attr == 'bottom' ? 'y' : 'x';
-	                _Attr = Attr[direction];
-
-	                value = type == 'number' ? (size[_Attr.nearby] - (this.relative ? size[_Attr.element] : 0)) * value / 100 : parseInt(value, 10);
-
-	                if (attr == 'bottom' || attr == 'right') {
-	                    value *= -1;
-	                    value -= size[_Attr.element] - size[_Attr.nearby];
-	                }
-
-	                value += size[direction] + this.offset[_Attr.offset] + size[_Attr.scroll];
-
-	                style[direction == 'x' ? 'left' : 'top'] = value;
 	            }
-	            var turnPosition = this.checkBorder(size, position, style); //屏幕边界限制
-	            if (turnPosition) {
-	                this.options.onTurn && this.options.onTurn.call(this, turnPosition);
-	                this.set({ position: turnPosition });
-	                return;
+	            direction = attr == 'top' || attr == 'bottom' ? 'y' : 'x';
+	            _Attr = Attr[direction];
+
+	            value = type == 'number' ? (size[_Attr.nearby] - (this.relative ? size[_Attr.element] : 0)) * value / 100 : parseInt(value, 10);
+
+	            if (attr == 'bottom' || attr == 'right') {
+	                value *= -1;
+	                value -= size[_Attr.element] - size[_Attr.nearby];
 	            }
 
-	            if (this.fixed == 'animate') {
-	                this.element.stop().animate(style, 200);
-	                return;
-	            }
-	            this.element.css(style);
-	        },
-	        checkBorder: function checkBorder(size, position, style) {
-	            if (this.turnPosition) {
-	                this.turnPosition = null;
-	                return;
-	            }
-	            var turn;
-	            var turnPosition = {};
-	            var win = $(window);
-	            for (var i in position) {
-	                turnPosition[i] = position[i];
-	            }
-	            if (style.left < 0 || size.WIDTH + style.left > win.width()) {
-	                var left = position.left;
-	                var right = position.right;
-	                if (left != undefined) {
-	                    delete turnPosition.left;
-	                    turnPosition.right = left;
-	                } else if (right != undefined) {
-	                    delete turnPosition.right;
-	                    turnPosition.left = right;
-	                }
-	                turn = true;
-	            }
-	            if (style.top < 0 || size.HEIGHT + style.top > win.height()) {
-	                var top = position.top;
-	                var bottom = position.bottom;
-	                if (top != undefined) {
-	                    delete turnPosition.top;
-	                    turnPosition.bottom = top;
-	                } else if (bottom != undefined) {
-	                    delete turnPosition.bottom;
-	                    turnPosition.top = bottom;
-	                }
-	                turn = true;
-	            }
-	            if (turn) {
-	                return this.turnPosition = turnPosition;
-	            }
+	            value += size[direction] + this.offset[_Attr.offset] + size[_Attr.scroll];
+
+	            style[direction == 'x' ? 'left' : 'top'] = value;
 	        }
-	    };
-
-	    var mixins = nj.mixins;
-
-	    return mixins.align = {
-	        getDefaultProps: function getDefaultProps() {
-	            return {};
-	        },
-	        // componentDidMount : function(){
-	        //     console.log(1,this.align,this.onShow)
-	        // },
-	        setAlign: function setAlign(options) {
-	            this.align = this.align || new Align(options);
-	            this.align.set();
+	        var turnPosition = this.checkBorder(size, position, style); //屏幕边界限制
+	        if (turnPosition) {
+	            this.options.onTurn && this.options.onTurn.call(this, turnPosition);
+	            this.set({ position: turnPosition });
+	            return;
 	        }
-	    };
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+	        if (this.fixed == 'animate') {
+	            this.element.stop().animate(style, 200);
+	            return;
+	        }
+	        this.element.css(style);
+	    },
+	    checkBorder: function checkBorder(size, position, style) {
+	        if (this.turnPosition) {
+	            this.turnPosition = null;
+	            return;
+	        }
+	        var turn;
+	        var turnPosition = {};
+	        var win = $(window);
+	        for (var i in position) {
+	            turnPosition[i] = position[i];
+	        }
+	        if (style.left < 0 || size.WIDTH + style.left > win.width()) {
+	            var left = position.left;
+	            var right = position.right;
+	            if (left != undefined) {
+	                delete turnPosition.left;
+	                turnPosition.right = left;
+	            } else if (right != undefined) {
+	                delete turnPosition.right;
+	                turnPosition.left = right;
+	            }
+	            turn = true;
+	        }
+	        if (style.top < 0 || size.HEIGHT + style.top > win.height()) {
+	            var top = position.top;
+	            var bottom = position.bottom;
+	            if (top != undefined) {
+	                delete turnPosition.top;
+	                turnPosition.bottom = top;
+	            } else if (bottom != undefined) {
+	                delete turnPosition.bottom;
+	                turnPosition.top = bottom;
+	            }
+	            turn = true;
+	        }
+	        if (turn) {
+	            return this.turnPosition = turnPosition;
+	        }
+	    }
+	};
+
+	var mixins = nj.mixins;
+
+	module.exports = mixins.align = {
+	    getDefaultProps: function getDefaultProps() {
+	        return {};
+	    },
+	    // componentDidMount : function(){
+	    //     console.log(1,this.align,this.onShow)
+	    // },
+	    setAlign: function setAlign(options) {
+	        this.align = this.align || new Align(options);
+	        this.align.set();
+	    }
+	};
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35073,7 +35195,1221 @@ webpackJsonp([0,1],[
 	module.exports = Mask;
 
 /***/ },
-/* 198 */
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _nj = __webpack_require__(2);
+
+	var _nj2 = _interopRequireDefault(_nj);
+
+	var _form = __webpack_require__(201);
+
+	var _form2 = _interopRequireDefault(_form);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var React = _nj2.default.React;
+	var render = _nj2.default.render;
+	var Form = _form2.default.Form;
+	var Input = _form2.default.Input;
+	var InputGroup = _form2.default.InputGroup;
+
+	var DemoNav = function DemoNav() {
+	    var nav = ['normal', 'component', 'input-group'];
+	    nav = nav.map(function (n, i) {
+	        return React.createElement(
+	            'a',
+	            { href: 'doc/form/' + n + '.html', key: n, className: location.hash.indexOf(n) > 0 ? 'current' : '' },
+	            n
+	        );
+	    });
+	    return React.createElement(
+	        'div',
+	        { className: 'demo-nav' },
+	        nav
+	    );
+	};
+
+	var FormComponent = React.createClass({
+	    displayName: 'FormComponent',
+
+	    mixins: [React.addons.LinkedStateMixin],
+	    getInitialState: function getInitialState() {
+	        // setTimeout(()=>{
+	        //     this.setState({truename:'2'})
+	        // }, 2000)
+	        return {};
+	    },
+	    valueLink: function valueLink(key) {
+	        var self = this;
+	        return {
+	            value: this.state[key],
+	            requestChange: function requestChange(newValue) {
+	                var state = {};
+	                state[key] = newValue;
+	                self.setState(state);
+	            }
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.refs.$verfy.onSubmit(function (e) {
+	            alert('验证通过');
+	            e.preventDefault();
+	        });
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            Form,
+	            { className: 'nj-form', ref: '$verfy', parentComponent: this },
+	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement(Input, { className: 'text', required: true, valueLink: this.valueLink('truename') }),
+	                React.createElement('input', { valueLink: this.linkState('truename') }),
+	                this.state.truename
+	            ),
+	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement(Input, { className: 'text', type: 'email', required: true })
+	            ),
+	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement(Input, { className: 'text', type: 'number', required: true })
+	            ),
+	            React.createElement(
+	                'button',
+	                { className: 'nj-button', disabled: !this.state.valid },
+	                '提交'
+	            )
+	        );
+	    }
+	});
+
+	module.exports = function (container) {
+	    var nav = document.getElementById('demo-form-nav');
+	    nav && render(React.createElement(DemoNav, null), nav);
+
+	    _form2.default.start(container);
+
+	    //用于渲染Form组件实例
+	    var formWrap = document.getElementById('demo-form-wrap');
+	    formWrap && render(React.createElement(FormComponent, null), formWrap);
+
+	    _form2.default.getByHandle('verify-input-group').onSubmit(function (e) {
+	        console.log(e);
+	        e.preventDefault();
+	    });
+	};
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/*
+	 * form 表单验证
+	 */
+	__webpack_require__(202);
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var mixins = nj.mixins;
+
+	var $ = __webpack_require__(185);
+
+	var formDirectives = {};
+
+	var getRules = function getRules() {
+	    var attrs = this.props;
+	    var type = attrs.type;
+	    var rules = [];
+
+	    for (var i in attrs) {
+	        var name = i.replace(/^nj-/, '');
+	        var rule = formRules[i] || formRules[name];
+
+	        if (rule) {
+	            //有效规则
+	            if (formRules[i]) {
+	                name = i;
+	            }
+	            rules[i == 'required' ? 'unshift' : 'push']({
+	                key: i,
+	                name: name,
+	                target: attrs[i],
+	                fn: rule
+	            });
+	        }
+	    }
+	    if (formRules[type]) {
+	        //type="email"
+	        rules.push({
+	            key: 'type',
+	            name: type,
+	            target: attrs.type,
+	            fn: formRules[type]
+	        });
+	    }
+	    if (type == 'input-group' && attrs['nj-minlength'] || attrs['required']) {
+	        rules.required = true;
+	    }
+
+	    return rules;
+	};
+
+	var formMixin = {
+	    //在组件外部手动更新验证状态 如异步场景
+
+	    setValid: function setValid(valid) {
+	        this.setState({ valid: valid, status: valid ? 'ok' : 'error' });
+	    }
+	};
+
+	//当前组件渲染完毕后 检测是否有子组件
+	var childComponents = function childComponents() {
+	    var _this = this;
+
+	    var _props = this.props;
+	    var _childNodes = _props._childNodes;
+	    var _componentType = _props._componentType;
+
+	    if (!_componentType) {
+	        //只适用于nj-form方式创建的表单
+	        return;
+	    }
+	    var childNodes = _childNodes || [];
+	    childNodes.forEach(function (n) {
+	        _this.refs.wrap.appendChild(n);
+	    });
+	    var children = elementGroups[_componentType];
+	    children = children && children.children;
+	    var components = [];
+	    children && children.forEach(function (type) {
+	        components = components.concat(directiveInit(type, _this.refs.wrap, _this));
+	    });
+	    this.state.childComponents = components;
+
+	    var instances = this.constructor.instances;
+	    for (var i = 0, n = instances.length; i < n; i++) {
+	        if (instances[i].handle === this) {
+	            Array.prototype.push.apply(instances[i].components, components);
+	            break;
+	        }
+	    }
+	};
+
+	//验证当前组件的所有子组件的状态
+	var verifyChildComponents = function verifyChildComponents(real) {
+	    var valid = true;
+	    this.state.childComponents.forEach(function (item) {
+	        if (item.verify) {
+	            var _valid = item.verify(real, true);
+	            if (!_valid) {
+	                valid = _valid;
+	                // console.log(valid,item.props.node)
+	            }
+	        }
+	    });
+	    this.setState({ valid: valid });
+	    return valid;
+	};
+
+	//验证单个组件
+	var verifyField = function verifyField(real, fromParent) {
+	    var textField;
+
+	    if (this.state.validing || this.state.status == 'ok') {
+	        return this.state.valid;
+	    }
+	    var value = this.state.value;
+
+	    real = real === false ? false : real || true;
+	    this.state.validing = true;
+
+	    //status有值用来保存状态 不重复验证 输入后清除状态 重新验证
+	    // this.state.status = null
+	    this.state.status = 'ok';
+
+	    var valid = true;
+	    var rules = this.state.rules;
+
+	    for (var i = 0, n = rules.length; i < n; i++) {
+	        var rule = rules[i];
+	        valid = rule.fn.call(this, value, rule.target);
+	        // console.log(valid,rule,value)
+	        if (!valid || valid == 'pending') {
+	            this.state.novalidName = rule.name;
+	            break;
+	        }
+	    }
+
+	    if (!rules.required && !value) {
+	        //非必填项
+	        valid = true;
+	    }
+
+	    //'input-group' 验证子项是否全部通过
+	    if (valid && this.props.type == 'input-group') {
+	        valid = this.state.valid_all;
+	    }
+	    // console.log(valid,this.refs.input, this.state.value, this.state.status)
+	    this.state.status = valid == 'pending' ? 'pending' : valid ? 'ok' : 'error';
+	    this.state.valid = valid;
+
+	    //input-group类 子组件输入时 需要更新父组件状态
+	    var parentComponent = this.state.parentComponent;
+	    if (parentComponent && !fromParent) {
+	        //父组件是form时 有个特殊情况：更新form或导致所有子组件全部更新 为了减少干扰 引入real参数
+	        //real为false时 只验证其状态 不更新ui
+	        parentComponent.verify(parentComponent.props.type == 'form' ? false : true);
+	    }
+	    this.state.validing = null;
+	    // fromParent && console.log(real,valid)
+	    // console.log(real,valid,this.state.status,this.refs.input,parentComponent)
+	    real && this.setState({ valid: valid });
+	    return valid;
+	};
+
+	formDirectives['form'] = React.createClass({
+	    mixins: [mixins.childComponents.config],
+	    getDefaultProps: function getDefaultProps() {
+	        return { type: 'form', method: 'post', showicon: 'all', noValidate: true };
+	    },
+	    handleSubmit: function handleSubmit(e) {
+	        var _this2 = this;
+
+	        e = e || window.event;
+	        this.state.action = 'submit';
+	        window.setTimeout(function () {
+	            _this2.state.action = null;
+	        }, 1);
+	        this.submitBeforeEvent.complete(e);
+	        if (e.isDefaultPrevented()) {
+	            return;
+	        }
+
+	        var valid = this.verify();
+	        if (!valid) {
+	            //未通过 阻止提交
+	            e.preventDefault();
+	            return;
+	        }
+	        // if( this.props.ajaxsubmit ){
+	        //     var method = this.props.method.toLowerCase()
+	        //     var formEl = this.refs.wrap
+	        //     $.ajax({
+	        //         url : formEl.action,
+	        //         type : method,
+	        //         data : $(formEl).serialize(),
+	        //         dataType : 'json',
+	        //         success (json) {
+
+	        //         }
+	        //     })
+	        //     e.preventDefault()
+	        // }
+	        this.submitEvent.complete(e);
+	        console.log('submit', valid);
+	        // if( e.isDefaultPrevented() ){//调用preventDefault阻止默认事件
+	        //     return
+	        // }
+	    },
+	    submit: function submit(options) {
+	        //从外部触发submit动作
+	        var el = this.refs.wrap;
+	        var result = false;
+	        if (el.fireEvent) {
+	            //IE fire event
+	            // el.onsubmit = (e)=>{
+	            //   this.handleSubmit(e)
+	            // }
+	            result = el.fireEvent('onsubmit');
+	        } else if (document.createEvent) {
+	            var ev = document.createEvent('HTMLEvents');
+	            ev.initEvent('submit', false, true);
+	            result = el.dispatchEvent(ev);
+	        }
+	        result && el.submit(); //表单提交是异步的 所以下面return不是正确的valid
+	        return this.state.valid;
+	    },
+	    reset: function reset() {
+	        this.state.childComponents.forEach(function (item) {
+	            item.setState({ value: '', status: null });
+	        });
+	    },
+	    componentDidMount: function componentDidMount() {
+	        childComponents.call(this);
+
+	        this.submitBeforeEvent = nj.utils.addEventQueue.call(this, 'onSubmitBefore');
+	        this.submitEvent = nj.utils.addEventQueue.call(this, 'onSubmit');
+	        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
+
+	        this.state.verfiyCode = form.verifyCode();
+
+	        var parentComponent = this.props.parentComponent; //form表单所处的父组件
+
+	        if (parentComponent) {
+	            //将表单状态同步到外部
+	            this.onVerify(function (valid) {
+	                parentComponent.setState({ valid: valid });
+	            });
+	        }
+	    },
+	    verify: function verify(real) {
+	        var valid = verifyChildComponents.call(this, real);
+	        this.verifyEvent.complete(valid);
+	        return valid;
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'form',
+	            _extends({}, this.props, { ref: 'wrap',
+	                onSubmit: this.handleSubmit }),
+	            this.props.children
+	        );
+	    }
+	});
+	formDirectives['input-group'] = React.createClass({
+	    mixins: [mixins.childComponents.setParents([formDirectives['form']])],
+	    getInitialState: function getInitialState() {
+	        return {
+	            valid: true,
+	            dirty: false,
+	            rules: getRules.call(this)
+	        };
+	    },
+	    getDefaultProps: function getDefaultProps() {
+	        return { type: 'input-group' };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        childComponents.call(this);
+	    },
+	    verify: function verify(real, fromParent) {
+	        if (this.state.validing) {
+	            return this.state.valid;
+	        }
+	        var valid; //= verifyChildComponents.call(this)
+	        //取出选中的checkbox
+	        var checked = [];
+	        var hasnovalid;
+	        this.state.childComponents.forEach(function (item) {
+	            // console.log(item.state.value,item.state.valid, item.refs.input)
+	            if (!item.state.valid) {
+	                hasnovalid = true;
+	            } else if (item.state.value) {
+	                checked.push(item);
+	            }
+	        });
+	        //this.state.status = null
+	        //子项是否全部验证通过[隐形规则]
+	        //当chekced满足了个数验证时 其中有非必填项输入了错误的值时 通过该属性检测group整体状态
+	        this.state.valid_all = !hasnovalid;
+
+	        this.state.value = checked.length ? checked : null; //没选中时 兼顾required
+	        var valid = verifyField.call(this, real, fromParent);
+
+	        return valid;
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'span',
+	            null,
+	            React.createElement(
+	                'span',
+	                { className: 'nj-input-group', ref: 'wrap' },
+	                this.props.children
+	            ),
+	            React.createElement(VerifyStatus, { field: this })
+	        );
+	    }
+	});
+	formDirectives['input'] = React.createClass({
+	    //React.addons.LinkedStateMixin
+	    mixins: [formMixin, mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
+	    getInitialState: function getInitialState() {
+	        return {
+	            dirty: false,
+	            valid: true,
+	            rules: getRules.call(this),
+	            value: this.props.defaultValue
+	        };
+	    },
+	    getDefaultProps: function getDefaultProps() {
+	        var props = { type: 'text' };
+	        // console.log(this.props)
+	        return props;
+	    },
+	    verify: function verify(real, fromParent) {
+
+	        //更新input-group
+	        var parentComponent = this.state.parentComponent;
+	        if (parentComponent) {
+	            parentComponent.setState({ dirty: true });
+	        }
+
+	        var valid = verifyField.call(this, real, fromParent);
+	        //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
+	        //this.refs.input.focus()
+	        //}
+	        return valid;
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange');
+	        //对外引用组件
+	        this.refs.input.$handle = this;
+	    },
+	    componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
+	        var _valueLink = this.props.valueLink;
+	        var _value = _valueLink && _valueLink.value;
+	        var newValue = nextState.value;
+
+	        /**
+	         * 组件内部state更新 需同步到组件外部
+	         */
+	        var valueLink = this.state.valueLink;
+	        //if( newValue!==undefined && _valueLink && newValue!==_value ){
+	        //_valueLink.value = this.state.value = newValue
+	        //valueLink && valueLink.requestChange(newValue, true)
+	        //}
+	        // console.log(0,this.props.valueLink,this.state.value,newValue,this.state.valueLink)
+	    },
+	    valueLink: function valueLink() {
+	        var _this3 = this;
+
+	        var _valueLink = this.props.valueLink;
+	        var _value = _valueLink && _valueLink.value;
+
+	        var type = this.props.type;
+
+	        // console.log(11,_value,this.state.value)
+	        //外部valueLink改变状态后 组件内部需同步
+	        if (_valueLink && _value !== this.state.value && _value != undefined) {
+	            this.state.value = _value;
+
+	            window.setTimeout(function () {
+	                valueLink.requestChange(_value, true);
+	            }, 10);
+	        }
+
+	        var valueLink = this.state.valueLink = {
+	            value: this.state.value,
+	            requestChange: function requestChange(newValue, update) {
+	                var textField = textReg.test(type);
+	                _valueLink && _valueLink.requestChange(newValue); //合并外部双向绑定
+	                // console.log(22,newValue,this.state.value)
+	                _this3.state.value = newValue;
+	                _this3.state.status = null;
+
+	                _this3.setState({
+	                    value: newValue,
+	                    dirty: true
+	                });
+
+	                update = update === false ? false : update || !textField;
+
+	                var parentComponent = _this3.state.parentComponent;
+	                if (parentComponent) {
+	                    parentComponent.state.status = null;
+	                    parentComponent.state.dirty = true;
+	                }
+
+	                update && _this3.verify.call(_this3, false);
+
+	                _this3.changeEvent.complete();
+	            }
+	        };
+
+	        return valueLink;
+	    },
+	    render: function render() {
+	        var _this4 = this;
+
+	        var attrs = this.props;
+	        var type = attrs.type;
+	        var _state = this.state;
+	        var rules = _state.rules;
+	        var dirty = _state.dirty;
+	        var status = _state.status;
+	        var value = _state.value;
+	        var parentComponent = _state.parentComponent;
+
+	        var className = [];
+	        if (rules.length && status) {
+	            var mark = true;
+	            if (!rules.required && !value) {
+	                mark = false;
+	            }
+	            if (!dirty && (!parentComponent || parentComponent.state.action != 'submit')) {
+	                mark = false;
+	            }
+	            // console.log(mark,dirty, parentComponent.state.action, this.refs.input)
+	            mark && className.push('input-' + status);
+	        }
+	        this.props.className && className.push(this.props.className);
+
+	        var input = React.createElement('input', _extends({ ref: 'input' }, attrs, { onKeyUp: function onKeyUp() {
+	                _this4.verify(true);
+	            }, className: className.join(' '), valueLink: this.valueLink() }));
+
+	        switch (type) {
+	            case 'checkbox':
+	                input = React.createElement('input', _extends({}, attrs, { ref: 'input', checkedLink: this.valueLink() }));
+	                break;
+	            case 'radio':
+	                input = React.createElement('input', _extends({}, attrs, { ref: 'input', checkedLink: this.valueLink() }));
+	                break;
+	            case 'textarea':
+	                input = React.createElement('textarea', _extends({}, attrs, { ref: 'input', onKeyUp: function onKeyUp() {
+	                        _this4.verify(true);
+	                    }, className: className.join(' '), valueLink: this.valueLink() }));
+	        }
+	        return React.createElement(
+	            'label',
+	            null,
+	            input,
+	            React.createElement(
+	                'span',
+	                null,
+	                this.props.text
+	            ),
+	            React.createElement(VerifyStatus, { field: this })
+	        );
+	    }
+	});
+
+	var textReg = /^(text|textarea|number|email|password)$/;
+
+	//验证状态显示
+	var VerifyStatus = React.createClass({
+	    displayName: 'VerifyStatus',
+	    render: function render() {
+	        var field = this.props.field;
+	        var rules = field.state.rules;
+	        var showmsg = rules.length;
+	        var parentComponent = field.state.parentComponent;
+
+	        if (showmsg) {
+	            if (field.state.dirty) {
+	                //checkbox组合 子项不显示
+	                var textField;
+
+	                //if( textReg.test(field.props.type) && parentComponent && parentComponent.props.type=='input-group' ){
+	                //showmsg = false
+	                //}
+	            } else if (parentComponent) {
+	                    showmsg = parentComponent.state.action == 'submit';
+	                }
+
+	            if (!field.state.value && !rules.required) {
+	                //非必填项
+	                showmsg = false;
+	            }
+	        }
+	        var novalidName = field.state.novalidName;
+	        var novalidText = '';
+	        var ispending = field.state.valid == 'pending';
+
+	        // console.log(showmsg, field.state.valid,field.state.status,field.refs.input)
+
+	        if (showmsg) {
+	            if (ispending) {
+	                novalidText = 'loading……';
+	            } else if (!field.state.valid) {
+	                novalidText = field.props.errorText || statusText[novalidName] || '';
+	            }
+
+	            var showicon = parentComponent && parentComponent.props.showicon;
+	            if (showicon != 'all' && field.state.status != showicon) {
+	                return null;
+	            }
+	            //适合'input-group'子项为text类
+	            if (field.props.type == 'input-group') {
+	                // console.log(field.state.valid,field.state.valid_all)             
+	                if (!field.state.valid_all) {
+	                    //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态
+	                    return null;
+	                } else if (field.state.valid) {
+	                    var child = field.state.childComponents[0];
+	                    if (child && textReg.test(child.props.type)) {
+	                        //已输入的全部通过 状态体现在子项上 group无需显示状态
+	                        return null;
+	                    }
+	                }
+	            }
+	        }
+
+	        // console.log(showmsg,field.state.status,field.refs.input)
+	        // console.log('verifyStatus:',showmsg,field.state.status)
+	        return showmsg && field.state.status ? React.createElement(
+	            'span',
+	            { className: 'nj-form-msg' },
+	            React.createElement(
+	                'span',
+	                { className: 'nj-form-msg-' + field.state.status },
+	                novalidText
+	            )
+	        ) : null;
+	    }
+	});
+
+	var form = {};
+
+	var formRules = {
+	    required: function required(value) {
+	        return !!value;
+	    },
+	    minlength: function minlength(value, target) {
+	        return value && value.length >= parseInt(target);
+	    },
+	    maxlength: function maxlength(value, target) {
+	        return value && value.length <= parseInt(target);
+	    },
+	    email: function email(value) {
+	        return (/^\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+(?:[-.]\w+)*$/.test(value)
+	        );
+	    },
+	    number: function number(value) {
+	        return !isNaN(value);
+	    },
+	    mobile: function mobile(value) {
+	        return (/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])[0-9]{8}$/.test(value)
+	        );
+	    },
+	    idcard: function idcard(value) {
+	        //验证身份证号是否合法18位或17位带字母
+	        return (/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}(?:\d|[a-zA-Z])$/.test(value)
+	        );
+	    },
+
+	    //二次确认输入项 target为比较的name值
+	    confirm: function confirm(value, target) {
+	        var instances = formDirectives['input'].instances;
+	        var self = this;
+	        var field;
+	        for (var i = 0, n = instances.length; i < n; i++) {
+	            field = instances[i].handle;
+	            if (field.props.name == target) {
+	                if (!field.state.addConfirmEvent) {
+	                    //当target组件被重新修改时 清空当前组件的验证状态
+	                    field.onChange(function () {
+	                        self.state.status = null;
+	                        self.verify();
+	                        //self.setState({status:null, valid:false})
+	                    });
+	                    field.state.addConfirmEvent = true;
+	                }
+	                return value === field.state.value;
+	            }
+	        }
+	    }
+	};
+
+	form.addRule = function (name, fn) {
+	    formRules[name] = fn;
+	};
+
+	var statusText = {
+	    required: '不能为空',
+	    email: '邮箱格式错误'
+	};
+
+	//<input required>将默认属性值为空的转化为required="required"
+	function parseAttrs(attrs) {
+	    for (var i in attrs) {
+	        if (attrs[i] === '' && i != 'defaultValue') {
+	            attrs[i] = i;
+	        }
+	    }
+	    return attrs;
+	}
+
+	function directiveInit(type, context, parentComponent) {
+	    if (!context) {
+	        return;
+	    }
+	    var components = [];
+	    var formElements = nj.utils.toArray(context.querySelectorAll('nj-' + type));
+	    formElements.forEach(function (node) {
+	        var c = initial(node, type, parentComponent);
+	        if (c) {
+	            c.state.parentComponent = parentComponent;
+	            components.push(c);
+	        }
+	    });
+	    return components;
+	}
+
+	var initial = function initial(node, type, parentComponent) {
+	    var el = document.createElement('span');
+	    node.parentNode.insertBefore(el, node);
+	    // nj.utils.toArray(node.childNodes).forEach((n)=>{
+	    //     console.log(n)
+	    //     el.appendChild(n)
+	    // })
+	    //
+	    node.parentNode.removeChild(node);
+
+	    var Component = formDirectives[type];
+	    if (Component) {
+	        var options = parseAttrs(nj.utils.getAttributes(node));
+	        options._childNodes = nj.utils.toArray(node.childNodes);
+	        options._componentType = type;
+	        options.text = options.text || node.innerText;
+	        // if( options.value!=undefined ){
+	        //     options.defaultValue = options.value
+	        //     delete options.value
+	        // }
+	        // options._node = el
+	        if (type == 'input-group' && parentComponent) {
+	            //继承form组件showicon属性
+	            options.showicon = parentComponent.props.showicon;
+	        }
+	        return ReactDOM.render(React.createElement(Component, options), el);
+	    }
+	};
+
+	var elementGroups = {
+	    'form': { children: ['input-group', 'input'] },
+	    'input-group': { children: ['input'] },
+	    'input': {}
+	};
+
+	//nj-input => Input / nj-input-group => InputGroup
+	function getComponentName(name) {
+	    return name.replace('nj-', '').replace(/^(\w)/, function (a, b, c) {
+	        return b.toUpperCase();
+	    }).replace(/-(\w)/, function (a, b, c) {
+	        return b.toUpperCase();
+	    });
+	}
+
+	function start(container) {
+	    for (var i in elementGroups) {
+	        directiveInit(i, container || document.body);
+	    }
+	}
+	$(function () {
+	    start();
+	});
+
+	//验证码
+	form.verifyCode = function (verify, refresh) {
+	    verify = verify || 'verify_img';
+	    refresh = refresh || 'verify_refresh';
+	    verify = document.getElementById(verify);
+	    refresh = document.getElementById(refresh);
+	    if (!verify || !refresh) {
+	        return {};
+	    }
+	    verify.onclick = function () {
+	        var _src = this.src.split('?'),
+	            ver = _src[1] || '',
+	            r = /((\?|&)t=)[\d]+/;
+	        if (r.test(ver)) {
+	            ver = _src[0] + '?' + ver.replace(r, '$1' + +new Date());
+	        } else {
+	            ver = 't=' + +new Date();
+	        }
+	        this.src = _src[0] + '?' + ver;
+	        //this.src= domain.login+'/Index-loginverify.html?t='+(+new Date);
+	    };
+	    refresh.onclick = function () {
+	        verify.click();
+	        return false;
+	    };
+	    return {
+	        refresh: function refresh() {
+	            verify.click();
+	        }
+	    };
+	};
+
+	form.start = start;
+
+	//将Form,Input,InputGroup挂在form对象上
+	for (var i in elementGroups) {
+	    form[getComponentName(i)] = formDirectives[i];
+	}
+	form.getByHandle = function (handle) {
+	    for (var i = 0, n = formDirectives.form.instances.length; i < n; i++) {
+	        var item = formDirectives.form.instances[i].handle;
+	        if (item.props.handle == handle) {
+	            return item;
+	        }
+	    }
+	};
+
+	function getMessage(tip, method) {
+	    return tip || form.message[method] || '';
+	}
+
+	form.reg = {
+	    /*
+	     * 常用规则
+	     */
+	    isNull: function isNull(val) {
+	        if (val.replace(/\s/g, "") != "") {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isEmail: function isEmail(val) {
+	        var p = /^\w+(?:[-+.']\w+)*@\w+(?:[-.]\w+)*\.\w+(?:[-.]\w+)*$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isQQ: function isQQ(val) {
+	        //qq
+	        var p = /^\s*[.0-9]{5,10}\s*$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isUrl: function isUrl(val) {
+	        //验证输入是否是合法url地址 可以包含中文\u2E80-\u9FFF
+	        if (typeof val != 'string') {
+	            return false;
+	        }
+	        val = val.split(/[\?#]/)[0];
+	        var p = /^(?:http(?:s)?:\/\/)?([\w-]+\.)+[\w-]+(?:\/[\w\W]*)?$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isMobile: function isMobile(val) {
+	        //验证是否是合法的手机号码
+	        var p = /^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])[0-9]{8}$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isTel: function isTel(val) {
+	        //验证是否是合法的座机号码
+	        var p = /^\d{2,5}?[-]?\d{5,8}([-]\d{0,1})?$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isTel400: function isTel400(val) {
+	        //验证是否是合法的400电话
+	        var p = /^(400)[-]?\d{3}[-]?\d{4}$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    isIdcard: function isIdcard(val) {
+	        //验证身份证号是否合法18位或17位带字母
+	        var p = /^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}(?:\d|[a-zA-Z])$/;
+	        if (p.test(val)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    },
+	    specialCode: function specialCode(val) {
+	        //是否包含特殊字符
+	        if (!/^[\u4e00-\u9fa5\w]*$/.test(val)) {
+	            return false;
+	        } else {
+	            return true;
+	        }
+	    },
+	    /*
+	     * 判断字符长度是否合法 或者 判断类似checkbox的个数(val为数字)
+	     * @options:必选参数，{min:最小长度,max:最大长度,其中的大于或小于都包含等于}
+	     */
+	    isLength: function isLength(val, options) {
+	        if (!options) {
+	            return;
+	        }
+	        //计算字符个数，一个汉字计算为2个字符
+	        var strLength = function strLength(a) {
+	            var L = 0;
+	            for (var i = 0; i < a.length; i++) {
+	                if (/[\u4e00-\u9fa5]/.test(a.charAt(i))) {
+	                    L += 2;
+	                } else {
+	                    L += 1;
+	                }
+	            }
+	            return L;
+	        };
+	        var options = options,
+	            len = typeof val === 'string' ? strLength(val) : typeof val === 'number' ? val : 0,
+	            test = true;
+	        if (options.min) {
+	            if (len < options.min) {
+	                test = false;
+	            }
+	        }
+	        if (options.max) {
+	            if (len > options.max) {
+	                test = false;
+	            }
+	        }
+	        return test;
+	    },
+	    /*
+	          	 验证输入是否是数字
+	           @options:可选参数，{min:最小值,max:最大值,decimals:可以带几位小数,type:int整数}
+	       */
+	    isNum: function isNum(val, opt) {
+	        var opt = opt || {},
+	            p,
+	            test = !isNaN(val);
+	        if (opt.decimals) {
+	            p = eval("/^-?\\d+(?:\\.\\d{1," + opt.decimals + "})?$/");
+	            test = p.test(val);
+	        }
+	        if ((opt.min || opt.min == 0) && val < opt.min) {
+	            test = false;
+	        }
+	        if ((opt.max || opt.max == 0) && val > opt.max) {
+	            test = false;
+	        }
+	        if (opt.type == 'int' && val.indexOf(".") != -1) {
+	            test = false;
+	        }
+	        if (val.lastIndexOf('.') == val.length - 1) {
+	            test = false;
+	        }
+	        return test;
+	    },
+	    //ajax验证
+	    remote: function remote(val, param, element) {
+	        var T = this,
+	            data;
+	        param = param || {};
+	        if (param.beforeSend && param.beforeSend(element) == false) {
+	            return 'pending';
+	        }
+	        data = param.data = param.data || {};
+
+	        if (typeof param.data == 'function') {
+	            data = param.data.call(this) || {};
+	        }
+
+	        if (param['name']) {
+	            data[param['name']] = val;
+	        } else {
+	            data[element.attr("name")] = val;
+	        }
+	        var _success = param.success;
+	        $.ajax({
+	            url: param.url,
+	            type: param.type || "get",
+	            data: data,
+	            context: param.context,
+	            dataType: param.dataType || "json",
+	            success: function success(json) {
+	                //if(!json){return;}
+	                //element.data( "remote", json );
+	                _success && _success(json, element);
+
+	                if (json && json.state == 1 || json.status == 1 || param.check && param.check(json) //自定义返回数据是否符合
+	                ) {
+	                        //ok
+	                        element.data("state", true);
+	                        form.state(element, 'ok', json.info || '', T.options && T.options.icoPosition);
+
+	                        param.callback && param.callback(); //用于submit 返回成功后继续submit操作
+	                        param.callback = null;
+	                    } else {
+	                    //error
+	                    element.data("state", false);
+	                    form.state(element, 'error', json.info || element.data("tip"), T.options && T.options.icoPosition);
+	                }
+	            }
+	        });
+	        return 'pending';
+	    }
+	};
+	/*填充表单数据*/
+	form.fill = function (options) {
+	    options = options || {};
+
+	    var Form = $(options.form || document.forms[0]),
+	        data = options.data,
+	        i,
+	        item,
+	        type,
+	        value;
+
+	    if (!Form.length || $.type(data) != 'object') {
+	        return;
+	    }
+
+	    for (i in data) {
+	        item = Form.find('[name="' + i + '"]');
+	        if (!item.length) {
+	            if (options.always) {
+	                //当options.always为true时 已隐藏域的形式填充到表单中
+	                Form.append('<input name="' + i + '" type="hidden" value="' + data[i] + '" />');
+	            }
+	            continue;
+	        }
+	        type = item[0].type;
+	        value = data[i];
+	        if (type == 'text' || type == 'hidden' || type == 'textarea' || type == 'select-one' && typeof value == 'string') {
+	            item.val(value);
+	        } else if (type == 'radio') {
+	            item.filter('[value="' + value + '"]').attr('checked', 'checked');
+	        } else if (type == 'checkbox' && $.type(value) == 'array') {
+	            $.each(value, function (i, v) {
+	                item.filter('[value="' + v + '"]').click();
+	            });
+	        }
+	    }
+	};
+
+	/*
+	 * 格式化表单数据
+	 * 主要针对非form对象 
+	 * 本身就是form对象则直接返回form.serialize()
+	 */
+	form.parse = function (form, dataType) {
+	    if (!form || !form.length) {
+	        return;
+	    }
+	    var _form = form.find('form'),
+	        Form = form[0].tagName.toLowerCase() == 'form' ? form : _form.length ? _form : null,
+	        data;
+
+	    dataType = dataType || 'string';
+
+	    if (Form) {
+	        data = Form.serialize();
+	    } else {
+	        //Form = $('<form style="display:none"></form>').appendTo(document.body);
+	        //clone无法拷贝select值
+	        //Form.append(form.clone(true));
+	        //data = Form.serialize();
+	        //Form.remove();
+	        var item = form.find('input,textarea,select,button'),
+	            i = 0,
+	            n = item.length,
+	            data = {};
+	        for (; i < n; i++) {
+	            if (item[i].name) {
+	                data[item[i].name] = item[i].value;
+	            }
+	        }
+	    }
+	    return data;
+	};
+
+	/*
+	 * post跨域 使用iframe实现
+	 */
+	form.post = function (options) {
+	    options = options || {};
+	    var _form = options.form;
+	    if (!_form) {
+	        _form = $('<form action="" method="post"></form>').appendTo(document.body)[0];
+	    }
+
+	    var name = 'iframe_' + +new Date(),
+	        iframe = $('<iframe src="" name="' + name + '" style="display:none"></iframe>').appendTo(document.body),
+	        callback = 'jsoncallback_' + +new Date();
+
+	    var data = $.extend(true, options.data, { jsoncallback: callback });
+	    form.fill({
+	        form: $(_form),
+	        data: data,
+	        always: true
+	    });
+
+	    if (options.url) {
+	        _form.action = options.url;
+	    }
+	    _form.method = 'post';
+	    _form.target = name;
+
+	    window[callback] = function (json) {
+	        // options.complete && options.complete.call(options, json);
+	        options.success && options.success.call(options, json);
+
+	        try {
+	            delete window[callback];
+	        } catch (e) {
+	            //ie bug
+	            window[callback] = null;
+	        }
+
+	        iframe.remove();
+	        iframe = null;
+	    };
+	    options.beforeSend && options.beforeSend.call(options);
+
+	    //document.domain = domain.host;//此句可以在beforeSend中配置
+	    _form.submit();
+	};
+
+	module.exports = form;
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(203);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(8)(content, {"insertAt":"top"});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./form.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./form.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(6)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/*form*/\r\nnj-form,nj-input{display:inline-block;}\r\n.nj-form li.item{padding:0 15px 15px 0;clear:both;}\r\n.nj-form .fields{margin-left:97px}\r\n.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}\r\n.nj-form .short-text{width:90px;}\r\n.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}\r\n.nj-form textarea.text[rows]{height:auto}\r\n.nj-form textarea.text[cols]{width:auto}\r\n.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}\r\n.nj-form .lab i{color:#f06;margin-right:7px}\r\n.nj-form .date{display:inline-block;vertical-align:top;}\r\n.nj-form .date .text{width:90px;background-color:transparent}\r\n.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{\r\n  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}\r\n.nj-form select.text{width:auto;height:auto;}\r\n.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}\r\n.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}\r\n\r\n.nj-form .input-ok{border-color:#00B700;}\r\n.nj-form .input-pending{border-color:#f90;}\r\n.nj-form .input-error{border-color:red;}\r\n\r\n.nj-form-msg-ok:before{content:'\\E606';color:#00BE00;font:16px 'njicon';}\r\n.nj-form-msg-error:before{content:'\\E60A';color:red;font:16px 'njicon';}\r\n.nj-form-msg-error{color:red;}\r\n.nj-form-msg-pending:before{content:'\\E604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}\r\n.nj-form-msg-pending{color:#f90;}", ""]);
+
+	// exports
+
+
+/***/ },
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35085,20 +36421,20 @@ webpackJsonp([0,1],[
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(199).default;
-	var createLogger = __webpack_require__(200);
+	var thunkMiddleware = __webpack_require__(205).default;
+	var createLogger = __webpack_require__(206);
 
-	var _require = __webpack_require__(201);
+	var _require = __webpack_require__(207);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(208);
+	var _require2 = __webpack_require__(214);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(223);
-	var rootReducer = __webpack_require__(229);
+	var App = __webpack_require__(229);
+	var rootReducer = __webpack_require__(235);
 
 	// const createStoreWithMiddleware = applyMiddleware(
 	//   thunkMiddleware, // 允许我们 dispatch() 函数
@@ -35115,7 +36451,7 @@ webpackJsonp([0,1],[
 	    //     console.log(store.getState())
 	    // })
 
-	    ReactDOM.render(React.createElement(
+	    var app = ReactDOM.render(React.createElement(
 	        Provider,
 	        { store: store },
 	        React.createElement(App, null)
@@ -35123,7 +36459,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 199 */
+/* 205 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35146,7 +36482,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 200 */
+/* 206 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35379,7 +36715,7 @@ webpackJsonp([0,1],[
 	module.exports = createLogger;
 
 /***/ },
-/* 201 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35387,11 +36723,11 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(202);
+	var _Provider = __webpack_require__(208);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(205);
+	var _connect = __webpack_require__(211);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -35401,7 +36737,7 @@ webpackJsonp([0,1],[
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 202 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -35409,9 +36745,9 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports["default"] = undefined;
 
-	var _react = __webpack_require__(203);
+	var _react = __webpack_require__(209);
 
-	var _storeShape = __webpack_require__(204);
+	var _storeShape = __webpack_require__(210);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
@@ -35485,7 +36821,7 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 203 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35494,14 +36830,14 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 204 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _react = __webpack_require__(203);
+	var _react = __webpack_require__(209);
 
 	exports["default"] = _react.PropTypes.shape({
 	  subscribe: _react.PropTypes.func.isRequired,
@@ -35510,7 +36846,7 @@ webpackJsonp([0,1],[
 	});
 
 /***/ },
-/* 205 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -35520,29 +36856,29 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports["default"] = connect;
 
-	var _react = __webpack_require__(203);
+	var _react = __webpack_require__(209);
 
-	var _storeShape = __webpack_require__(204);
+	var _storeShape = __webpack_require__(210);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(206);
+	var _shallowEqual = __webpack_require__(212);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(207);
+	var _wrapActionCreators = __webpack_require__(213);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _isPlainObject = __webpack_require__(218);
+	var _isPlainObject = __webpack_require__(224);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(221);
+	var _hoistNonReactStatics = __webpack_require__(227);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(222);
+	var _invariant = __webpack_require__(228);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -35838,7 +37174,7 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 206 */
+/* 212 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35869,7 +37205,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 207 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35877,7 +37213,7 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(208);
+	var _redux = __webpack_require__(214);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -35886,7 +37222,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 208 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -35894,27 +37230,27 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(209);
+	var _createStore = __webpack_require__(215);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(213);
+	var _combineReducers = __webpack_require__(219);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(215);
+	var _bindActionCreators = __webpack_require__(221);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(216);
+	var _applyMiddleware = __webpack_require__(222);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(217);
+	var _compose = __webpack_require__(223);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(214);
+	var _warning = __webpack_require__(220);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -35938,7 +37274,7 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 209 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35947,7 +37283,7 @@ webpackJsonp([0,1],[
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(210);
+	var _isPlainObject = __webpack_require__(216);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
@@ -36159,11 +37495,11 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 210 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(211),
-	    isObjectLike = __webpack_require__(212);
+	var isHostObject = __webpack_require__(217),
+	    isObjectLike = __webpack_require__(218);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -36231,7 +37567,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 211 */
+/* 217 */
 /***/ function(module, exports) {
 
 	/**
@@ -36257,7 +37593,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 212 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/**
@@ -36291,7 +37627,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 213 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -36299,13 +37635,13 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(209);
+	var _createStore = __webpack_require__(215);
 
-	var _isPlainObject = __webpack_require__(210);
+	var _isPlainObject = __webpack_require__(216);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(214);
+	var _warning = __webpack_require__(220);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -36424,7 +37760,7 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 214 */
+/* 220 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36453,7 +37789,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 215 */
+/* 221 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36509,7 +37845,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 216 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36519,7 +37855,7 @@ webpackJsonp([0,1],[
 	exports.__esModule = true;
 	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(217);
+	var _compose = __webpack_require__(223);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -36571,7 +37907,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 217 */
+/* 223 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -36605,11 +37941,11 @@ webpackJsonp([0,1],[
 	}
 
 /***/ },
-/* 218 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(219),
-	    isObjectLike = __webpack_require__(220);
+	var isHostObject = __webpack_require__(225),
+	    isObjectLike = __webpack_require__(226);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -36677,7 +38013,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 219 */
+/* 225 */
 /***/ function(module, exports) {
 
 	/**
@@ -36703,7 +38039,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 220 */
+/* 226 */
 /***/ function(module, exports) {
 
 	/**
@@ -36737,7 +38073,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 221 */
+/* 227 */
 /***/ function(module, exports) {
 
 	/**
@@ -36783,7 +38119,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 222 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36841,7 +38177,7 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 223 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36854,18 +38190,18 @@ webpackJsonp([0,1],[
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(201);
+	var _require = __webpack_require__(207);
 
 	var connect = _require.connect;
 
-	var AddComment = __webpack_require__(224);
-	var CommentList = __webpack_require__(225);
+	var AddComment = __webpack_require__(230);
+	var CommentList = __webpack_require__(231);
 
-	var _require2 = __webpack_require__(226);
+	var _require2 = __webpack_require__(232);
 
 	var addComment = _require2.addComment;
 
-	var fetch = __webpack_require__(227);
+	var fetch = __webpack_require__(233);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -36884,7 +38220,7 @@ webpackJsonp([0,1],[
 	        );
 	    }
 	});
-	function select(state) {
+	function select(state, ownProps) {
 	    return {
 	        comments: state.comments
 	    };
@@ -36892,7 +38228,7 @@ webpackJsonp([0,1],[
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 224 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36938,7 +38274,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 225 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36972,7 +38308,7 @@ webpackJsonp([0,1],[
 	});
 
 /***/ },
-/* 226 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36980,7 +38316,7 @@ webpackJsonp([0,1],[
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(227);
+	var fetch = __webpack_require__(233);
 
 	var ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT';
 
@@ -37036,19 +38372,19 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 227 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(228);
+	__webpack_require__(234);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 228 */
+/* 234 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -37443,7 +38779,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 229 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37452,18 +38788,18 @@ webpackJsonp([0,1],[
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(208);
+	var _require = __webpack_require__(214);
 
 	var combineReducers = _require.combineReducers;
 
-	var comments = __webpack_require__(230);
+	var comments = __webpack_require__(236);
 
 	module.exports = combineReducers({
 	  comments: comments
 	});
 
 /***/ },
-/* 230 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37472,7 +38808,7 @@ webpackJsonp([0,1],[
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(226);
+	var _require = __webpack_require__(232);
 
 	var ADD_COMMENT = _require.ADD_COMMENT;
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
@@ -37522,7 +38858,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 231 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37534,20 +38870,20 @@ webpackJsonp([0,1],[
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(199).default;
-	var createLogger = __webpack_require__(200);
+	var thunkMiddleware = __webpack_require__(205).default;
+	var createLogger = __webpack_require__(206);
 
-	var _require = __webpack_require__(201);
+	var _require = __webpack_require__(207);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(208);
+	var _require2 = __webpack_require__(214);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(232);
-	var rootReducer = __webpack_require__(235);
+	var App = __webpack_require__(238);
+	var rootReducer = __webpack_require__(241);
 
 	module.exports = function (container) {
 	    var store = createStore(rootReducer, {}, applyMiddleware(thunkMiddleware, createLogger()));
@@ -37560,7 +38896,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 232 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37573,17 +38909,17 @@ webpackJsonp([0,1],[
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(201);
+	var _require = __webpack_require__(207);
 
 	var connect = _require.connect;
 
-	var SearchPhoto = __webpack_require__(233);
+	var SearchPhoto = __webpack_require__(239);
 
-	var _require2 = __webpack_require__(234);
+	var _require2 = __webpack_require__(240);
 
 	var searchPhoto = _require2.searchPhoto;
 
-	var fetch = __webpack_require__(227);
+	var fetch = __webpack_require__(233);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -37639,7 +38975,7 @@ webpackJsonp([0,1],[
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 233 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37684,7 +39020,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 234 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37692,7 +39028,7 @@ webpackJsonp([0,1],[
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(227);
+	var fetch = __webpack_require__(233);
 
 	var SEARCH_PHOTO = exports.SEARCH_PHOTO = 'SEARCH_PHOTO';
 
@@ -37737,7 +39073,7 @@ webpackJsonp([0,1],[
 	};
 
 /***/ },
-/* 235 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37746,18 +39082,18 @@ webpackJsonp([0,1],[
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(208);
+	var _require = __webpack_require__(214);
 
 	var combineReducers = _require.combineReducers;
 
-	var photos = __webpack_require__(236);
+	var photos = __webpack_require__(242);
 
 	module.exports = combineReducers({
 	  photos: photos
 	});
 
 /***/ },
-/* 236 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37766,7 +39102,7 @@ webpackJsonp([0,1],[
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(234);
+	var _require = __webpack_require__(240);
 
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
 	var RECEIVE_POSTS = _require.RECEIVE_POSTS;
@@ -37802,4 +39138,4 @@ webpackJsonp([0,1],[
 	};
 
 /***/ }
-]);
+/******/ ]);

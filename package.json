@@ -37,7 +37,8 @@
   "name": "nojs-react",
   "scripts": {
     "start": "node ./server.js",
-    "wp" : "webpack --config ./wp.js",
+    "build" : "webpack --config ./wp.js",
+    "page" : "git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git push origin gh-pages",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "version": "1.0.34"
