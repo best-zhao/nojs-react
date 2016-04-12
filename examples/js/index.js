@@ -6,7 +6,8 @@ import Marked from 'marked'
 import {Frame} from 'nj/frame'
 import Demo from './Demos/'
 
-$.getJSON('./menu.json', json=>{
+
+$.getJSON('./menu.json').then(json=>{
     const frameOptions = {
         logo : <h1>nojs-react</h1>,
         menu : json.data,
@@ -21,7 +22,7 @@ $.getJSON('./menu.json', json=>{
             if( node ){
                 var demo = Demo[node.link] || Demo[node.demo]  
 
-                demo && setTimeout(()=>{
+                typeof demo=='function' && setTimeout(()=>{
                     demo(container)
                 }, 10)
             }

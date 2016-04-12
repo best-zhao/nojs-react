@@ -47,8 +47,12 @@ const FormComponent = React.createClass({
         <Form className="nj-form" ref="$verfy" parentComponent={this}>
             <div><Input className="text" required valueLink={this.valueLink('truename')} />
             <input valueLink={this.linkState('truename')}/>{this.state.truename}</div>
-            <div><Input className="text" type="email" required /></div>
+            <div><Input className="text" placeholder="email" type="email" required /></div>
             <div><Input className="text" type="number" required /></div>
+            <div>以下至少输入一项：<br/><InputGroup required>
+                <Input className="text" placeholder="email" type="email" />
+                <Input className="text" placeholder="mobile" type="mobile" />
+            </InputGroup></div>
             <button className="nj-button" disabled={!this.state.valid}>提交</button>
         </Form>
         )

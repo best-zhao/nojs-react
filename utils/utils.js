@@ -40,10 +40,11 @@ module.exports = {
         }
         function complete(){
           var args = Array.prototype.slice.call(arguments)
+          var res
           queue.forEach(function(fn){
-              fn.apply(self, args)
+              res = fn.apply(self, args)
           })
-          return this
+          return res
         }
         //某些场景 在事件列表执行完成之后需要清空队列
         function end(){

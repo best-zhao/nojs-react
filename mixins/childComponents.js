@@ -1,7 +1,7 @@
 /**
  * 获取组合组件之间的父子关系
  */
-var nj = require('../lib/nojs-react')
+var nj = require('../lib')
 var $ = require('jquery')
 
 var config = exports.config = {
@@ -36,8 +36,6 @@ var config = exports.config = {
             components : []
         })
 
-        // console.log(fn.instances)
-
         //查找存在指针的父组件
         var parents = fn.parents || []
         var parentConstructor
@@ -47,6 +45,7 @@ var config = exports.config = {
         for( var i=0; i<parents.length; i++ ){
             parentConstructor = parents[i]
             parentPoint = parentConstructor.point
+
             if( parentPoint != null ){
                 parentComponent = parentConstructor.instances[parentPoint]
                 //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
@@ -75,7 +74,7 @@ var config = exports.config = {
         var fn = this.constructor
         this.state.childComponents = fn.instances[fn.instances.length-1].components
         fn.point = null
-        fn.parents = null
+        //fn.parents = null
     }
 }
 //设置组件可能存在父子组件关系的
