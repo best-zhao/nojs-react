@@ -25,10 +25,17 @@ var config = exports.config = {
             }
         }
     },
-    
+    getDefaultProps () {
+        return {}
+    },    
     getInitialState () {
         var state = {childComponents:[]}
         var fn = this.constructor
+        if( fn.parents ){//对于组合类组件中的非最顶级组件 html指令标签初始化的方式 index来源于props
+            state.index = this.props.index
+            state.parentComponent = this.props.parentComponent
+        }
+        
         var point = fn.point = fn.instances.length//组件当前指针
         
         fn.instances.push({
@@ -45,7 +52,6 @@ var config = exports.config = {
         for( var i=0; i<parents.length; i++ ){
             parentConstructor = parents[i]
             parentPoint = parentConstructor.point
-
             if( parentPoint != null ){
                 parentComponent = parentConstructor.instances[parentPoint]
                 //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引

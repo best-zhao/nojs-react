@@ -9,13 +9,27 @@ const Directive = function(options){
     this.options = options || {}
     $(()=>this.start(null,1))
 
-    //exports 为某个或某类组件集合 
+    //exports 为某个或某类组件集合 对外提供的接口 
     const {exports, elementGroups} = this.options    
     exports.start = this.start.bind(this)
 
     //将指令对应的组件挂到exports上
+    var n = 0, rootComponent
     for( var i in elementGroups ){
-        exports[getComponentName(i)] = elementGroups[i].component
+        var com = exports[getComponentName(i)] = elementGroups[i].component
+        if( !n ){//最外层的父组件
+            rootComponent = com
+        }
+        n++
+    }
+
+    exports.getByHandle = (handle)=> {
+        for( var n=rootComponent.instances.length,i=n-1; i>=0; i-- ){
+            var item = rootComponent.instances[i].handle
+            if( item.props.handle == handle ){
+                return item
+            }
+        }
     }
 }
 
@@ -32,16 +46,15 @@ Directive.prototype = {
         }
         var components = []
         var formElements = nj.utils.toArray(context.querySelectorAll('nj-'+type))
-        formElements.forEach((node)=>{
-            var c = this.initial(node, type, parentComponent)
+        formElements.forEach((node,i)=>{
+            var c = this.initial(node, type, parentComponent,i)
             if( c ){
-                c.state.parentComponent = parentComponent
                 components.push(c)
             }
         })
         return components
     },
-    initial (node, type, parentComponent) {
+    initial (node, type, parentComponent, index) {
         var el = document.createElement('span')
         node.parentNode.insertBefore(el, node);
         node.parentNode.removeChild(node);
@@ -52,6 +65,11 @@ Directive.prototype = {
             options._childNodes = nj.utils.toArray(node.childNodes)
             options._componentType = type
             options.text = options.text || node.innerText
+            options.index = index || 0
+            
+            if( parentComponent ){
+                options.parentComponent = parentComponent
+            }
             // if( options.value!=undefined ){
             //     options.defaultValue = options.value
             //     delete options.value
@@ -69,7 +87,7 @@ Directive.prototype = {
         if( !_componentType ){//只适用于nj-html方式创建的组件
             return
         }
-        var wrap = component.refs.wrap//ReactDOM.findDOMNode(component)
+        var wrap = component.refs.wrap || ReactDOM.findDOMNode(component)
         var childNodes = _childNodes || []
         childNodes.forEach((n)=>{
             wrap.appendChild(n)
@@ -77,9 +95,12 @@ Directive.prototype = {
         var children = this.options.elementGroups[_componentType]
         children = children && children.children
         var components = []
+
         children && children.forEach((type)=>{
-            components = components.concat(this.directiveInit(type, wrap, component))
+            var c = this.directiveInit(type, wrap, component)
+            components = components.concat(c)
         })
+        //console.log(component.constructor.instances)
         component.state.childComponents = components
 
         var instances = component.constructor.instances

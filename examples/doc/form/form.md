@@ -6,7 +6,7 @@
 ### Usage 
 <pre><code class="language-javascript">
 import Verify from 'nojs-react/lib/form' //引入组件
-const {Form, Input, InputGroup} = Verify
+const {Form, Input, InputGroup, start} = Verify
 </code>
 </pre>
 

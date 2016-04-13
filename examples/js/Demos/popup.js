@@ -29,7 +29,7 @@ module.exports = (container)=>{
         Popup.confirm({
             template : '确认操作?'
         }).then((res)=>{
-            alert(res?'选择了是':'选择了否')
+            Popup.tip.show('ok', res?'选择了是':'选择了否')
         })
     ))
 

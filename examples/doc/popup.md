@@ -2,7 +2,6 @@
 
 弹窗组件 
  
-
 ### Usage
 <pre><code class="language-javascript">
 import Popup from 'nojs-react/lib/popup' //引入组件

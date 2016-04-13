@@ -32474,10 +32474,18 @@
 	            }
 	        }
 	    },
-
+	    getDefaultProps: function getDefaultProps() {
+	        return {};
+	    },
 	    getInitialState: function getInitialState() {
 	        var state = { childComponents: [] };
 	        var fn = this.constructor;
+	        if (fn.parents) {
+	            //对于组合类组件中的非最顶级组件 html指令标签初始化的方式 index来源于props
+	            state.index = this.props.index;
+	            state.parentComponent = this.props.parentComponent;
+	        }
+
 	        var point = fn.point = fn.instances.length; //组件当前指针
 
 	        fn.instances.push({
@@ -32494,7 +32502,6 @@
 	        for (var i = 0; i < parents.length; i++) {
 	            parentConstructor = parents[i];
 	            parentPoint = parentConstructor.point;
-
 	            if (parentPoint != null) {
 	                parentComponent = parentConstructor.instances[parentPoint];
 	                //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
@@ -33919,9 +33926,6 @@
 
 	        var wrap = $(this.refs.frameContent);
 	        wrap.css({ 'visibility': 'hidden' }).fadeOut(100);
-	        setTimeout(function () {
-	            wrap.css('visibility', 'visible').fadeIn(100);
-	        }, 200);
 
 	        var _props = this.props;
 	        var onChange = _props.onChange;
@@ -33934,7 +33938,7 @@
 	        // iframeContainer.load(url, contentInit)
 	        $.get(url, function (json) {
 	            json = typeof parseContent == 'function' ? parseContent(json, url) : json;
-	            wrap.html(json);
+	            wrap.html(json).css('visibility', 'visible').fadeIn(100);
 	            onChange && onChange.call(_this, node, nj.utils.parseHash(), _this.refs.frameContent);
 	        }).error(function () {
 	            wrap.html('');
@@ -34773,7 +34777,7 @@
 	 * 文档中的demo实例
 	 */
 
-	var components = ['popup', 'tree', 'form', 'comments', 'photos'];[__webpack_require__(196), __webpack_require__(200), __webpack_require__(201), __webpack_require__(206), __webpack_require__(239)].forEach(function (fn, i) {
+	var components = ['popup', 'tree', 'form', 'switch', 'scroll', 'comments', 'photos'];[__webpack_require__(196), __webpack_require__(200), __webpack_require__(201), __webpack_require__(206), __webpack_require__(208), __webpack_require__(210), __webpack_require__(243)].forEach(function (fn, i) {
 	    exports[components[i]] = fn;
 	});
 
@@ -34815,7 +34819,7 @@
 	        return Popup.confirm({
 	            template: '确认操作?'
 	        }).then(function (res) {
-	            alert(res ? '选择了是' : '选择了否');
+	            Popup.tip.show('ok', res ? '选择了是' : '选择了否');
 	        });
 	    });
 	};
@@ -35517,11 +35521,13 @@
 	    var formWrap = document.getElementById('demo-form-wrap');
 	    formWrap && render(React.createElement(FormComponent, null), formWrap);
 
-	    var myverify = _form2.default.getByHandle('verify-input-group');
-	    myverify && myverify.onSubmit(function (e) {
-	        console.log(e);
-	        e.preventDefault();
-	    });
+	    setTimeout(function () {
+	        var myverify = _form2.default.getByHandle('verify-input-group');
+	        myverify && myverify.onSubmit(function (e) {
+	            console.log(e);
+	            e.preventDefault();
+	        });
+	    }, 0);
 	};
 
 /***/ },
@@ -35704,7 +35710,7 @@
 	        //     e.preventDefault()
 	        // }
 	        this.submitEvent.complete(e);
-	        console.log('submit', valid);
+	        // console.log('submit', valid)
 	        // if( e.isDefaultPrevented() ){//调用preventDefault阻止默认事件
 	        //     return
 	        // }
@@ -36167,15 +36173,6 @@
 	    };
 	};
 
-	form.getByHandle = function (handle) {
-	    for (var i = 0, n = formDirectives.form.instances.length; i < n; i++) {
-	        var item = formDirectives.form.instances[i].handle;
-	        if (item.props.handle == handle) {
-	            return item;
-	        }
-	    }
-	};
-
 	/*填充表单数据*/
 	form.fill = function (options) {
 	    options = options || {};
@@ -36373,7 +36370,7 @@
 	        return _this.start(null, 1);
 	    });
 
-	    //exports 为某个或某类组件集合
+	    //exports 为某个或某类组件集合 对外提供的接口
 	    var _options = this.options;
 	    var exports = _options.exports;
 	    var elementGroups = _options.elementGroups;
@@ -36381,9 +36378,25 @@
 	    exports.start = this.start.bind(this);
 
 	    //将指令对应的组件挂到exports上
+	    var n = 0,
+	        rootComponent;
 	    for (var i in elementGroups) {
-	        exports[getComponentName(i)] = elementGroups[i].component;
+	        var com = exports[getComponentName(i)] = elementGroups[i].component;
+	        if (!n) {
+	            //最外层的父组件
+	            rootComponent = com;
+	        }
+	        n++;
 	    }
+
+	    exports.getByHandle = function (handle) {
+	        for (var n = rootComponent.instances.length, i = n - 1; i >= 0; i--) {
+	            var item = rootComponent.instances[i].handle;
+	            if (item.props.handle == handle) {
+	                return item;
+	            }
+	        }
+	    };
 	};
 
 	Directive.prototype = {
@@ -36402,16 +36415,15 @@
 	        }
 	        var components = [];
 	        var formElements = _lib2.default.utils.toArray(context.querySelectorAll('nj-' + type));
-	        formElements.forEach(function (node) {
-	            var c = _this2.initial(node, type, parentComponent);
+	        formElements.forEach(function (node, i) {
+	            var c = _this2.initial(node, type, parentComponent, i);
 	            if (c) {
-	                c.state.parentComponent = parentComponent;
 	                components.push(c);
 	            }
 	        });
 	        return components;
 	    },
-	    initial: function initial(node, type, parentComponent) {
+	    initial: function initial(node, type, parentComponent, index) {
 	        var el = document.createElement('span');
 	        node.parentNode.insertBefore(el, node);
 	        node.parentNode.removeChild(node);
@@ -36422,6 +36434,11 @@
 	            options._childNodes = _lib2.default.utils.toArray(node.childNodes);
 	            options._componentType = type;
 	            options.text = options.text || node.innerText;
+	            options.index = index || 0;
+
+	            if (parentComponent) {
+	                options.parentComponent = parentComponent;
+	            }
 	            // if( options.value!=undefined ){
 	            //     options.defaultValue = options.value
 	            //     delete options.value
@@ -36446,7 +36463,7 @@
 	            //只适用于nj-html方式创建的组件
 	            return;
 	        }
-	        var wrap = component.refs.wrap; //ReactDOM.findDOMNode(component)
+	        var wrap = component.refs.wrap || ReactDOM.findDOMNode(component);
 	        var childNodes = _childNodes || [];
 	        childNodes.forEach(function (n) {
 	            wrap.appendChild(n);
@@ -36454,9 +36471,12 @@
 	        var children = this.options.elementGroups[_componentType];
 	        children = children && children.children;
 	        var components = [];
+
 	        children && children.forEach(function (type) {
-	            components = components.concat(_this3.directiveInit(type, wrap, component));
+	            var c = _this3.directiveInit(type, wrap, component);
+	            components = components.concat(c);
 	        });
+	        //console.log(component.constructor.instances)
 	        component.state.childComponents = components;
 
 	        var instances = component.constructor.instances;
@@ -36495,6 +36515,563 @@
 
 	'use strict';
 
+	var _nj = __webpack_require__(2);
+
+	var _nj2 = _interopRequireDefault(_nj);
+
+	var _switch = __webpack_require__(207);
+
+	var _switch2 = _interopRequireDefault(_switch);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var React = _nj2.default.React;
+	var render = _nj2.default.render;
+	var Switch = _switch2.default.Switch;
+	var SwitchMenu = _switch2.default.SwitchMenu;
+	var SwitchItem = _switch2.default.SwitchItem;
+	var start = _switch2.default.start;
+
+	module.exports = function (container) {
+
+	    var demoWrap = document.getElementById('demo-switch-wrap');
+	    demoWrap && render(React.createElement(
+	        Switch,
+	        { trigger: 'hover' },
+	        React.createElement(
+	            'ul',
+	            { className: 'nj-switch-menus clearfix' },
+	            React.createElement(
+	                'li',
+	                null,
+	                React.createElement(
+	                    SwitchMenu,
+	                    null,
+	                    '1'
+	                )
+	            ),
+	            React.createElement(
+	                'li',
+	                null,
+	                React.createElement(
+	                    SwitchMenu,
+	                    null,
+	                    '2'
+	                )
+	            )
+	        ),
+	        React.createElement(
+	            SwitchItem,
+	            null,
+	            '11a'
+	        ),
+	        React.createElement(
+	            SwitchItem,
+	            null,
+	            '22a'
+	        )
+	    ), demoWrap);
+	    start(container);
+
+	    // Switchs.getByHandle('myswitch').onChange((index,e)=>{
+	    //     console.log(index,e)
+	    // })
+	};
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/**
+	 * Switch组件
+	 */
+	var nj = __webpack_require__(3);var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var mixins = nj.mixins;
+
+	var $ = __webpack_require__(185);
+
+	var Directive = __webpack_require__(205).default;
+
+	exports.Switch = React.createClass({
+	    displayName: 'Switch',
+
+	    mixins: [mixins.childComponents.config],
+	    getInitialState: function getInitialState() {
+	        return { index: 0, trigger: this.props.trigger || 'click' };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var _this = this;
+
+	        directive.getChildComponents(this);
+
+	        //自动切换
+	        var interval = this.props.interval;
+	        interval && window.setInterval(function () {
+	            _this.change(++_this.state.index);
+	        }, interval);
+
+	        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange'); //.add(this.props.onChange)
+	    },
+	    change: function change(index, e) {
+	        var length = this.state.length;
+	        index = index < 0 ? length - 1 : index;
+	        index = index >= length ? 0 : index;
+	        this.setState({ index: index });
+
+	        this.state.childComponents.forEach(function (c) {
+	            c.forceUpdate();
+	        });
+	        this.changeEvent.complete(index, e);
+	    },
+	    render: function render() {
+	        var className = nj.utils.joinClass('nj-switch', this.props.className);
+	        return React.createElement(
+	            'div',
+	            _extends({}, this.props, { className: className }),
+	            this.props.children
+	        );
+	    }
+	});
+
+	exports.SwitchMenu = React.createClass({
+	    displayName: 'SwitchMenu',
+
+	    mixins: [mixins.childComponents.setParents([exports.Switch])],
+	    componentDidMount: function componentDidMount() {
+	        directive.getChildComponents(this);
+	    },
+	    render: function render() {
+	        var parentComponent = this.state.parentComponent;
+	        var index = parentComponent.state.index;
+	        var className = nj.utils.joinClass('nj-switch-menu', index == this.state.index && 'nj-switch-menu-active');
+
+	        var options = { className: className };
+
+	        var trigger = parentComponent.state.trigger;
+	        var eventType = trigger == 'hover' ? 'onMouseEnter' : 'onClick';
+	        //调用父组件的change方法
+	        options[eventType] = parentComponent.change.bind(parentComponent, this.state.index);
+
+	        options = Object.assign({}, this.props, options);
+
+	        return React.createElement(
+	            'div',
+	            options,
+	            this.props.children
+	        );
+	    }
+	});
+
+	exports.SwitchItem = React.createClass({
+	    displayName: 'SwitchItem',
+
+	    mixins: [mixins.childComponents.setParents([exports.Switch])],
+	    componentDidMount: function componentDidMount() {
+	        directive.getChildComponents(this);
+	        //以SwitchItem的数量来更新Switch组件的切换子项个数
+	        this.state.parentComponent.state.length = this.state.index + 1;
+	    },
+	    render: function render() {
+	        var index = this.state.parentComponent.state.index;
+	        var className = nj.utils.joinClass('nj-switch-item', index == this.state.index ? 'nj-switch-item-active' : 'd_hide');
+	        return React.createElement(
+	            'div',
+	            _extends({}, this.props, { className: className }),
+	            this.props.children
+	        );
+	    }
+	});
+
+	var directive = new Directive({
+	    elementGroups: {
+	        'switch': { children: ['switch-menu', 'switch-item'], component: exports.Switch },
+	        'switch-menu': { component: exports.SwitchMenu },
+	        'switch-item': { component: exports.SwitchItem }
+	    },
+	    exports: exports
+	});
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _nj = __webpack_require__(2);
+
+	var _nj2 = _interopRequireDefault(_nj);
+
+	var _scroll = __webpack_require__(209);
+
+	var _scroll2 = _interopRequireDefault(_scroll);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var React = _nj2.default.React;
+	var render = _nj2.default.render;
+
+	module.exports = function (container) {
+	    var demoWrap = document.getElementById('demo-scroll-wrap');
+	    demoWrap && render(React.createElement(
+	        _scroll2.default,
+	        { time: 1000, direction: 'x' },
+	        React.createElement(
+	            'div',
+	            { className: '_item' },
+	            '1'
+	        ),
+	        React.createElement(
+	            'div',
+	            { className: '_item' },
+	            '2'
+	        ),
+	        React.createElement(
+	            'div',
+	            { className: '_item' },
+	            '3'
+	        )
+	    ), demoWrap);
+	};
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/*
+	 * 无间断滚动
+	 */
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var mixins = nj.mixins;
+
+	var $ = __webpack_require__(185);
+
+	var Scroll = React.createClass({
+	    displayName: 'Scroll',
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            //滚动方向，默认纵向
+	            direction: 'y',
+	            children: []
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        var _props = this.props;
+	        var _props$children = _props.children;
+	        var children = _props$children === undefined ? [] : _props$children;
+	        var _props$step = _props.step;
+	        var step = _props$step === undefined ? 1 : _props$step;
+	        var time = _props.time;
+	        var _props$repeat = _props.repeat;
+	        var repeat = _props$repeat === undefined ? true : _props$repeat;
+	        var _props$auto = _props.auto;
+	        var auto = _props$auto === undefined ? true : _props$auto;
+
+	        step = parseInt(step);
+	        var length = children.length;
+	        return {
+	            children: children,
+	            length: length,
+	            step: step, //滚动步长，0为连续滚动
+	            time: time || (step ? 6000 : 30), //滚动速度，连续推荐设置40ms ;间断滚动时，该值为滚动的间隔时间
+	            repeat: repeat, //是否重复循环无间断
+	            auto: auto,
+	            index: 0,
+	            size: {},
+	            totalLength: length, //总个数 包含追加
+	            scrollLength: 0 //已滚动个数
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var _this = this;
+
+	        $(window).on('resize', function () {
+	            _this.reset();
+	        });
+	        this.reset();
+	        var _state = this.state;
+	        var length = _state.length;
+	        var view = _state.view;
+	        var step = _state.step;
+	        var size = _state.size;
+	        // console.log(length,view)
+
+	        if (length <= view) {
+	            return;
+	        }
+	        var nextLast = length % view;
+
+	        //初始化的追加个数 保证next即可
+	        //next所需:view-nextLast
+	        //step==0连续滚动时 拷贝view个即可
+	        nextLast && this.append(0, step ? view - nextLast : view);
+
+	        if (this.props.direction == 'y') {
+	            size.total = $(this.refs.items).height();
+	        }
+	        this.start();
+
+	        $(this.refs.wrap).hover(function () {
+	            _this.stop();
+	        }, function () {
+	            _this.start();
+	        });
+	    },
+	    append: function append(start, appendLength) {
+	        /*
+	         * 使用向后追加元素的方式来实现不间断滚动
+	         * 初始化追加一次 ；每次滚动完毕后追加
+	         */
+	        var _state2 = this.state;
+	        var repeat = _state2.repeat;
+	        var length = _state2.length;
+	        var children = _state2.children;
+	        var size = _state2.size;
+
+	        if (!repeat) {
+	            return;
+	        }
+	        var items = this.props.children;
+	        var copy,
+
+	        //剩余一次可截取个数
+	        last = length - start,
+	            c;
+
+	        if (appendLength > last) {
+	            copy = items.slice(start); //从当前copy到结尾
+	            start = 0;
+	            appendLength = appendLength - copy.length;
+	        }
+	        c = items.slice(start, start + appendLength);
+	        if (copy) {
+	            Array.prototype.push.apply(copy, c);
+	        } else {
+	            copy = c;
+	        }
+
+	        Array.prototype.push.apply(children, copy);
+
+	        this.state.totalLength = children.length; //追加后的总个数
+
+	        if (this.props.direction == 'x') {
+	            size.total = this.state.totalLength * size.item;
+	        }
+	        this.setState({ size: size, children: children });
+	    },
+	    start: function start() {
+	        var _this2 = this;
+
+	        var _state3 = this.state;
+	        var auto = _state3.auto;
+	        var length = _state3.length;
+	        var view = _state3.view;
+	        var time = _state3.time;
+	        // console.log(length,auto,view)
+
+	        if (auto && length > view) {
+	            clearInterval(this.delay);
+	            this.delay = setInterval(function () {
+	                _this2.scroll();
+	            }, time);
+	        }
+	    },
+	    stop: function stop() {
+	        this.delay = clearInterval(this.delay);
+	    },
+	    reset: function reset() {
+	        var _props2 = this.props;
+	        var computed = _props2.computed;
+	        var direction = _props2.direction;
+	        var step = _props2.step;
+
+	        var horizontal = direction == 'x';
+	        var wrap = $(this.refs.wrap);
+	        var content = $(this.refs.items);
+	        var item = $(this.refs.item0);
+
+	        var size = this.state.size = {
+	            box: horizontal ? wrap.width() : wrap.height(), //容器尺寸
+	            total: horizontal ? null : content.height(), //内容总尺寸
+	            item: horizontal ? item.outerWidth(true) : item.outerHeight(true) //单项尺寸
+	        };
+	        if (horizontal) {
+	            size.total = this.state.totalLength * size.item;
+	            // this.con.width(this.state.size.total);
+	        }
+	        this.state.view = Math.ceil(size.box / size.item);
+	        if (step == 'view') {
+	            this.state.step = this.state.view;
+	        }
+	        this.setState({ size: size });
+	        // console.log(this.state,size)
+	    },
+	    scroll: function scroll(next) {
+	        var _this3 = this;
+
+	        /*
+	         * next 
+	         * boolean: 向前/后滚动 控制方向
+	         * number: 索引值 直接滚动到某一张 （弱repeat=true 改索引是相对追加之前的）
+	         */
+	        var index;
+	        if (typeof next == 'number') {
+	            index = getIndex(next, this.len);
+	        } else {
+	            next = next === false ? false : true;
+	        }
+	        var wrap = $(this.refs.wrap);
+	        var _state4 = this.state;
+	        var size = _state4.size;
+	        var step = _state4.step;
+	        var scrollLength = _state4.scrollLength;
+	        var totalLength = _state4.totalLength;
+	        var length = _state4.length;
+	        var view = _state4.view;
+	        var direction = this.props.direction;
+
+	        //if( this.wrap.is(":animated") ) { return;}
+
+	        wrap.stop();
+
+	        var T = this,
+	            m,
+	            speed = 0,
+
+	        //每次滚动距离，连续-每次增加1px，间隔-每次增加n个元素的宽高
+	        //计算最大滚动差
+	        max = size.total - size.box,
+	            scrollAttr = direction == 'x' ? 'scrollLeft' : 'scrollTop',
+	            attr = {},
+	            now = wrap[scrollAttr](),
+	            nowScroll,
+	            ratio = next ? 1 : -1;
+
+	        if (step == 0) {
+	            m = 1;
+	        } else {
+	            m = step * size.item;
+	            speed = 800;
+	        }
+
+	        if (step) {
+	            m = ratio * m;
+
+	            //不足prev时 向后跳转this.len的个数
+	            if (!next && scrollLength < step && typeof index == 'undefined') {
+	                var prevLast = totalLength - (scrollLength + length);
+	                // console.log(prevLast, view)
+	                if (prevLast < view) {
+	                    this.append(totalLength % length, view - prevLast);
+	                    // scrollLength = this.state.scrollLength
+	                }
+	                wrap[scrollAttr](wrap[scrollAttr]() + size.item * length);
+	                scrollLength += length;
+	            }
+
+	            scrollLength += ratio * step;
+	        } else {
+	            //连续滚动
+	            scrollLength = Math.floor(now / size.item);
+	        }
+	        this.state.index = scrollLength % length; //当前开始index
+
+	        if (typeof index == 'undefined') {
+	            attr[scrollAttr] = '+=' + m;
+	            this.state[scrollAttr] = nowScroll = now + ratio * m;
+	        } else {
+	            scrollLength = index;
+	            this.state.index = index;
+	            attr[scrollAttr] = this.state[scrollAttr] = nowScroll = now = size.item * index;
+	        }
+	        this.state.scrollLength = scrollLength;
+	        this.state.endIndex = getIndex(this.state.index + view - 1, length); //当前结束index
+
+	        wrap.animate(attr, speed, function () {
+	            if (nowScroll >= length * size.item) {
+	                //滚动过得距离超过总长度  则向前跳转一次
+	                var newPos = step ? size.item * _this3.state.index : 0;
+	                wrap[scrollAttr](newPos);
+	                scrollLength = _this3.state.scrollLength = _this3.state.index = step ? _this3.state.index : newPos;
+	                //T.step==0 && T.scroll();
+	            }
+	            var last = totalLength - scrollLength - view;
+	            if (last < view) {
+	                //需再次追加 此处step=0不会存在
+	                _this3.append(getIndex(_this3.state.endIndex + last + 1, length), view - last);
+	            }
+	            // T.opt.onScrollEnd && T.opt.onScrollEnd.call(T);
+	        });
+
+	        // this.opt.onScroll && this.opt.onScroll.call(this, this.state.index);
+	    },
+	    render: function render() {
+	        var _props3 = this.props;
+	        var direction = _props3.direction;
+	        var computed = _props3.computed;
+
+	        var horizontal = direction == 'x';
+	        var _state5 = this.state;
+	        var size = _state5.size;
+	        var children = _state5.children;
+
+	        var itemStyle = { display: 'inline-block' };
+	        //适应多分辨率时 设置computed=true可以自动为this.item设置尺寸 因为css中无法设置
+	        if (computed) {
+	            var value;
+	            if (horizontal) {
+	                value = this.wrap.width();
+	                itemStyle.width = value;
+	                itemStyle.height = value / computed;
+	            } else {
+	                value = this.wrap.height();
+	                itemStyle.width = value * computed;
+	                itemStyle.height = value;
+	            }
+	        }
+	        return React.createElement(
+	            'div',
+	            { ref: 'wrap', className: 'nj-scroll-wrap' },
+	            React.createElement(
+	                'div',
+	                { ref: 'items', className: 'nj-scroll-items clearfix', style: direction == 'x' ? { width: size.total } : {} },
+	                children.map(function (item, i) {
+	                    return React.createElement(
+	                        'span',
+	                        { className: 'nj-scroll-item clearfix', ref: 'item' + i, key: i, style: itemStyle },
+	                        item
+	                    );
+	                })
+	            )
+	        );
+	    }
+	});
+	Scroll.PropTypes = {
+	    // children : React.Children.only
+	};
+
+	function getIndex(index, total) {
+	    index = index < 0 ? 0 : index;
+	    index = index > total ? index % total : index;
+	    return index;
+	}
+
+	module.exports = Scroll;
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	/**
 	 * 评论应用 
 	 */
@@ -36502,20 +37079,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(207).default;
-	var createLogger = __webpack_require__(208);
+	var thunkMiddleware = __webpack_require__(211).default;
+	var createLogger = __webpack_require__(212);
 
-	var _require = __webpack_require__(209);
+	var _require = __webpack_require__(213);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(216);
+	var _require2 = __webpack_require__(220);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(231);
-	var rootReducer = __webpack_require__(237);
+	var App = __webpack_require__(235);
+	var rootReducer = __webpack_require__(241);
 
 	// const createStoreWithMiddleware = applyMiddleware(
 	//   thunkMiddleware, // 允许我们 dispatch() 函数
@@ -36540,7 +37117,7 @@
 	};
 
 /***/ },
-/* 207 */
+/* 211 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36563,7 +37140,7 @@
 	}
 
 /***/ },
-/* 208 */
+/* 212 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -36796,7 +37373,7 @@
 	module.exports = createLogger;
 
 /***/ },
-/* 209 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36804,11 +37381,11 @@
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(210);
+	var _Provider = __webpack_require__(214);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(213);
+	var _connect = __webpack_require__(217);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -36818,7 +37395,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 210 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -36826,9 +37403,9 @@
 	exports.__esModule = true;
 	exports["default"] = undefined;
 
-	var _react = __webpack_require__(211);
+	var _react = __webpack_require__(215);
 
-	var _storeShape = __webpack_require__(212);
+	var _storeShape = __webpack_require__(216);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
@@ -36902,7 +37479,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 211 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36911,14 +37488,14 @@
 
 
 /***/ },
-/* 212 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _react = __webpack_require__(211);
+	var _react = __webpack_require__(215);
 
 	exports["default"] = _react.PropTypes.shape({
 	  subscribe: _react.PropTypes.func.isRequired,
@@ -36927,7 +37504,7 @@
 	});
 
 /***/ },
-/* 213 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -36937,29 +37514,29 @@
 	exports.__esModule = true;
 	exports["default"] = connect;
 
-	var _react = __webpack_require__(211);
+	var _react = __webpack_require__(215);
 
-	var _storeShape = __webpack_require__(212);
+	var _storeShape = __webpack_require__(216);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(214);
+	var _shallowEqual = __webpack_require__(218);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(215);
+	var _wrapActionCreators = __webpack_require__(219);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _isPlainObject = __webpack_require__(226);
+	var _isPlainObject = __webpack_require__(230);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(229);
+	var _hoistNonReactStatics = __webpack_require__(233);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(230);
+	var _invariant = __webpack_require__(234);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -37255,7 +37832,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 214 */
+/* 218 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -37286,7 +37863,7 @@
 	}
 
 /***/ },
-/* 215 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37294,7 +37871,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(216);
+	var _redux = __webpack_require__(220);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -37303,7 +37880,7 @@
 	}
 
 /***/ },
-/* 216 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -37311,27 +37888,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(217);
+	var _createStore = __webpack_require__(221);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(221);
+	var _combineReducers = __webpack_require__(225);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(223);
+	var _bindActionCreators = __webpack_require__(227);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(224);
+	var _applyMiddleware = __webpack_require__(228);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(225);
+	var _compose = __webpack_require__(229);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(222);
+	var _warning = __webpack_require__(226);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -37355,7 +37932,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 217 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37364,7 +37941,7 @@
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(218);
+	var _isPlainObject = __webpack_require__(222);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
@@ -37576,11 +38153,11 @@
 	}
 
 /***/ },
-/* 218 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(219),
-	    isObjectLike = __webpack_require__(220);
+	var isHostObject = __webpack_require__(223),
+	    isObjectLike = __webpack_require__(224);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -37648,7 +38225,7 @@
 
 
 /***/ },
-/* 219 */
+/* 223 */
 /***/ function(module, exports) {
 
 	/**
@@ -37674,7 +38251,7 @@
 
 
 /***/ },
-/* 220 */
+/* 224 */
 /***/ function(module, exports) {
 
 	/**
@@ -37708,7 +38285,7 @@
 
 
 /***/ },
-/* 221 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -37716,13 +38293,13 @@
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(217);
+	var _createStore = __webpack_require__(221);
 
-	var _isPlainObject = __webpack_require__(218);
+	var _isPlainObject = __webpack_require__(222);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(222);
+	var _warning = __webpack_require__(226);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -37841,7 +38418,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 222 */
+/* 226 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -37870,7 +38447,7 @@
 	}
 
 /***/ },
-/* 223 */
+/* 227 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -37926,7 +38503,7 @@
 	}
 
 /***/ },
-/* 224 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37936,7 +38513,7 @@
 	exports.__esModule = true;
 	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(225);
+	var _compose = __webpack_require__(229);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -37988,7 +38565,7 @@
 	}
 
 /***/ },
-/* 225 */
+/* 229 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38022,11 +38599,11 @@
 	}
 
 /***/ },
-/* 226 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(227),
-	    isObjectLike = __webpack_require__(228);
+	var isHostObject = __webpack_require__(231),
+	    isObjectLike = __webpack_require__(232);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -38094,7 +38671,7 @@
 
 
 /***/ },
-/* 227 */
+/* 231 */
 /***/ function(module, exports) {
 
 	/**
@@ -38120,7 +38697,7 @@
 
 
 /***/ },
-/* 228 */
+/* 232 */
 /***/ function(module, exports) {
 
 	/**
@@ -38154,7 +38731,7 @@
 
 
 /***/ },
-/* 229 */
+/* 233 */
 /***/ function(module, exports) {
 
 	/**
@@ -38200,7 +38777,7 @@
 
 
 /***/ },
-/* 230 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38258,7 +38835,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 231 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38271,18 +38848,18 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(209);
+	var _require = __webpack_require__(213);
 
 	var connect = _require.connect;
 
-	var AddComment = __webpack_require__(232);
-	var CommentList = __webpack_require__(233);
+	var AddComment = __webpack_require__(236);
+	var CommentList = __webpack_require__(237);
 
-	var _require2 = __webpack_require__(234);
+	var _require2 = __webpack_require__(238);
 
 	var addComment = _require2.addComment;
 
-	var fetch = __webpack_require__(235);
+	var fetch = __webpack_require__(239);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -38309,7 +38886,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 232 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38355,7 +38932,7 @@
 	};
 
 /***/ },
-/* 233 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38389,7 +38966,7 @@
 	});
 
 /***/ },
-/* 234 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38397,7 +38974,7 @@
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(235);
+	var fetch = __webpack_require__(239);
 
 	var ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT';
 
@@ -38453,19 +39030,19 @@
 	};
 
 /***/ },
-/* 235 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(236);
+	__webpack_require__(240);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 236 */
+/* 240 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -38860,7 +39437,7 @@
 
 
 /***/ },
-/* 237 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38869,18 +39446,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(220);
 
 	var combineReducers = _require.combineReducers;
 
-	var comments = __webpack_require__(238);
+	var comments = __webpack_require__(242);
 
 	module.exports = combineReducers({
 	  comments: comments
 	});
 
 /***/ },
-/* 238 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38889,7 +39466,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(234);
+	var _require = __webpack_require__(238);
 
 	var ADD_COMMENT = _require.ADD_COMMENT;
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
@@ -38939,7 +39516,7 @@
 	};
 
 /***/ },
-/* 239 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38951,20 +39528,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(207).default;
-	var createLogger = __webpack_require__(208);
+	var thunkMiddleware = __webpack_require__(211).default;
+	var createLogger = __webpack_require__(212);
 
-	var _require = __webpack_require__(209);
+	var _require = __webpack_require__(213);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(216);
+	var _require2 = __webpack_require__(220);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(240);
-	var rootReducer = __webpack_require__(243);
+	var App = __webpack_require__(244);
+	var rootReducer = __webpack_require__(247);
 
 	module.exports = function (container) {
 	    var store = createStore(rootReducer, {}, applyMiddleware(thunkMiddleware, createLogger()));
@@ -38977,7 +39554,7 @@
 	};
 
 /***/ },
-/* 240 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38990,17 +39567,17 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(209);
+	var _require = __webpack_require__(213);
 
 	var connect = _require.connect;
 
-	var SearchPhoto = __webpack_require__(241);
+	var SearchPhoto = __webpack_require__(245);
 
-	var _require2 = __webpack_require__(242);
+	var _require2 = __webpack_require__(246);
 
 	var searchPhoto = _require2.searchPhoto;
 
-	var fetch = __webpack_require__(235);
+	var fetch = __webpack_require__(239);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -39056,7 +39633,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 241 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39101,7 +39678,7 @@
 	};
 
 /***/ },
-/* 242 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39109,7 +39686,7 @@
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(235);
+	var fetch = __webpack_require__(239);
 
 	var SEARCH_PHOTO = exports.SEARCH_PHOTO = 'SEARCH_PHOTO';
 
@@ -39154,7 +39731,7 @@
 	};
 
 /***/ },
-/* 243 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39163,18 +39740,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(220);
 
 	var combineReducers = _require.combineReducers;
 
-	var photos = __webpack_require__(244);
+	var photos = __webpack_require__(248);
 
 	module.exports = combineReducers({
 	  photos: photos
 	});
 
 /***/ },
-/* 244 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39183,7 +39760,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(242);
+	var _require = __webpack_require__(246);
 
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
 	var RECEIVE_POSTS = _require.RECEIVE_POSTS;
