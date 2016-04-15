@@ -11,19 +11,19 @@ const Directive = function(options){
 
     //exports 为某个或某类组件集合 对外提供的接口 
     const {exports, elementGroups} = this.options    
-    exports.start = this.start.bind(this)
+    
 
     //将指令对应的组件挂到exports上
-    var n = 0, rootComponent
+    var rootComponent
     for( var i in elementGroups ){
         var com = exports[getComponentName(i)] = elementGroups[i].component
-        if( !n ){//最外层的父组件
+        if( !rootComponent ){//最外层的父组件
             rootComponent = com
         }
-        n++
     }
 
-    exports.getByHandle = (handle)=> {
+    rootComponent.start = this.start.bind(this)
+    rootComponent.getByHandle = (handle)=> {
         for( var n=rootComponent.instances.length,i=n-1; i>=0; i-- ){
             var item = rootComponent.instances[i].handle
             if( item.props.handle == handle ){
@@ -66,7 +66,21 @@ Directive.prototype = {
             options._componentType = type
             options.text = options.text || node.innerText
             options.index = index || 0
+
+            var componentInfo = this.options.elementGroups[type]
+            var componentChildren = componentInfo.children || []
             
+            if( options._childNodes.length ){
+                options.children = []
+                //先在props.children中占位 必须是有效的元素节点
+                options._children = options._childNodes.filter(n=>{
+                    if( n.nodeType==1 ){
+                        var name = n.nodeName.toLowerCase().replace(/^nj-/, '')
+                        componentChildren.indexOf(name)<0 && options.children.push('')
+                        return true
+                    }
+                })
+            }
             if( parentComponent ){
                 options.parentComponent = parentComponent
             }
@@ -81,23 +95,35 @@ Directive.prototype = {
             return ReactDOM.render(<Component {...options} />, el)
         }
     },
-    //当前组件渲染完毕后 检测是否有子组件
+    //当前组件渲染完毕后 将dom移入组件 并且检测是否有子组件
     getChildComponents (component) {
-        var {_childNodes, _componentType} = component.props
+        var {_childNodes, _componentType, _children} = component.props
         if( !_componentType ){//只适用于nj-html方式创建的组件
             return
         }
-        var wrap = component.refs.wrap || ReactDOM.findDOMNode(component)
-        var childNodes = _childNodes || []
-        childNodes.forEach((n)=>{
-            wrap.appendChild(n)
+        var {wrap} = this.options
+        if( typeof wrap=='function' ){
+
+            wrap = wrap(component)
+        }else{
+            wrap = component.refs.wrap || ReactDOM.findDOMNode(component)
+        }
+        
+        var {children, wrapItem} = this.options.elementGroups[_componentType]
+
+        var childNodes = _childNodes || [];//_children过滤了非元素节点
+        (wrapItem?_children:childNodes).forEach((n,i)=>{
+            var w = wrap
+            if( typeof wrapItem=='function' ){
+                w = wrapItem(component,n,i)
+            }
+            w && w.appendChild(n)
         })
-        var children = this.options.elementGroups[_componentType]
-        children = children && children.children
+        
         var components = []
 
         children && children.forEach((type)=>{
-            var c = this.directiveInit(type, wrap, component)
+            var c = this.directiveInit(type, ReactDOM.findDOMNode(component), component)
             components = components.concat(c)
         })
         //console.log(component.constructor.instances)

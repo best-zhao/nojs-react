@@ -1,7 +1,6 @@
 import nj from 'nj'
 const {React, render} = nj
-import Verify from 'nj/form'
-const {Form, Input, InputGroup} = Verify
+import {Form, Input, InputGroup} from 'nj/form'
 
 const DemoNav = ()=>{
     var nav = ['normal','component','input-group']
@@ -63,14 +62,14 @@ module.exports = (container)=>{
     var nav = document.getElementById('demo-form-nav')
     nav && render(<DemoNav />, nav)
 
-    Verify.start(container)
+    Form.start(container)
 
     //用于渲染Form组件实例
     var formWrap = document.getElementById('demo-form-wrap')
     formWrap && render(<FormComponent />, formWrap)
 
     setTimeout(()=>{
-        var myverify = Verify.getByHandle('verify-input-group')        
+        var myverify = Form.getByHandle('verify-input-group')        
         myverify && myverify.onSubmit((e)=>{
             console.log(e)
             e.preventDefault()

@@ -35,7 +35,5 @@ h4 span{font-size:14px;font-weight:100;color:#666;}
 .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}
 .nj-switch-item{padding:15px;}
 
-.nj-scroll{height:20px;overflow:hidden;border:1px solid #ddd;width:400px;}
-.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}
-.nj-scroll-item{}
-.nj-scroll ._item{float:left;width:400px;}
+
+

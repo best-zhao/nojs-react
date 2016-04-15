@@ -11,6 +11,7 @@
             {"id":6, "name":"Form Verify", "parentid":1, "link":"form/form", "demo":"form"},
             {"id":7, "name":"Switch", "parentid":1, "link":"switch"},
             {"id":8, "name":"Scroll", "parentid":1, "link":"scroll"},
+            {"id":9, "name":"Face", "parentid":1, "link":"face"},
         {"id":101, "name":"Utils"},           
         {"id":201, "name":"Mixins","open":1},
             {"id":202, "name":"Effects", "parentid":201},

@@ -24,7 +24,7 @@
 .d_show{display:block}
 .d_hide{display:none}
                     
-.ng-layer-wrap{display:inline;}
+.nj-layer-wrap,.ng-layer-wrap{display:inline;}
 .nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;
     background:rgba(0,0,0,.2);
     
@@ -60,8 +60,7 @@
 .nj-icon-error:before{content:'\e60a';color:red;}
 
 
-.nj-popover{background:#fff;border:1px solid #ddd\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);padding:20px;}
-
+.nj-popover-inner{background:#fff;border:1px solid #ddd\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}
 
 
 /*buttons*/
@@ -93,3 +92,13 @@ button.nj-button{min-width:80px;}
 .ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}
 
 .nj-page *{margin:0 3px;}
+
+
+.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}
+.nj-scroll-item{overflow:hidden;}
+
+
+.nj-face-pop{width:400px;}
+.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}
+.nj-face-pop .pack li:hover{border-color:#aaa;}
+.nj-face-pop .pack img{width:100%;height:100%;}

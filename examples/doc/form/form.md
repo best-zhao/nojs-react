@@ -1,12 +1,11 @@
-## Verify
+## Form
 
 表单验证组件，2种方式创建表单，React组件和html标签指令(nj-form)
 <a href="doc/form/normal.html">demos</a>
 
 ### Usage 
 <pre><code class="language-javascript">
-import Verify from 'nojs-react/lib/form' //引入组件
-const {Form, Input, InputGroup, start} = Verify
+import {Form, Input, InputGroup} from 'nojs-react/lib/form' //引入组件
 </code>
 </pre>
 
@@ -39,7 +38,7 @@ var myform = ReactDOM.render((
 
 通过 <code>handle</code>属性可以获取表单的实例对象
 <pre><code class="language-javascript">
-var myform = Verfiy.getByHandle('myform')
+var myform = Form.getByHandle('myform')
 </code>
 </pre>
 

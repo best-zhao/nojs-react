@@ -4,7 +4,7 @@
 
 ### Usage
 <pre><code class="language-javascript">
-import {Switch, SwitchMenu, SwitchItem, start} from 'nojs-react/lib/switch' //引入组件
+import {Switch, SwitchMenu, SwitchItem} from 'nojs-react/lib/switch' //引入组件
 </code>
 </pre>
 

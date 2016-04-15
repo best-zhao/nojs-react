@@ -59,6 +59,57 @@ module.exports = {
         }
     },
 
+    //检测元素是否存在真实dom中
+    elementInDOM (element) {
+        if( !element ){
+            return
+        }
+        var body = document.body
+        var parent = element
+        while ( parent = parent.parentNode ){
+            if( parent === body ){
+                break;
+            }
+        }
+        if( parent ){
+            return true
+        }
+    },
+    browser : function(){
+        //检测浏览器
+        var u = navigator.userAgent.toLowerCase(),
+        v = u.match(/(?:firefox|opera|safari|chrome|msie)[\/: ]([\d.]+)/),
+        //mozilla/5.0 (windows nt 6.1; wow64; trident/7.0; slcc2; .net clr 2.0.50727; .net clr 3.5.30729; .net clr 3.0.30729; media center pc 6.0; .net4.0c; .net4.0e; rv:11.0) like gecko
+        //ie11已去除msie标示 可通过trident检测
+        fn = {
+            version:v?v[0]:' ',//浏览器版本号
+            safari:/version.+safari/.test(u),
+            chrome:/chrome/.test(u),
+            firefox:/firefox/.test(u),
+            ie:/msie/.test(u) || /trident/.test(u),
+            ie6:/msie 6.0/.test(u),
+            ie7:/msie 7.0/.test(u),
+            ie8:/msie 8.0/.test(u),
+            ie9:/msie 9.0/.test(u),
+            opera: /opera/.test(u) 
+        }, state;
+        function check( name ){
+            //多个用逗号隔开 如'ie6 ie7'
+            state = false;
+            name = name.split(' ');
+            $.each( name, function( i, val ){
+                if( fn[ val ] ){
+                    state = true;
+                    return false;
+                }
+            })
+            return state;
+        }        
+        //check.fn = fn;
+        check.version = parseInt(fn.version.split(/[\/: ]/)[1].split('.')[0]);
+        return check; 
+    }(),
+
     /*
      * 读取cookie值: cookie("key"); 
      * 设置/新建cookie的值:    cookie("key", "value");

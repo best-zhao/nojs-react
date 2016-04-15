@@ -70,7 +70,6 @@ var config = exports.config = {
                 break;
             }
         }
-        
         if( parentComponent ){
             state.parentComponent = parentComponent
         }

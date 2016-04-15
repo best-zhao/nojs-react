@@ -2,7 +2,7 @@ import nj from 'nj'
 const {React, render} = nj
 
 import Switchs from 'nj/switch'
-const {Switch, SwitchMenu, SwitchItem, start} = Switchs
+const {Switch, SwitchMenu, SwitchItem} = Switchs
 
 
 module.exports = (container)=>{
@@ -18,7 +18,7 @@ module.exports = (container)=>{
             <SwitchItem>22a</SwitchItem>
         </Switch>
     , demoWrap)
-    start(container)
+    Switch.start(container)
 
     // Switchs.getByHandle('myswitch').onChange((index,e)=>{
     //     console.log(index,e)
