@@ -20,17 +20,18 @@ const Directive = function(options){
         if( !rootComponent ){//最外层的父组件
             rootComponent = com
         }
-    }
-
-    rootComponent.start = this.start.bind(this)
-    rootComponent.getByHandle = (handle)=> {
-        for( var n=rootComponent.instances.length,i=n-1; i>=0; i-- ){
-            var item = rootComponent.instances[i].handle
-            if( item.props.handle == handle ){
-                return item
+        com.getByHandle = (handle)=> {
+            for( var n=com.instances.length,i=n-1; i>=0; i-- ){
+                var item = com.instances[i].handle
+                if( item.props.handle == handle ){
+                    return item
+                }
             }
         }
     }
+
+    rootComponent.start = this.start.bind(this)
+    
 }
 
 Directive.prototype = {
@@ -103,7 +104,6 @@ Directive.prototype = {
         }
         var {wrap} = this.options
         if( typeof wrap=='function' ){
-
             wrap = wrap(component)
         }else{
             wrap = component.refs.wrap || ReactDOM.findDOMNode(component)
@@ -126,7 +126,6 @@ Directive.prototype = {
             var c = this.directiveInit(type, ReactDOM.findDOMNode(component), component)
             components = components.concat(c)
         })
-        //console.log(component.constructor.instances)
         component.state.childComponents = components
 
         var instances = component.constructor.instances

@@ -13,7 +13,7 @@
     -ms-transform:translate(0,-15px);
     transform:translate(0,-15px);
     opacity:0;
-    visibility:hidden;
+    visibility: hidden;    
 }
 .drop_pop.nj-hide{-webkit-animation:dropUp .3s;-moz-animation:dropUp .3s;-ms-animation:dropUp .3s;}
 .drop_pop.nj-hide .drop_pop{visibility:hidden;}/*弹窗隐藏时 内部未隐藏的内容会遮挡页面 ??*/

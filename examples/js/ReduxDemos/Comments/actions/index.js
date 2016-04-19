@@ -3,9 +3,10 @@
  */
 var fetch = require('isomorphic-fetch')
 
-const ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT'
+export const ADD_COMMENT = 'ADD_COMMENT'
+// const ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT'
 
-const REQUEST_POSTS = exports.REQUEST_POSTS = 'REQUEST_POSTS'
+export const REQUEST_POSTS = 'REQUEST_POSTS'
 const RECEIVE_POSTS = exports.RECEIVE_POSTS = 'RECEIVE_POSTS'
 const SELECT_REDDIT = exports.SELECT_REDDIT = 'SELECT_REDDIT'
 

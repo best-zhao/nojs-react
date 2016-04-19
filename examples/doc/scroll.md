@@ -6,7 +6,7 @@
 <pre><code class="language-javascript"><script type="text/code">
 import {Scroll} from 'nojs-react/lib/scroll' //引入组件
 render(
-    <Scroll time={4000} direction='x'>
+    <Scroll time={4200} direction='x'>
         <div>1</div>
         <div>2</div>
         <div>3</div>
@@ -25,7 +25,7 @@ render(
 #### auto <span>[Boolean] 是否自动滚动 默认true</span>
 
 <div id="demo-scroll-wrap" class="mb30"></div>
-
+<a href="" class="prev">prev</a><a href="" class="next">next</a>
 <div>
     <style>
     .nj-scroll{height:20px;overflow:hidden;border:1px solid #ddd;width:400px;position:relative;}
@@ -35,22 +35,25 @@ render(
     .nj-scroll-page{position:absolute;right:0;top:0;}
     .nj-scroll-page .-page-active{color:red;}
     </style>
-    <div>{step:1} 每次滚动一项</div>
-    <nj-scroll time="2000" class="dir-scroll">
+
+    <!-- <div>{step:1} 每次滚动一项</div>
+    <nj-scroll time="2100" class="dir-scroll">
         <nj-scroll-items>
         <div>11</div>
         <div>22</div>
         <div>33</div>
         </nj-scroll-items>
     </nj-scroll>
-    <div>{step:2} 每次滚动一项</div>
-    <nj-scroll time="2000" step="2" class="dir-scroll">
+
+    <div>{step:2} 每次滚动两项</div>
+    <nj-scroll time="2200" step="2" class="dir-scroll">
         <nj-scroll-items>
         <div>11</div>
         <div>22</div>
         <div>33</div>
         </nj-scroll-items>
     </nj-scroll>
+
     <div>{direction:'x'} 横向滚动</div>
     <nj-scroll time="2000" direction="x">
         <nj-scroll-items>
@@ -58,6 +61,6 @@ render(
             <div class="_item">22</div>
             <div class="_item">33</div>
         </nj-scroll-items>
-        <nj-scroll-page>aa</nj-scroll-page>
-    </nj-scroll>
+        <nj-scroll-page trigger="hover" handle="scroll-page"></nj-scroll-page>
+    </nj-scroll> -->
 </div>

@@ -96,9 +96,13 @@ button.nj-button{min-width:80px;}
 
 .nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}
 .nj-scroll-item{overflow:hidden;}
-
+nj-scroll-items{display:inline-block;overflow:hidden;}
 
 .nj-face-pop{width:400px;}
+.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}
+.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}
+.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}
+.nj-face-pop .nj-switch-item{padding:15px;}
 .nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}
 .nj-face-pop .pack li:hover{border-color:#aaa;}
 .nj-face-pop .pack img{width:100%;height:100%;}

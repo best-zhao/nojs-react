@@ -1,6 +1,8 @@
 var $ = require('jquery');
+var actions = require('./asyncActions')
 
 module.exports = {
+
     /*
      * 所有依赖dom的ui组件都可以通过id,element,jQuery来获取dom元素
      */
@@ -360,7 +362,7 @@ module.exports = {
 
     /**
      * 时间格式化字符串
-     * @format[string] 'yy:mm:dd h:m:s'
+     * @format[string] 'yy/mm/dd hh:mm:ss'
      */
     dateParse (options) {
         options = options || {};
@@ -436,7 +438,7 @@ module.exports = {
         }
     }
 }
-
+module.exports.action = actions(module.exports)
 
 if( typeof Object.assign=='undefined' ){
     Object.assign = function(target){
@@ -452,3 +454,4 @@ if( typeof Object.assign=='undefined' ){
         return target
     }
 }
+

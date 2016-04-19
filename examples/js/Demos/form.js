@@ -61,7 +61,7 @@ const FormComponent = React.createClass({
 module.exports = (container)=>{
     var nav = document.getElementById('demo-form-nav')
     nav && render(<DemoNav />, nav)
-
+    
     Form.start(container)
 
     //用于渲染Form组件实例

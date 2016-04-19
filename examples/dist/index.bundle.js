@@ -57,17 +57,17 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _jquery = __webpack_require__(185);
+	var _jquery = __webpack_require__(184);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _marked = __webpack_require__(188);
+	var _marked = __webpack_require__(189);
 
 	var _marked2 = _interopRequireDefault(_marked);
 
-	var _frame = __webpack_require__(189);
+	var _frame = __webpack_require__(190);
 
-	var _Demos = __webpack_require__(195);
+	var _Demos = __webpack_require__(196);
 
 	var _Demos2 = _interopRequireDefault(_Demos);
 
@@ -125,16 +125,30 @@
 	//引入React和ReactDOM
 	var React = exports.React = __webpack_require__(9);
 	var ReactDOM = exports.ReactDOM = __webpack_require__(183);
+	var $ = __webpack_require__(184);
 	exports.render = ReactDOM.render;
 
 	//工具集
-	exports.utils = __webpack_require__(184);
+	exports.utils = __webpack_require__(185);
 
 	exports.mixins = {
-	    setDisplay: __webpack_require__(186),
-	    childComponents: __webpack_require__(187)
+	    setDisplay: __webpack_require__(187),
+	    childComponents: __webpack_require__(188)
 	};
 
+	/* 
+	 * [jQuery animate动画扩展]
+	 * http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js
+	 * easeIn：加速度缓动；
+	 * easeOut：减速度缓动；
+	 * easeInOut：先加速度至50%，再减速度完成动画
+	 */
+	$.extend($.easing, {
+	    //指数曲线缓动
+	    easeOutExpo: function easeOutExpo(x, t, b, c, d) {
+	        return t == d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+	    }
+	});
 	// var components = []
 
 	// components.forEach(function(name){
@@ -203,7 +217,7 @@
 	exports.i(__webpack_require__(7), "");
 
 	// module
-	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline;}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\n\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}", ""]);
+	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline;}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n", ""]);
 
 	// exports
 
@@ -273,7 +287,7 @@
 
 
 	// module
-	exports.push([module.id, "/*loading 旋转*/\r\n@keyframes njRotate{\r\n    0%   {transform:rotate(0deg);}\r\n    50%   {transform:rotate(260deg);}\r\n    100%   {transform:rotate(360deg);}\r\n}\r\n\r\n/*drop effect*/\r\n.drop_pop{\r\n    transition:transform .3s,opacity .3s;\r\n    -webkit-transform:translate(0,-15px);\r\n    -moz-transform:translate(0,-15px);\r\n    -ms-transform:translate(0,-15px);\r\n    transform:translate(0,-15px);\r\n    opacity:0;\r\n    visibility:hidden;\r\n}\r\n.drop_pop.nj-hide{-webkit-animation:dropUp .3s;-moz-animation:dropUp .3s;-ms-animation:dropUp .3s;}\r\n.drop_pop.nj-hide .drop_pop{visibility:hidden;}/*弹窗隐藏时 内部未隐藏的内容会遮挡页面 ??*/\r\n@-webkit-keyframes dropUp {\r\n  0% {-webkit-transform:translate(0,0);visibility:visible}\r\n  100% {-webkit-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-moz-keyframes dropUp {\r\n  0% {-moz-transform:translate(0,0);visibility:visible}\r\n  100% {-moz-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-ms-keyframes dropUp {\r\n  0% {-ms-transform:translate(0,0);visibility:visible}\r\n  100% {-ms-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n.drop_pop_show{\r\n    -webkit-transform:translate(0,0);\r\n    -moz-transform:translate(0,0);\r\n    -ms-transform:translate(0,0);\r\n    transform:translate(0,0);\r\n    opacity:1;\r\n    visibility: visible;\r\n}\r\n\r\n/*fade effect*/\r\n.fade-in{animation:fadeIn 0.4s;opacity:1;}\r\n.fade-out{animation:fadeOut 0.4s;animation-fill-mode:forwards;opacity:0;visibility:hidden\\9;}\r\n@keyframes fadeIn{\r\n    0% {opacity:0;}\r\n    100% {opacity:1;}\r\n}\r\n@keyframes fadeOut{\r\n    0% {opacity:1;}\r\n    100% {opacity:0;visibility:hidden;}\r\n}\r\n\r\n/*scale effect*/\r\n.scale-pop,.scale-pop .nj-popover-inner{\r\n  transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1), \r\n  opacity 250ms cubic-bezier(0.23, 1, 0.32, 1);\r\n  transform-origin:0 0;\r\n  transform: scale(0,0);\r\n}\r\n.scale-pop{opacity:0;visibility:hidden;}\r\n.scale-pop .nj-popover-inner{transition:transform 500ms;transform: scale(1,.6);}\r\n.scale-in{visibility:visible;}\r\n.scale-in,.scale-in .nj-popover-inner{transform: scale(1,1);opacity: 1}", ""]);
+	exports.push([module.id, "/*loading 旋转*/\r\n@keyframes njRotate{\r\n    0%   {transform:rotate(0deg);}\r\n    50%   {transform:rotate(260deg);}\r\n    100%   {transform:rotate(360deg);}\r\n}\r\n\r\n/*drop effect*/\r\n.drop_pop{\r\n    transition:transform .3s,opacity .3s;\r\n    -webkit-transform:translate(0,-15px);\r\n    -moz-transform:translate(0,-15px);\r\n    -ms-transform:translate(0,-15px);\r\n    transform:translate(0,-15px);\r\n    opacity:0;\r\n    visibility: hidden;    \r\n}\r\n.drop_pop.nj-hide{-webkit-animation:dropUp .3s;-moz-animation:dropUp .3s;-ms-animation:dropUp .3s;}\r\n.drop_pop.nj-hide .drop_pop{visibility:hidden;}/*弹窗隐藏时 内部未隐藏的内容会遮挡页面 ??*/\r\n@-webkit-keyframes dropUp {\r\n  0% {-webkit-transform:translate(0,0);visibility:visible}\r\n  100% {-webkit-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-moz-keyframes dropUp {\r\n  0% {-moz-transform:translate(0,0);visibility:visible}\r\n  100% {-moz-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-ms-keyframes dropUp {\r\n  0% {-ms-transform:translate(0,0);visibility:visible}\r\n  100% {-ms-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n.drop_pop_show{\r\n    -webkit-transform:translate(0,0);\r\n    -moz-transform:translate(0,0);\r\n    -ms-transform:translate(0,0);\r\n    transform:translate(0,0);\r\n    opacity:1;\r\n    visibility: visible;\r\n}\r\n\r\n/*fade effect*/\r\n.fade-in{animation:fadeIn 0.4s;opacity:1;}\r\n.fade-out{animation:fadeOut 0.4s;animation-fill-mode:forwards;opacity:0;visibility:hidden\\9;}\r\n@keyframes fadeIn{\r\n    0% {opacity:0;}\r\n    100% {opacity:1;}\r\n}\r\n@keyframes fadeOut{\r\n    0% {opacity:1;}\r\n    100% {opacity:0;visibility:hidden;}\r\n}\r\n\r\n/*scale effect*/\r\n.scale-pop,.scale-pop .nj-popover-inner{\r\n  transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1), \r\n  opacity 250ms cubic-bezier(0.23, 1, 0.32, 1);\r\n  transform-origin:0 0;\r\n  transform: scale(0,0);\r\n}\r\n.scale-pop{opacity:0;visibility:hidden;}\r\n.scale-pop .nj-popover-inner{transition:transform 500ms;transform: scale(1,.6);}\r\n.scale-in{visibility:visible;}\r\n.scale-in,.scale-in .nj-popover-inner{transform: scale(1,1);opacity: 1}", ""]);
 
 	// exports
 
@@ -22159,466 +22173,6 @@
 /* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-	var $ = __webpack_require__(185);
-
-	module.exports = {
-	    /*
-	     * 所有依赖dom的ui组件都可以通过id,element,jQuery来获取dom元素
-	     */
-
-	    dom: function dom(selector) {
-	        if (!selector) {
-	            return;
-	        }
-	        var type = typeof selector === 'undefined' ? 'undefined' : _typeof(selector),
-	            elem;
-	        if (type == 'string') {
-	            //通过id
-	            elem = $('#' + selector);
-	        } else if (type == 'object') {
-	            elem = selector.nodeType || selector === window || selector === window.parent ? $(selector) : selector;
-	        }
-	        elem = elem.length ? elem : null;
-	        return elem;
-	    },
-
-	    //部分组件需要动态插入dom 创建一个该类组件的容器
-	    createContainer: function createContainer(className) {
-	        var layerElement = document.createElement('div');
-	        layerElement.className = className;
-	        document.body.appendChild(layerElement);
-	        return layerElement;
-	    },
-
-	    /**
-	     * 创建事件队列
-	     * var componentEvent = addEventQueue.call(component, 'onShow', when)
-	     * component就具备了'onShow'事件
-	     * 执行事件的时机 componentEvent.complete(args) 或者在when函数中定义
-	     */
-	    addEventQueue: function addEventQueue(eventName, when) {
-	        var self = this;
-	        var queue = []; //this['_'+eventName+'_queue'] =
-	        queue.name = eventName;
-	        function add(handle) {
-	            handle && queue.push(handle);
-	            return this;
-	        }
-	        function complete() {
-	            var args = Array.prototype.slice.call(arguments);
-	            var res;
-	            queue.forEach(function (fn) {
-	                res = fn.apply(self, args);
-	            });
-	            return res;
-	        }
-	        //某些场景 在事件列表执行完成之后需要清空队列
-	        function end() {
-	            queue.length = 0;
-	        }
-	        this[eventName] = add.bind(this);
-	        typeof when == 'function' && when.call(this, complete);
-	        return {
-	            add: add,
-	            complete: complete,
-	            end: end
-	        };
-	    },
-
-	    //检测元素是否存在真实dom中
-	    elementInDOM: function elementInDOM(element) {
-	        if (!element) {
-	            return;
-	        }
-	        var body = document.body;
-	        var parent = element;
-	        while (parent = parent.parentNode) {
-	            if (parent === body) {
-	                break;
-	            }
-	        }
-	        if (parent) {
-	            return true;
-	        }
-	    },
-
-	    browser: function () {
-	        //检测浏览器
-	        var u = navigator.userAgent.toLowerCase(),
-	            v = u.match(/(?:firefox|opera|safari|chrome|msie)[\/: ]([\d.]+)/),
-
-	        //mozilla/5.0 (windows nt 6.1; wow64; trident/7.0; slcc2; .net clr 2.0.50727; .net clr 3.5.30729; .net clr 3.0.30729; media center pc 6.0; .net4.0c; .net4.0e; rv:11.0) like gecko
-	        //ie11已去除msie标示 可通过trident检测
-	        fn = {
-	            version: v ? v[0] : ' ', //浏览器版本号
-	            safari: /version.+safari/.test(u),
-	            chrome: /chrome/.test(u),
-	            firefox: /firefox/.test(u),
-	            ie: /msie/.test(u) || /trident/.test(u),
-	            ie6: /msie 6.0/.test(u),
-	            ie7: /msie 7.0/.test(u),
-	            ie8: /msie 8.0/.test(u),
-	            ie9: /msie 9.0/.test(u),
-	            opera: /opera/.test(u)
-	        },
-	            state;
-	        function check(name) {
-	            //多个用逗号隔开 如'ie6 ie7'
-	            state = false;
-	            name = name.split(' ');
-	            $.each(name, function (i, val) {
-	                if (fn[val]) {
-	                    state = true;
-	                    return false;
-	                }
-	            });
-	            return state;
-	        }
-	        //check.fn = fn;
-	        check.version = parseInt(fn.version.split(/[\/: ]/)[1].split('.')[0]);
-	        return check;
-	    }(),
-
-	    /*
-	     * 读取cookie值: cookie("key"); 
-	     * 设置/新建cookie的值:    cookie("key", "value");
-	     * 新建一个cookie 包括有效期(天数) 路径 域名等:cookie("key", "value", {expires: 7, path: '/', domain: 'a.com', secure: true});
-	     * 删除一个cookie:cookie("key", null);    
-	     */
-	    cookie: function cookie(name, value, options) {
-	        if (typeof value != 'undefined') {
-	            options = options || {};
-	            if (value === null) {
-	                value = '';
-	                options.expires = -1;
-	            }
-	            var expires = '';
-	            if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
-	                var date;
-	                if (typeof options.expires == 'number') {
-	                    date = new Date();
-	                    date.setTime(date.getTime() + options.expires * 24 * 60 * 60 * 1000);
-	                } else {
-	                    date = options.expires;
-	                }
-	                expires = '; expires=' + date.toUTCString();
-	            }
-	            var path = options.path ? '; path=' + options.path : '';
-	            var domain = options.domain ? '; domain=' + options.domain : '';
-	            var secure = options.secure ? '; secure' : '';
-	            document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
-	        } else {
-	            var cookieValue = '';
-	            if (document.cookie && document.cookie != '') {
-	                var cookies = document.cookie.split(';');
-	                for (var i = 0; i < cookies.length; i++) {
-	                    var cookie = $.trim(cookies[i]);
-	                    if (cookie.substring(0, name.length + 1) == name + '=') {
-	                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-	                        break;
-	                    }
-	                }
-	            }
-	            return cookieValue;
-	        }
-	    },
-
-	    /**
-	     * 本地数据存储
-	     * localStorage.set(key,value,options)
-	     * localStorage.get(key)
-	     */
-	    localStorage: function () {
-	        var localStorage = window.localStorage || function () {
-	            //userData
-	            var o = document.getElementsByTagName("head")[0],
-	                n = window.location.hostname || "localStorage",
-	                d = new Date(),
-	                doc,
-	                agent;
-
-	            if (!o.addBehavior) {
-	                return {};
-	            }
-	            try {
-	                agent = new ActiveXObject('htmlfile');
-	                agent.open();
-	                agent.write('<s' + 'cript>document.w=window;</s' + 'cript><iframe src="/favicon.ico"></frame>');
-	                agent.close();
-	                doc = agent.w.frames[0].document;
-	            } catch (e) {
-	                doc = document;
-	            }
-	            o = doc.createElement('head');
-	            doc.appendChild(o);
-	            d.setDate(d.getDate() + 365);
-	            o.addBehavior("#default#userData");
-	            o.expires = d.toUTCString();
-	            o.load(n);
-
-	            var root = o.XMLDocument.documentElement,
-	                attrs = root.attributes,
-	                prefix = "prefix_____hack__",
-	                reg1 = /^[-\d]/,
-	                reg2 = new RegExp("^" + prefix),
-	                encode = function encode(key) {
-	                return reg1.test(key) ? prefix + key : key;
-	            },
-	                decode = function decode(key) {
-	                return key.replace(reg2, "");
-	            };
-
-	            return {
-	                length: attrs.length,
-	                getItem: function getItem(key) {
-	                    return (attrs.getNamedItem(encode(key)) || { nodeValue: null }).nodeValue || root.getAttribute(encode(key));
-	                },
-	                setItem: function setItem(key, value) {
-	                    root.setAttribute(encode(key), value);
-	                    o.save(n);
-	                    this.length = attrs.length;
-	                },
-	                removeItem: function removeItem(key) {
-	                    root.removeAttribute(encode(key));
-	                    o.save(n);
-	                    this.length = attrs.length;
-	                },
-	                clear: function clear() {
-	                    while (attrs.length) {
-	                        this.removeItem(attrs[0].nodeName);
-	                    }
-	                    this.length = 0;
-	                },
-	                key: function key(i) {
-	                    return attrs[i] ? decode(attrs[i].nodeName) : undefined;
-	                }
-	            };
-	        }();
-	        var exports = {
-	            length: localStorage.length,
-	            set: function set(key, value, options) {
-	                options = options || {};
-
-	                //iPhone/iPad 'QUOTA_EXCEEDED_ERR'
-	                if (this.get(key, false) !== undefined) {
-	                    this.remove(key);
-	                }
-
-	                //options.expires过期时间 单位天  使用一个独立的key来保存所有设置过期时间的键
-	                if (typeof options.expires == 'number') {
-	                    expiresData[key] = +new Date() + options.expires * 24 * 60 * 60 * 1000;
-	                    exports.set(expiresKey, JSON.stringify(expiresData));
-	                }
-
-	                localStorage.setItem(key, value, options);
-	                this.length = localStorage.length;
-	            },
-	            get: function get(key, isCheck) {
-	                //get时检测是否过期
-	                isCheck = isCheck === false ? false : true; //防止重复查询
-	                isCheck && expiresCheck();
-	                var v = localStorage.getItem(key);
-	                return v === null ? undefined : v;
-	            },
-	            remove: function remove(key) {
-	                localStorage.removeItem(key);
-	                this.length = localStorage.length;
-	            },
-	            clear: function clear() {
-	                localStorage.clear();
-	                this.length = 0;
-	            },
-	            key: function key(index) {
-	                //获取索引为index的key名称
-	                return localStorage.key(index);
-	            }
-	        },
-	            expiresKey = '__expireskey__',
-	            expiresData = exports.get(expiresKey, false);
-
-	        //检测是否过期
-	        function expiresCheck() {
-	            var key,
-	                i = 0;
-	            for (key in expiresData) {
-	                if (+new Date() > expiresData[key]) {
-	                    exports.remove(key);
-	                    delete expiresData[key];
-	                    continue;
-	                }
-	                i++;
-	            }
-	            if (i > 0) {
-	                exports.set(expiresKey, JSON.stringify(expiresData));
-	            } else {
-	                //全部过期 删除此key
-	                exports.remove(expiresKey);
-	            }
-	        }
-	        if (expiresData) {
-	            expiresData = JSON.parse(expiresData);
-	            expiresCheck();
-	        } else {
-	            expiresData = {};
-	        }
-	        exports.check = expiresCheck;
-
-	        return exports;
-	    }(),
-
-	    tmpl: function () {
-	        /*
-	         * js模版引擎
-	         * http://ejohn.org/blog/javascript-micro-templating/
-	         */
-	        var c = {};
-	        return function (s, d) {
-	            var fn = !/\W/.test(s) ? c[s] = c[s] || $.tmpl(document.getElementById(s).innerHTML) : new Function("o", "var p=[];" + "with(o){p.push('" + s
-	            //.replace(/\\/g,"\\\\")//解决转义符bug
-	            .replace(/[\r\t\n]/g, " ").split("<%").join("\t").replace(/((^|%>)[^\t]*)'/g, "$1\r")
-
-	            //.replace(/\t=(.*?)%>/g, "',$1,'")
-	            //将undefined的值置为''
-	            .replace(/\t=(.*?)%>/g, "',(typeof $1=='undefined'?'':$1),'").split("\t").join("');").split("%>").join("p.push('").split("\r").join("\\'") + "');}return p.join('');");
-	            return d ? fn(d) : fn;
-	        };
-	    }(),
-
-	    /**
-	     * 将容器上自带属性拷贝到组件上
-	     */
-	    getAttributes: function getAttributes(node) {
-	        var attrs = node.attributes;
-	        var options = {};
-
-	        //部分属性需要替换为符合react规范
-	        var needReplace = {
-	            'class': 'className',
-	            'novalidate': 'noValidate',
-	            'cellpadding': 'cellPadding',
-	            'cellspacing': 'cellSpacing',
-	            'rowspan': 'rowSpan',
-	            'colspan': 'colSpan',
-	            'defaultvalue': 'defaultValue'
-	        };
-	        for (var i = 0, n = attrs.length; i < n; i++) {
-	            var attr = attrs[i];
-	            var name = attr.name;
-	            if (name == 'id') {
-	                continue;
-	            }
-
-	            // if( name=='value' && node.type=='text' ){
-	            //     options['defaultValue'] = attr.value
-	            //     continue
-	            // }
-	            if (needReplace[name]) {
-	                options[needReplace[name]] = attr.value;
-	            } else {
-	                options[name] = attr.value;
-	            }
-	        }
-	        return options;
-	    },
-
-	    /**
-	     * 时间格式化字符串
-	     * @format[string] 'yy:mm:dd h:m:s'
-	     */
-	    dateParse: function dateParse(options) {
-	        options = options || {};
-	        // console.log(options.date,new Date(Number(options.date)))
-	        var date = options.date ? new Date(Number(options.date)) : new Date();
-	        var format = options.format || 'yy/mm/dd hh:mm:ss';
-	        var arr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
-
-	        if (typeof format == 'string') {
-	            format = format.replace(/\b(\w+)\b/g, function (a) {
-	                var d = String(arr.shift());
-	                return a.length > d.length ? '0' + d : d;
-	            });
-	        }
-	        return format;
-	    },
-
-	    //将类数组转换为真正的数组 如dom集合
-	    toArray: function toArray(data) {
-	        var array = [];
-	        for (var i = 0, n = data.length; i < n; i++) {
-	            array.push(data[i]);
-	        }
-	        return array;
-	    },
-	    joinClass: function joinClass() {
-	        var args = Array.prototype.slice.call(arguments, 0);
-	        var arrs = [];
-	        for (var i = 0; i < args.length; i++) {
-	            var c = args[i] || '';
-	            var arr = String(c).split(' ');
-	            Array.prototype.push.apply(arrs, arr);
-	        }
-	        return arrs.filter(function (c) {
-	            if (c) {
-	                return c;
-	            }
-	        }).join(' ');
-	    },
-
-	    //标准数组和json数组的转换
-	    arrayTransfor: function arrayTransfor(data) {},
-	    parseHash: function parseHash() {
-	        var hash = location.hash.replace(/^#/, '');
-	        var hashData = {};
-	        hash.split('&').forEach(function (h) {
-	            h = h.split('=');
-	            hashData[h[0]] = decodeURIComponent(h[1]);
-	        });
-	        return hashData;
-	    },
-
-	    //获取select选中项
-	    selectedOptions: function selectedOptions(select) {
-	        var selectedOption;
-	        if (select.selectedOptions) {
-	            selectedOption = select.selectedOptions[0];
-	        } else {
-	            //ie不支持selectedOptions
-	            this.toArray(select.options).forEach(function (option) {
-	                if (option.selected) {
-	                    selectedOption = option;
-	                }
-	            });
-	        }
-	        return {
-	            value: selectedOption.value,
-	            text: selectedOption.innerText
-	        };
-	    }
-	};
-
-	if (typeof Object.assign == 'undefined') {
-	    Object.assign = function (target) {
-	        var arr = Array.prototype.slice.call(arguments, 1);
-	        arr.forEach(function (item) {
-	            if (!item || (typeof item === 'undefined' ? 'undefined' : _typeof(item)) != 'object') {
-	                return;
-	            }
-	            for (var i in item) {
-	                target[i] = item[i];
-	            }
-	        });
-	        return target;
-	    };
-	}
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * jQuery JavaScript Library v2.2.0
 	 * http://jquery.com/
@@ -32453,7 +32007,624 @@
 
 
 /***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var $ = __webpack_require__(184);
+	var actions = __webpack_require__(186);
+
+	module.exports = {
+
+	    /*
+	     * 所有依赖dom的ui组件都可以通过id,element,jQuery来获取dom元素
+	     */
+
+	    dom: function dom(selector) {
+	        if (!selector) {
+	            return;
+	        }
+	        var type = typeof selector === 'undefined' ? 'undefined' : _typeof(selector),
+	            elem;
+	        if (type == 'string') {
+	            //通过id
+	            elem = $('#' + selector);
+	        } else if (type == 'object') {
+	            elem = selector.nodeType || selector === window || selector === window.parent ? $(selector) : selector;
+	        }
+	        elem = elem.length ? elem : null;
+	        return elem;
+	    },
+
+	    //部分组件需要动态插入dom 创建一个该类组件的容器
+	    createContainer: function createContainer(className) {
+	        var layerElement = document.createElement('div');
+	        layerElement.className = className;
+	        document.body.appendChild(layerElement);
+	        return layerElement;
+	    },
+
+	    /**
+	     * 创建事件队列
+	     * var componentEvent = addEventQueue.call(component, 'onShow', when)
+	     * component就具备了'onShow'事件
+	     * 执行事件的时机 componentEvent.complete(args) 或者在when函数中定义
+	     */
+	    addEventQueue: function addEventQueue(eventName, when) {
+	        var self = this;
+	        var queue = []; //this['_'+eventName+'_queue'] =
+	        queue.name = eventName;
+	        function add(handle) {
+	            handle && queue.push(handle);
+	            return this;
+	        }
+	        function complete() {
+	            var args = Array.prototype.slice.call(arguments);
+	            var res;
+	            queue.forEach(function (fn) {
+	                res = fn.apply(self, args);
+	            });
+	            return res;
+	        }
+	        //某些场景 在事件列表执行完成之后需要清空队列
+	        function end() {
+	            queue.length = 0;
+	        }
+	        this[eventName] = add.bind(this);
+	        typeof when == 'function' && when.call(this, complete);
+	        return {
+	            add: add,
+	            complete: complete,
+	            end: end
+	        };
+	    },
+
+	    //检测元素是否存在真实dom中
+	    elementInDOM: function elementInDOM(element) {
+	        if (!element) {
+	            return;
+	        }
+	        var body = document.body;
+	        var parent = element;
+	        while (parent = parent.parentNode) {
+	            if (parent === body) {
+	                break;
+	            }
+	        }
+	        if (parent) {
+	            return true;
+	        }
+	    },
+
+	    browser: function () {
+	        //检测浏览器
+	        var u = navigator.userAgent.toLowerCase(),
+	            v = u.match(/(?:firefox|opera|safari|chrome|msie)[\/: ]([\d.]+)/),
+
+	        //mozilla/5.0 (windows nt 6.1; wow64; trident/7.0; slcc2; .net clr 2.0.50727; .net clr 3.5.30729; .net clr 3.0.30729; media center pc 6.0; .net4.0c; .net4.0e; rv:11.0) like gecko
+	        //ie11已去除msie标示 可通过trident检测
+	        fn = {
+	            version: v ? v[0] : ' ', //浏览器版本号
+	            safari: /version.+safari/.test(u),
+	            chrome: /chrome/.test(u),
+	            firefox: /firefox/.test(u),
+	            ie: /msie/.test(u) || /trident/.test(u),
+	            ie6: /msie 6.0/.test(u),
+	            ie7: /msie 7.0/.test(u),
+	            ie8: /msie 8.0/.test(u),
+	            ie9: /msie 9.0/.test(u),
+	            opera: /opera/.test(u)
+	        },
+	            state;
+	        function check(name) {
+	            //多个用逗号隔开 如'ie6 ie7'
+	            state = false;
+	            name = name.split(' ');
+	            $.each(name, function (i, val) {
+	                if (fn[val]) {
+	                    state = true;
+	                    return false;
+	                }
+	            });
+	            return state;
+	        }
+	        //check.fn = fn;
+	        check.version = parseInt(fn.version.split(/[\/: ]/)[1].split('.')[0]);
+	        return check;
+	    }(),
+
+	    /*
+	     * 读取cookie值: cookie("key"); 
+	     * 设置/新建cookie的值:    cookie("key", "value");
+	     * 新建一个cookie 包括有效期(天数) 路径 域名等:cookie("key", "value", {expires: 7, path: '/', domain: 'a.com', secure: true});
+	     * 删除一个cookie:cookie("key", null);    
+	     */
+	    cookie: function cookie(name, value, options) {
+	        if (typeof value != 'undefined') {
+	            options = options || {};
+	            if (value === null) {
+	                value = '';
+	                options.expires = -1;
+	            }
+	            var expires = '';
+	            if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+	                var date;
+	                if (typeof options.expires == 'number') {
+	                    date = new Date();
+	                    date.setTime(date.getTime() + options.expires * 24 * 60 * 60 * 1000);
+	                } else {
+	                    date = options.expires;
+	                }
+	                expires = '; expires=' + date.toUTCString();
+	            }
+	            var path = options.path ? '; path=' + options.path : '';
+	            var domain = options.domain ? '; domain=' + options.domain : '';
+	            var secure = options.secure ? '; secure' : '';
+	            document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+	        } else {
+	            var cookieValue = '';
+	            if (document.cookie && document.cookie != '') {
+	                var cookies = document.cookie.split(';');
+	                for (var i = 0; i < cookies.length; i++) {
+	                    var cookie = $.trim(cookies[i]);
+	                    if (cookie.substring(0, name.length + 1) == name + '=') {
+	                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                        break;
+	                    }
+	                }
+	            }
+	            return cookieValue;
+	        }
+	    },
+
+	    /**
+	     * 本地数据存储
+	     * localStorage.set(key,value,options)
+	     * localStorage.get(key)
+	     */
+	    localStorage: function () {
+	        var localStorage = window.localStorage || function () {
+	            //userData
+	            var o = document.getElementsByTagName("head")[0],
+	                n = window.location.hostname || "localStorage",
+	                d = new Date(),
+	                doc,
+	                agent;
+
+	            if (!o.addBehavior) {
+	                return {};
+	            }
+	            try {
+	                agent = new ActiveXObject('htmlfile');
+	                agent.open();
+	                agent.write('<s' + 'cript>document.w=window;</s' + 'cript><iframe src="/favicon.ico"></frame>');
+	                agent.close();
+	                doc = agent.w.frames[0].document;
+	            } catch (e) {
+	                doc = document;
+	            }
+	            o = doc.createElement('head');
+	            doc.appendChild(o);
+	            d.setDate(d.getDate() + 365);
+	            o.addBehavior("#default#userData");
+	            o.expires = d.toUTCString();
+	            o.load(n);
+
+	            var root = o.XMLDocument.documentElement,
+	                attrs = root.attributes,
+	                prefix = "prefix_____hack__",
+	                reg1 = /^[-\d]/,
+	                reg2 = new RegExp("^" + prefix),
+	                encode = function encode(key) {
+	                return reg1.test(key) ? prefix + key : key;
+	            },
+	                decode = function decode(key) {
+	                return key.replace(reg2, "");
+	            };
+
+	            return {
+	                length: attrs.length,
+	                getItem: function getItem(key) {
+	                    return (attrs.getNamedItem(encode(key)) || { nodeValue: null }).nodeValue || root.getAttribute(encode(key));
+	                },
+	                setItem: function setItem(key, value) {
+	                    root.setAttribute(encode(key), value);
+	                    o.save(n);
+	                    this.length = attrs.length;
+	                },
+	                removeItem: function removeItem(key) {
+	                    root.removeAttribute(encode(key));
+	                    o.save(n);
+	                    this.length = attrs.length;
+	                },
+	                clear: function clear() {
+	                    while (attrs.length) {
+	                        this.removeItem(attrs[0].nodeName);
+	                    }
+	                    this.length = 0;
+	                },
+	                key: function key(i) {
+	                    return attrs[i] ? decode(attrs[i].nodeName) : undefined;
+	                }
+	            };
+	        }();
+	        var exports = {
+	            length: localStorage.length,
+	            set: function set(key, value, options) {
+	                options = options || {};
+
+	                //iPhone/iPad 'QUOTA_EXCEEDED_ERR'
+	                if (this.get(key, false) !== undefined) {
+	                    this.remove(key);
+	                }
+
+	                //options.expires过期时间 单位天  使用一个独立的key来保存所有设置过期时间的键
+	                if (typeof options.expires == 'number') {
+	                    expiresData[key] = +new Date() + options.expires * 24 * 60 * 60 * 1000;
+	                    exports.set(expiresKey, JSON.stringify(expiresData));
+	                }
+
+	                localStorage.setItem(key, value, options);
+	                this.length = localStorage.length;
+	            },
+	            get: function get(key, isCheck) {
+	                //get时检测是否过期
+	                isCheck = isCheck === false ? false : true; //防止重复查询
+	                isCheck && expiresCheck();
+	                var v = localStorage.getItem(key);
+	                return v === null ? undefined : v;
+	            },
+	            remove: function remove(key) {
+	                localStorage.removeItem(key);
+	                this.length = localStorage.length;
+	            },
+	            clear: function clear() {
+	                localStorage.clear();
+	                this.length = 0;
+	            },
+	            key: function key(index) {
+	                //获取索引为index的key名称
+	                return localStorage.key(index);
+	            }
+	        },
+	            expiresKey = '__expireskey__',
+	            expiresData = exports.get(expiresKey, false);
+
+	        //检测是否过期
+	        function expiresCheck() {
+	            var key,
+	                i = 0;
+	            for (key in expiresData) {
+	                if (+new Date() > expiresData[key]) {
+	                    exports.remove(key);
+	                    delete expiresData[key];
+	                    continue;
+	                }
+	                i++;
+	            }
+	            if (i > 0) {
+	                exports.set(expiresKey, JSON.stringify(expiresData));
+	            } else {
+	                //全部过期 删除此key
+	                exports.remove(expiresKey);
+	            }
+	        }
+	        if (expiresData) {
+	            expiresData = JSON.parse(expiresData);
+	            expiresCheck();
+	        } else {
+	            expiresData = {};
+	        }
+	        exports.check = expiresCheck;
+
+	        return exports;
+	    }(),
+
+	    tmpl: function () {
+	        /*
+	         * js模版引擎
+	         * http://ejohn.org/blog/javascript-micro-templating/
+	         */
+	        var c = {};
+	        return function (s, d) {
+	            var fn = !/\W/.test(s) ? c[s] = c[s] || $.tmpl(document.getElementById(s).innerHTML) : new Function("o", "var p=[];" + "with(o){p.push('" + s
+	            //.replace(/\\/g,"\\\\")//解决转义符bug
+	            .replace(/[\r\t\n]/g, " ").split("<%").join("\t").replace(/((^|%>)[^\t]*)'/g, "$1\r")
+
+	            //.replace(/\t=(.*?)%>/g, "',$1,'")
+	            //将undefined的值置为''
+	            .replace(/\t=(.*?)%>/g, "',(typeof $1=='undefined'?'':$1),'").split("\t").join("');").split("%>").join("p.push('").split("\r").join("\\'") + "');}return p.join('');");
+	            return d ? fn(d) : fn;
+	        };
+	    }(),
+
+	    /**
+	     * 将容器上自带属性拷贝到组件上
+	     */
+	    getAttributes: function getAttributes(node) {
+	        var attrs = node.attributes;
+	        var options = {};
+
+	        //部分属性需要替换为符合react规范
+	        var needReplace = {
+	            'class': 'className',
+	            'novalidate': 'noValidate',
+	            'cellpadding': 'cellPadding',
+	            'cellspacing': 'cellSpacing',
+	            'rowspan': 'rowSpan',
+	            'colspan': 'colSpan',
+	            'defaultvalue': 'defaultValue'
+	        };
+	        for (var i = 0, n = attrs.length; i < n; i++) {
+	            var attr = attrs[i];
+	            var name = attr.name;
+	            if (name == 'id') {
+	                continue;
+	            }
+
+	            // if( name=='value' && node.type=='text' ){
+	            //     options['defaultValue'] = attr.value
+	            //     continue
+	            // }
+	            if (needReplace[name]) {
+	                options[needReplace[name]] = attr.value;
+	            } else {
+	                options[name] = attr.value;
+	            }
+	        }
+	        return options;
+	    },
+
+	    /**
+	     * 时间格式化字符串
+	     * @format[string] 'yy/mm/dd hh:mm:ss'
+	     */
+	    dateParse: function dateParse(options) {
+	        options = options || {};
+	        // console.log(options.date,new Date(Number(options.date)))
+	        var date = options.date ? new Date(Number(options.date)) : new Date();
+	        var format = options.format || 'yy/mm/dd hh:mm:ss';
+	        var arr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+
+	        if (typeof format == 'string') {
+	            format = format.replace(/\b(\w+)\b/g, function (a) {
+	                var d = String(arr.shift());
+	                return a.length > d.length ? '0' + d : d;
+	            });
+	        }
+	        return format;
+	    },
+
+	    //将类数组转换为真正的数组 如dom集合
+	    toArray: function toArray(data) {
+	        var array = [];
+	        for (var i = 0, n = data.length; i < n; i++) {
+	            array.push(data[i]);
+	        }
+	        return array;
+	    },
+	    joinClass: function joinClass() {
+	        var args = Array.prototype.slice.call(arguments, 0);
+	        var arrs = [];
+	        for (var i = 0; i < args.length; i++) {
+	            var c = args[i] || '';
+	            var arr = String(c).split(' ');
+	            Array.prototype.push.apply(arrs, arr);
+	        }
+	        return arrs.filter(function (c) {
+	            if (c) {
+	                return c;
+	            }
+	        }).join(' ');
+	    },
+
+	    //标准数组和json数组的转换
+	    arrayTransfor: function arrayTransfor(data) {},
+	    parseHash: function parseHash() {
+	        var hash = location.hash.replace(/^#/, '');
+	        var hashData = {};
+	        hash.split('&').forEach(function (h) {
+	            h = h.split('=');
+	            hashData[h[0]] = decodeURIComponent(h[1]);
+	        });
+	        return hashData;
+	    },
+
+	    //获取select选中项
+	    selectedOptions: function selectedOptions(select) {
+	        var selectedOption;
+	        if (select.selectedOptions) {
+	            selectedOption = select.selectedOptions[0];
+	        } else {
+	            //ie不支持selectedOptions
+	            this.toArray(select.options).forEach(function (option) {
+	                if (option.selected) {
+	                    selectedOption = option;
+	                }
+	            });
+	        }
+	        return {
+	            value: selectedOption.value,
+	            text: selectedOption.innerText
+	        };
+	    }
+	};
+	module.exports.action = actions(module.exports);
+
+	if (typeof Object.assign == 'undefined') {
+	    Object.assign = function (target) {
+	        var arr = Array.prototype.slice.call(arguments, 1);
+	        arr.forEach(function (item) {
+	            if (!item || (typeof item === 'undefined' ? 'undefined' : _typeof(item)) != 'object') {
+	                return;
+	            }
+	            for (var i in item) {
+	                target[i] = item[i];
+	            }
+	        });
+	        return target;
+	    };
+	}
+
+/***/ },
 /* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/*
+	 * ajax事件集合类
+	 * @on : 绑定事件
+	 * @trigger : 触发事件
+	 * 参数相同[action, options]
+	 */
+
+	var $ = __webpack_require__(184);
+
+	var Actions = module.exports = function (context) {
+	    var Events = {},
+	        _config2 = { //全局选项
+	        //newData : 只使用外部数据，将配置数据置空(副本)
+	        //reverse : {}
+	        //data
+	        _data: {}, //传递附加数据
+	        type: 'post',
+	        dataType: 'json'
+	    };
+
+	    function parseConf(conf) {
+	        for (var i in conf) {
+	            if (i == 'reverse' || conf.reverse[i]) {
+	                continue;
+	            }
+	            conf.reverse[i] = conf[i];
+	        }
+	    }
+
+	    //创建事件
+	    function Action(options) {
+	        this.options = options;
+	        this.init();
+	    }
+	    Action.prototype = {
+	        init: function init() {
+	            //添加自定义事件
+	            this.fetchBeforeEvent = context.addEventQueue.call(this, 'onFetchBefore');
+	            this.fetchEvent = context.addEventQueue.call(this, 'onFetch');
+	            this.fetchCompleteEvent = context.addEventQueue.call(this, 'onFetchComplete');
+	        }
+	    };
+
+	    return {
+	        //配置默认选项
+	        config: function config(options) {
+	            _config2 = $.extend(true, _config2, options);
+	        },
+	        //添加事件
+	        add: function add(name, options) {
+	            options = $.extend(true, {}, _config2, options);
+	            options.reverse && parseConf(options);
+	            return Events[name] = new Action(options);
+	        },
+	        get: function get(name) {
+	            return Events[name];
+	        },
+	        //绑定事件
+	        on: function on(action, options) {
+	            if ($.type(action) == 'object') {
+	                //批量添加
+	                for (var i in action) {
+	                    Actions.on(i, action[i]);
+	                }
+	                return;
+	            }
+
+	            options = options || {};
+	            var target = $(typeof options.target == 'string' ? '#' + options.target : options.target);
+
+	            if (typeof action != 'string' || !target.length) {
+	                return;
+	            }
+	            target.on('click', function () {
+	                //dom上使用data-state属性标示初始状态，如已关注标示为1,否则为0或不标示
+	                Actions.trigger(action, $.extend({}, options, { target: this, state: $(this).data('state') }));
+	                return this.tagName.toLowerCase() == 'input' ? true : false;
+	            });
+	        },
+	        //触发事件
+	        trigger: function trigger(action, options) {
+	            if (typeof action != 'string') {
+	                //无动作名则为临时动作，只有一个参数options
+	                options = action;
+	            }
+	            var _action = Events[action];
+
+	            var _config = _action ? _action.options : _config2,
+	                conf,
+	                data,
+	                reverse,
+	                target;
+
+	            options = options || {};
+	            target = options.target;
+
+	            if (target && $(target).data('ajaxState')) {
+	                return;
+	            }
+	            if (reverse = _config.reverse) {
+	                //是否执行反向动作
+	                reverse = $(target).data('state') ? true : false; //初始状态
+	                if (options.reverse) {
+	                    parseConf(options);
+	                    options = reverse ? options.reverse : options;
+	                }
+	            }
+	            conf = $.extend(true, {}, reverse ? _config.reverse : _config); //创建全局配置的副本
+
+	            if (typeof options.data == 'function') {
+	                //外部数据
+	                options.data = options.data.call(target);
+	            }
+	            if (options.newData) {
+	                //只使用外部数据，不使用配置数据
+	                conf.data = null;
+	            } else if (typeof conf.data == 'function') {
+	                //配置数据
+	                conf.data = conf.data.call(target);
+	            }
+	            conf = $.extend(true, conf, options); //合并得到最终选项               
+
+	            if (_action && _action.fetchBeforeEvent.complete(conf) === false) {
+	                return;
+	            }
+
+	            target = $(target);
+	            target.data('ajaxState', true);
+
+	            var promise1 = $.ajax(conf);
+	            var promise2 = _action && _action.fetchEvent.complete(promise1, conf);
+	            var promise = promise1 || promise2;
+
+	            promise = promise.then(function (json) {
+	                target.data('ajaxState', null);
+	                if (json.status == 1 && _config.reverse) {
+	                    //还原反向动作状态
+	                    conf.state = _config.state = reverse ? null : 1;
+	                    target.data('state', conf.state);
+	                }
+	                _action && _action.fetchCompleteEvent.complete(json, conf);
+	            });
+
+	            return promise;
+	        }
+	    };
+	};
+
+/***/ },
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32496,7 +32667,7 @@
 	};
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32505,7 +32676,7 @@
 	 * 获取组合组件之间的父子关系
 	 */
 	var nj = __webpack_require__(2);
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 
 	var config = exports.config = {
 	    statics: {
@@ -32592,7 +32763,7 @@
 	};
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -33884,7 +34055,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33892,15 +34063,15 @@
 	/**
 	 * 框架组件
 	 */
-	__webpack_require__(190);
+	__webpack_require__(191);
 
 	var nj = __webpack_require__(3);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 	var Component = React.Component;
 
-	var $ = __webpack_require__(185);
-	var Tree = __webpack_require__(192);
+	var $ = __webpack_require__(184);
+	var Tree = __webpack_require__(193);
 
 	exports.Frame = React.createClass({
 	    displayName: 'Frame',
@@ -34035,13 +34206,13 @@
 	});
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(191);
+	var content = __webpack_require__(192);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(8)(content, {"insertAt":"top"});
@@ -34061,7 +34232,7 @@
 	}
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(6)();
@@ -34075,7 +34246,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34083,13 +34254,13 @@
 	/**
 	 * 树形菜单组件
 	 */
-	__webpack_require__(193);
+	__webpack_require__(194);
 	var nj = __webpack_require__(3);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
 
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 
 	var Tree = React.createClass({
 	    displayName: 'Tree',
@@ -34781,13 +34952,13 @@
 	module.exports = Tree;
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(194);
+	var content = __webpack_require__(195);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(8)(content, {"insertAt":"top"});
@@ -34807,7 +34978,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(6)();
@@ -34821,7 +34992,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34830,12 +35001,12 @@
 	 * 文档中的demo实例
 	 */
 
-	var components = ['popup', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos'];[__webpack_require__(196), __webpack_require__(200), __webpack_require__(201), __webpack_require__(206), __webpack_require__(208), __webpack_require__(210), __webpack_require__(213), __webpack_require__(246)].forEach(function (fn, i) {
+	var components = ['popup', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos'];[__webpack_require__(197), __webpack_require__(201), __webpack_require__(202), __webpack_require__(207), __webpack_require__(209), __webpack_require__(211), __webpack_require__(214), __webpack_require__(247)].forEach(function (fn, i) {
 	    exports[components[i]] = fn;
 	});
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34844,17 +35015,13 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var Popup = __webpack_require__(197);
-	var $ = __webpack_require__(185);
+	var Popup = __webpack_require__(198);
+	var $ = __webpack_require__(184);
 
 	module.exports = function (container) {
 	    var popup = Popup.create({
 	        title: 'Popup Title',
-	        template: React.createElement(
-	            'div',
-	            null,
-	            '12'
-	        ),
+	        template: '<div>12</div>',
 	        buttons: [{ text: '确定' }, { text: '取消' }]
 	    });
 
@@ -34878,7 +35045,7 @@
 	};
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34888,9 +35055,9 @@
 	 */
 
 	var nj = __webpack_require__(3);
-	var $ = __webpack_require__(185);
-	var align = __webpack_require__(198);
-	var Mask = __webpack_require__(199);
+	var $ = __webpack_require__(184);
+	var align = __webpack_require__(199);
+	var Mask = __webpack_require__(200);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
@@ -34898,266 +35065,270 @@
 	var instances = [];
 	var focusPops = [];
 	var setFocusPop = function setFocusPop(pop) {
-	    if (!pop) {
-	        return;
-	    }
-	    focusPops.indexOf(pop) < 0 && focusPops.push(pop);
-	    focusPops.forEach(function (p) {
-	        p.setState({ isFocus: p === pop });
-	    });
-	    // pop.scope.safeApply()
+	  if (!pop) {
+	    return;
+	  }
+	  focusPops.indexOf(pop) < 0 && focusPops.push(pop);
+	  focusPops.forEach(function (p) {
+	    p.setState({ isFocus: p === pop });
+	  });
+	  // pop.scope.safeApply()
 	};
 	var bind = function bind() {
-	    if (!bind.init) {
-	        bind.init = 1;
+	  if (!bind.init) {
+	    bind.init = 1;
 
-	        //按下esc键隐藏弹窗
-	        $(document).on('keydown', function (e) {
-	            if (e.keyCode == 27) {
-	                var pop = focusPops.slice(-1)[0];
-	                if (pop && pop.props.bindEsc) {
-	                    pop.setDisplay(false);
-	                }
-	            }
-	        });
-	    }
+	    //按下esc键隐藏弹窗
+	    $(document).on('keydown', function (e) {
+	      if (e.keyCode == 27) {
+	        var pop = focusPops.slice(-1)[0];
+	        if (pop && pop.props.bindEsc) {
+	          pop.setDisplay(false);
+	        }
+	      }
+	    });
+	  }
 	};
 
 	//组件静态方法
 	var Statics = {
 
-	    //创建一个弹窗
+	  //创建一个弹窗
 
-	    create: function create(options) {
+	  create: function create(options) {
+	    options = options || {};
+	    var pop = ReactDOM.render(React.createElement(Popup, options), nj.utils.createContainer('nj-popup-container ng-layer-wrap'));
+	    bind();
+	    instances.push(pop);
+
+	    return pop;
+	  },
+
+	  //销毁弹窗
+	  destory: function destory(pop) {
+	    instances.forEach(function (p, i) {
+	      if (p === pop) {
+	        instances.splice(i, 1);
+	        document.body.removeChild(ReactDOM.findDOMNode(p).parentNode);
+	      }
+	    });
+	  },
+
+	  //消息提示
+	  alert: function alert(options) {
+	    options = Object.assign({
+	      title: '提示：',
+	      name: 'popup-alert popup-tip',
+	      bindEsc: false,
+	      buttons: [{ text: '确定', className: 'nj-button nj-button-red' }]
+	    }, options);
+	    var pop = Popup.create(options);
+	    //隐藏后销毁弹窗
+	    pop.onHide(function () {
+	      Popup.destory(this);
+	    });
+	    window.setTimeout(function () {
+	      pop.setDisplay(true);
+	    }, 1);
+	    return pop;
+	  },
+	  confirm: function confirm(options) {
+	    options = Object.assign({
+	      title: '提示：',
+	      showClose: false,
+	      name: 'popup-confirm popup-tip',
+	      buttons: [{ text: '确定', className: 'nj-button nj-button-red', handle: function handle() {
+	          return true;
+	        } }, { text: '取消', className: 'nj-button' }]
+	    }, options);
+	    options.template = React.createElement(
+	      'div',
+	      null,
+	      React.createElement('span', { className: 'nj-icon nj-icon-warn' }),
+	      React.createElement(
+	        'div',
+	        { className: '_content' },
+	        options.template
+	      )
+	    );
+	    var pop = Popup.create(options);
+	    //隐藏后销毁弹窗
+	    pop.onHide(function () {
+	      Popup.destory(this);
+	    });
+	    pop.setDisplay(true);
+	    return pop;
+	  },
+
+	  tip: function () {
+	    return {
+	      show: function show(type, message, options) {
 	        options = options || {};
-	        var pop = ReactDOM.render(React.createElement(Popup, options), nj.utils.createContainer('nj-popup-container ng-layer-wrap'));
-	        bind();
-	        instances.push(pop);
-
-	        return pop;
-	    },
-
-	    //销毁弹窗
-	    destory: function destory(pop) {
-	        instances.forEach(function (p, i) {
-	            if (p === pop) {
-	                instances.splice(i, 1);
-	                document.body.removeChild(ReactDOM.findDOMNode(p).parentNode);
-	            }
-	        });
-	    },
-
-	    //消息提示
-	    alert: function alert(options) {
-	        options = Object.assign({
-	            title: '提示：',
-	            name: 'popup-alert popup-tip',
-	            bindEsc: false,
-	            buttons: [{ text: '确定', className: 'nj-button nj-button-red' }]
-	        }, options);
-	        var pop = Popup.create(options);
-	        //隐藏后销毁弹窗
-	        pop.onHide(function () {
-	            Popup.destory(this);
-	        });
-	        window.setTimeout(function () {
-	            pop.setDisplay(true);
-	        }, 1);
-	        return pop;
-	    },
-	    confirm: function confirm(options) {
-	        options = Object.assign({
-	            title: '提示：',
-	            showClose: false,
-	            name: 'popup-confirm popup-tip',
-	            buttons: [{ text: '确定', className: 'nj-button nj-button-red', handle: function handle() {
-	                    return true;
-	                } }, { text: '取消', className: 'nj-button' }]
-	        }, options);
-	        options.template = React.createElement(
+	        Popup.tip.hide();
+	        if (type == 'loading') {
+	          message = message || 'loading……';
+	        } else {
+	          var timer = setTimeout(function () {
+	            tip.setDisplay(false);
+	          }, 1500);
+	        }
+	        var tip = Popup.tip.handle = Popup.alert({
+	          title: '',
+	          template: React.createElement(
 	            'div',
-	            null,
-	            React.createElement('span', { className: 'nj-icon nj-icon-warn' }),
+	            { className: "tip-area tip-" + type },
+	            React.createElement('i', { className: "nj-icon nj-icon-" + type }),
 	            React.createElement(
-	                'div',
-	                { className: '_content' },
-	                options.template
+	              'span',
+	              { className: 'tip-text' },
+	              message
 	            )
-	        );
-	        var pop = Popup.create(options);
-	        //隐藏后销毁弹窗
-	        pop.onHide(function () {
-	            Popup.destory(this);
+	          ),
+	          showMask: false,
+	          buttons: null
 	        });
-	        pop.setDisplay(true);
-	        return pop;
-	    },
 
-	    tip: function () {
-	        return {
-	            show: function show(type, message, options) {
-	                options = options || {};
-	                Popup.tip.hide();
-	                if (type == 'loading') {
-	                    message = message || 'loading……';
-	                } else {
-	                    var timer = setTimeout(function () {
-	                        tip.setDisplay(false);
-	                    }, 1500);
-	                }
-	                var tip = Popup.tip.handle = Popup.alert({
-	                    title: '',
-	                    template: React.createElement(
-	                        'div',
-	                        { className: "tip-area tip-" + type },
-	                        React.createElement('i', { className: "nj-icon nj-icon-" + type }),
-	                        React.createElement(
-	                            'span',
-	                            { className: 'tip-text' },
-	                            message
-	                        )
-	                    ),
-	                    showMask: false,
-	                    buttons: null
-	                });
-
-	                //提示完成后 重载页面
-	                var reload = options.reload;
-	                if (reload) {
-	                    tip.onShow(function () {
-	                        window.setTimeout(function () {
-	                            if (typeof reload == 'string') {
-	                                window.location.href = reload;
-	                            } else {
-	                                window.location.reload();
-	                            }
-	                        }, 1500);
-	                    });
-	                }
-	            },
-	            hide: function hide() {
-	                var tip = Popup.tip.handle;
-	                tip && tip.setDisplay(false);
-	                // Mask.hide()
-	            }
-	        };
-	    }()
+	        //提示完成后 重载页面
+	        var reload = options.reload;
+	        if (reload) {
+	          tip.onShow(function () {
+	            window.setTimeout(function () {
+	              if (typeof reload == 'string') {
+	                window.location.href = reload;
+	              } else {
+	                window.location.reload();
+	              }
+	            }, 1500);
+	          });
+	        }
+	      },
+	      hide: function hide() {
+	        var tip = Popup.tip.handle;
+	        tip && tip.setDisplay(false);
+	        // Mask.hide()
+	      }
+	    };
+	  }()
 	};
 
 	var Popup = React.createClass({
-	    displayName: 'Popup',
+	  displayName: 'Popup',
 
-	    mixins: [align, mixins.setDisplay, React.addons.LinkedStateMixin],
-	    statics: Statics,
-	    getDefaultProps: function getDefaultProps() {
-	        return { effect: 'drop', showMask: true, bindEsc: true };
-	    },
-	    getInitialState: function getInitialState() {
-	        return { buttons: this.props.buttons || [], title: this.props.title || '' };
-	    },
-	    componentWillMount: function componentWillMount() {
-	        //添加then事件
-	        this.thenEvent = nj.utils.addEventQueue.call(this, 'then');
-	    },
-	    componentDidMount: function componentDidMount() {
-	        this.setAlign({
-	            nearby: window,
-	            element: ReactDOM.findDOMNode(this)
-	        });
+	  mixins: [align, mixins.setDisplay, React.addons.LinkedStateMixin],
+	  statics: Statics,
+	  getDefaultProps: function getDefaultProps() {
+	    return { effect: 'drop', showMask: true, bindEsc: true };
+	  },
+	  getInitialState: function getInitialState() {
+	    return { buttons: this.props.buttons || [], title: this.props.title || '' };
+	  },
+	  componentWillMount: function componentWillMount() {
+	    //添加then事件
+	    this.thenEvent = nj.utils.addEventQueue.call(this, 'then');
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.setAlign({
+	      nearby: window,
+	      element: ReactDOM.findDOMNode(this)
+	    });
 
-	        //显示遮罩层
-	        this.onShow(function () {
-	            this.props.showMask && Mask.show();
+	    //显示遮罩层
+	    this.onShow(function () {
+	      this.props.showMask && Mask.show();
 
-	            //当前焦点弹窗
-	            setFocusPop(this);
-	            this.align.set();
-	        }).onHide(function () {
-	            var _this = this;
+	      //当前焦点弹窗
+	      setFocusPop(this);
+	      this.align.set();
+	    }).onHide(function () {
+	      var _this = this;
 
-	            focusPops.pop();
-	            var hasShowMaskPop;
-	            focusPops.forEach(function (pop) {
-	                if (pop.props.showMask && pop !== _this) {
-	                    hasShowMaskPop = pop;
-	                }
-	            });
-	            // console.log(this.props.showMask,hasShowMaskPop,this)
-	            this.props.showMask && !hasShowMaskPop && Mask.hide();
-
-	            this.setState({ isFocus: null });
-	            //当前弹窗隐藏后 需要设置处于焦点集合中最新的那个重新获得焦点
-	            setFocusPop(focusPops.slice(-1)[0]);
-
-	            this.thenEvent.complete(this.res);
-	        });
-	        //dangerouslySetInnerHTML={{__html:this.state.template}}  
-	    },
-	    componentWillUnmount: function componentWillUnmount() {
-	        console.log(this);
-	    },
-	    buttonHandle: function buttonHandle(fn, event) {
-	        var res = this.res = fn && fn.call(this, event);
-	        if (event.isDefaultPrevented()) {
-	            //调用preventDefault阻止关闭弹窗事件
-	            return;
+	      focusPops.pop();
+	      var hasShowMaskPop;
+	      focusPops.forEach(function (pop) {
+	        if (pop.props.showMask && pop !== _this) {
+	          hasShowMaskPop = pop;
 	        }
-	        this.setDisplay(false);
-	    },
-	    render: function render() {
-	        var template = this.props.template;
-	        template = typeof template == 'function' ? template.call(this) : template;
+	      });
+	      // console.log(this.props.showMask,hasShowMaskPop,this)
+	      this.props.showMask && !hasShowMaskPop && Mask.hide();
 
-	        var className = nj.utils.joinClass('nj-popup', this.state.className, this.state.isFocus && 'popup-active', this.props.name);
-	        var buttons = this.state.buttons;
+	      this.setState({ isFocus: null });
+	      //当前弹窗隐藏后 需要设置处于焦点集合中最新的那个重新获得焦点
+	      setFocusPop(focusPops.slice(-1)[0]);
 
-	        return React.createElement(
-	            'div',
-	            { className: className },
-	            React.createElement('div', { className: '_close', onClick: this.setDisplay.bind(this, false) }),
-	            React.createElement(
-	                'div',
-	                { className: '_head' },
-	                this.state.title
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: '_body', ref: 'body' },
-	                template
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: buttons.length ? '_foot' : 'd_hide' },
-	                buttons.map(function (btn, i) {
-	                    var btnClass = btn.className;
-	                    if (!btnClass) {
-	                        btnClass = 'nj-button';
-	                        if (i == 0) {
-	                            btnClass += ' nj-button-red';
-	                        }
-	                    }
-	                    return React.createElement(
-	                        'button',
-	                        { key: i, type: 'button', className: btnClass, onClick: this.buttonHandle.bind(this, btn.handle) },
-	                        btn.text
-	                    );
-	                }.bind(this))
-	            )
-	        );
+	      this.thenEvent.complete(this.res);
+	    });
+	    //dangerouslySetInnerHTML={{__html:this.state.template}}  
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    console.log(this);
+	  },
+	  buttonHandle: function buttonHandle(fn, event) {
+	    var res = this.res = fn && fn.call(this, event);
+	    if (event.isDefaultPrevented()) {
+	      //调用preventDefault阻止关闭弹窗事件
+	      return;
 	    }
+	    this.setDisplay(false);
+	  },
+	  render: function render() {
+	    var template = this.props.template;
+	    template = typeof template == 'function' ? template.call(this) : template;
+	    var body = React.createElement(
+	      'div',
+	      { className: '_body', ref: 'body' },
+	      template
+	    );
+	    if (typeof template == 'string') {
+	      body = React.createElement('div', { className: '_body', ref: 'body', dangerouslySetInnerHTML: { __html: template } });
+	    }
+
+	    var className = nj.utils.joinClass('nj-popup', this.state.className, this.state.isFocus && 'popup-active', this.props.name);
+	    var buttons = this.state.buttons;
+
+	    return React.createElement(
+	      'div',
+	      { className: className },
+	      React.createElement('div', { className: '_close', onClick: this.setDisplay.bind(this, false) }),
+	      React.createElement(
+	        'div',
+	        { className: '_head' },
+	        this.state.title
+	      ),
+	      body,
+	      React.createElement(
+	        'div',
+	        { className: buttons.length ? '_foot' : 'd_hide' },
+	        buttons.map(function (btn, i) {
+	          var btnClass = btn.className;
+	          if (!btnClass) {
+	            btnClass = 'nj-button';
+	            if (i == 0) {
+	              btnClass += ' nj-button-red';
+	            }
+	          }
+	          return React.createElement(
+	            'button',
+	            { key: i, type: 'button', className: btnClass, onClick: this.buttonHandle.bind(this, btn.handle) },
+	            btn.text
+	          );
+	        }.bind(this))
+	      )
+	    );
+	  }
 	});
 
 	module.exports = Popup;
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 	var nj = __webpack_require__(3);
 	var dom = nj.utils.dom;
 	/*
@@ -35312,7 +35483,7 @@
 	        for (var i in position) {
 	            turnPosition[i] = position[i];
 	        }
-	        if (style.left < 0 || size.WIDTH + style.left > win.width()) {
+	        if (style.left < 0 || style.left > size.WIDTH && size.WIDTH + style.left - win.scrollLeft() > win.width()) {
 	            var left = position.left;
 	            var right = position.right;
 	            if (left != undefined) {
@@ -35324,7 +35495,7 @@
 	            }
 	            turn = true;
 	        }
-	        if (style.top < 0 || size.HEIGHT + style.top > win.height()) {
+	        if (style.top < 0 || style.top > size.HEIGHT && size.HEIGHT + style.top - win.scrollTop() > win.height()) {
 	            var top = position.top;
 	            var bottom = position.bottom;
 	            if (top != undefined) {
@@ -35358,7 +35529,7 @@
 	};
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35400,7 +35571,7 @@
 	module.exports = Mask;
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35409,11 +35580,11 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _tree = __webpack_require__(192);
+	var _tree = __webpack_require__(193);
 
 	var _tree2 = _interopRequireDefault(_tree);
 
-	var _jquery = __webpack_require__(185);
+	var _jquery = __webpack_require__(184);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -35458,7 +35629,7 @@
 	};
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35467,7 +35638,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _form = __webpack_require__(202);
+	var _form = __webpack_require__(203);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35579,7 +35750,7 @@
 	};
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35589,15 +35760,15 @@
 	/*
 	 * form 表单验证
 	 */
-	__webpack_require__(203);
+	__webpack_require__(204);
 	var nj = __webpack_require__(3);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
 
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 
-	var Directive = __webpack_require__(205).default;
+	var Directive = __webpack_require__(206).default;
 
 	var formDirectives = {};
 
@@ -35719,7 +35890,7 @@
 	    return valid;
 	};
 
-	formDirectives['form'] = React.createClass({
+	var Form = formDirectives['form'] = React.createClass({
 	    mixins: [mixins.childComponents.config],
 	    getDefaultProps: function getDefaultProps() {
 	        return { type: 'form', method: 'post', showicon: 'all', noValidate: true };
@@ -35794,7 +35965,7 @@
 	        this.submitEvent = nj.utils.addEventQueue.call(this, 'onSubmit');
 	        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
 
-	        this.state.verfiyCode = form.verifyCode();
+	        this.state.verfiyCode = Form.verifyCode();
 
 	        var parentComponent = this.props.parentComponent; //form表单所处的父组件
 
@@ -36186,11 +36357,11 @@
 	        'input-group': { children: ['input'], component: formDirectives['input-group'] },
 	        'input': { component: formDirectives['input'] }
 	    },
-	    exports: form
+	    exports: exports
 	});
 
 	//验证码
-	form.verifyCode = function (verify, refresh) {
+	Form.verifyCode = function (verify, refresh) {
 	    verify = verify || 'verify_img';
 	    refresh = refresh || 'verify_refresh';
 	    verify = document.getElementById(verify);
@@ -36222,7 +36393,7 @@
 	};
 
 	/*填充表单数据*/
-	form.fill = function (options) {
+	Form.fill = function (options) {
 	    options = options || {};
 
 	    var Form = $(options.form || document.forms[0]),
@@ -36264,18 +36435,18 @@
 	 * 主要针对非form对象 
 	 * 本身就是form对象则直接返回form.serialize()
 	 */
-	form.parse = function (form, dataType) {
+	Form.parse = function (form, dataType) {
 	    if (!form || !form.length) {
 	        return;
 	    }
 	    var _form = form.find('form'),
-	        Form = form[0].tagName.toLowerCase() == 'form' ? form : _form.length ? _form : null,
+	        $form = form[0].tagName.toLowerCase() == 'form' ? form : _form.length ? _form : null,
 	        data;
 
 	    dataType = dataType || 'string';
 
-	    if (Form) {
-	        data = Form.serialize();
+	    if ($form) {
+	        data = $form.serialize();
 	    } else {
 	        //Form = $('<form style="display:none"></form>').appendTo(document.body);
 	        //clone无法拷贝select值
@@ -36298,7 +36469,7 @@
 	/*
 	 * post跨域 使用iframe实现
 	 */
-	form.post = function (options) {
+	Form.post = function (options) {
 	    options = options || {};
 	    var _form = options.form;
 	    if (!_form) {
@@ -36310,7 +36481,7 @@
 	        callback = 'jsoncallback_' + +new Date();
 
 	    var data = $.extend(true, options.data, { jsoncallback: callback });
-	    form.fill({
+	    Form.fill({
 	        form: $(_form),
 	        data: data,
 	        always: true
@@ -36342,16 +36513,14 @@
 	    _form.submit();
 	};
 
-	module.exports = form;
-
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(204);
+	var content = __webpack_require__(205);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(8)(content, {"insertAt":"top"});
@@ -36371,7 +36540,7 @@
 	}
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(6)();
@@ -36385,7 +36554,7 @@
 
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36398,7 +36567,7 @@
 
 	var _lib2 = _interopRequireDefault(_lib);
 
-	var _jquery = __webpack_require__(185);
+	var _jquery = __webpack_require__(184);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -36432,17 +36601,17 @@
 	            //最外层的父组件
 	            rootComponent = com;
 	        }
+	        com.getByHandle = function (handle) {
+	            for (var n = com.instances.length, i = n - 1; i >= 0; i--) {
+	                var item = com.instances[i].handle;
+	                if (item.props.handle == handle) {
+	                    return item;
+	                }
+	            }
+	        };
 	    }
 
 	    rootComponent.start = this.start.bind(this);
-	    rootComponent.getByHandle = function (handle) {
-	        for (var n = rootComponent.instances.length, i = n - 1; i >= 0; i--) {
-	            var item = rootComponent.instances[i].handle;
-	            if (item.props.handle == handle) {
-	                return item;
-	            }
-	        }
-	    };
 	};
 
 	Directive.prototype = {
@@ -36527,7 +36696,6 @@
 	        var wrap = this.options.wrap;
 
 	        if (typeof wrap == 'function') {
-
 	            wrap = wrap(component);
 	        } else {
 	            wrap = component.refs.wrap || ReactDOM.findDOMNode(component);
@@ -36552,7 +36720,6 @@
 	            var c = _this3.directiveInit(type, ReactDOM.findDOMNode(component), component);
 	            components = components.concat(c);
 	        });
-	        //console.log(component.constructor.instances)
 	        component.state.childComponents = components;
 
 	        var instances = component.constructor.instances;
@@ -36586,7 +36753,7 @@
 	exports.default = Directive;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36595,7 +36762,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _switch = __webpack_require__(207);
+	var _switch = __webpack_require__(208);
 
 	var _switch2 = _interopRequireDefault(_switch);
 
@@ -36654,7 +36821,7 @@
 	};
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36668,9 +36835,9 @@
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
 
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 
-	var Directive = __webpack_require__(205).default;
+	var Directive = __webpack_require__(206).default;
 
 	var Switch = React.createClass({
 	    displayName: 'Switch',
@@ -36772,7 +36939,7 @@
 	});
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36781,7 +36948,11 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _scroll = __webpack_require__(209);
+	var _scroll = __webpack_require__(210);
+
+	var _jquery = __webpack_require__(184);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36789,10 +36960,11 @@
 	var render = _nj2.default.render;
 
 	module.exports = function (container) {
+	    var demo;
 	    var demoWrap = document.getElementById('demo-scroll-wrap');
-	    demoWrap && render(React.createElement(
+	    demoWrap && (demo = render(React.createElement(
 	        _scroll.Scroll,
-	        { time: 4000, direction: 'x' },
+	        { time: 4100, auto: false, direction: 'x' },
 	        React.createElement(
 	            _scroll.ScrollItems,
 	            null,
@@ -36812,13 +36984,19 @@
 	                '3'
 	            )
 	        )
-	    ), demoWrap);
+	    ), demoWrap));
 
 	    _scroll.Scroll.start(container);
+
+	    (0, _jquery2.default)('a.prev,a.next').click(function () {
+	        var index = demo.state.index;
+	        demo.scroll((0, _jquery2.default)(this).hasClass('prev') ? false : true);
+	        return false;
+	    });
 	};
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36831,8 +37009,8 @@
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
 
-	var $ = __webpack_require__(185);
-	var Directive = __webpack_require__(205).default;
+	var $ = __webpack_require__(184);
+	var Directive = __webpack_require__(206).default;
 
 	var Scroll = React.createClass({
 	    displayName: 'Scroll',
@@ -36885,6 +37063,7 @@
 	        var view = _state.view;
 	        var step = _state.step;
 	        var size = _state.size;
+	        var itemsComponent = _state.itemsComponent;
 	        // console.log(length,view)
 
 	        if (length <= view) {
@@ -36898,11 +37077,11 @@
 	        nextLast && this.append(0, step ? view - nextLast : view);
 
 	        if (this.props.direction == 'y') {
-	            size.total = $(this.refs.items).height();
+	            size.total = $(itemsComponent.refs.items).height();
 	        }
 	        this.start();
 
-	        $(this.refs.wrap).hover(function () {
+	        $(itemsComponent.refs.wrap).hover(function () {
 	            _this.stop();
 	        }, function () {
 	            _this.start();
@@ -37006,8 +37185,8 @@
 
 	        var itemsComponent = this.state.itemsComponent;
 	        var horizontal = direction == 'x';
-	        var wrap = $(this.refs.wrap);
-	        var content = $(this.refs.items);
+	        var wrap = $(itemsComponent.refs.wrap);
+	        var content = $(itemsComponent.refs.items);
 	        var item = $(itemsComponent.refs.item0);
 
 	        var size = this.state.size = {
@@ -37024,7 +37203,7 @@
 	            this.state.step = this.state.view;
 	        }
 	        this.setState({ size: size });
-	        // console.log(this.state,size)
+	        itemsComponent.forceUpdate();
 	    },
 	    scroll: function scroll(next) {
 	        var _this3 = this;
@@ -37032,15 +37211,8 @@
 	        /*
 	         * next 
 	         * boolean: 向前/后滚动 控制方向
-	         * number: 索引值 直接滚动到某一张 （弱repeat=true 改索引是相对追加之前的）
+	         * number: 索引值 直接滚动到某一张 （若repeat=true 该索引是相对追加之前的）
 	         */
-	        var index;
-	        if (typeof next == 'number') {
-	            index = getIndex(next, this.len);
-	        } else {
-	            next = next === false ? false : true;
-	        }
-	        var wrap = $(this.refs.wrap);
 	        var _state4 = this.state;
 	        var size = _state4.size;
 	        var step = _state4.step;
@@ -37048,6 +37220,16 @@
 	        var totalLength = _state4.totalLength;
 	        var length = _state4.length;
 	        var view = _state4.view;
+	        var itemsComponent = _state4.itemsComponent;
+
+	        var index;
+	        if (typeof next == 'number') {
+	            index = getIndex(next, length);
+	        } else {
+	            next = next === false ? false : true;
+	        }
+	        var wrap = $(itemsComponent.refs.wrap);
+
 	        var direction = this.props.direction;
 
 	        //if( this.wrap.is(":animated") ) { return;}
@@ -37087,9 +37269,10 @@
 	            //不足prev时 向后跳转this.len的个数
 	            if (!next && scrollLength < step && typeof index == 'undefined') {
 	                var prevLast = totalLength - (scrollLength + length);
-	                // console.log(prevLast, view)
+
 	                if (prevLast < view) {
 	                    this.append(totalLength % length, view - prevLast);
+	                    totalLength = this.state.totalLength;
 	                    // scrollLength = this.state.scrollLength
 	                }
 	                wrap[scrollAttr](wrap[scrollAttr]() + size.item * length);
@@ -37114,7 +37297,7 @@
 	        this.state.scrollLength = scrollLength;
 	        this.state.endIndex = getIndex(this.state.index + view - 1, length); //当前结束index
 
-	        wrap.animate(attr, speed, function () {
+	        wrap.animate(attr, speed, 'easeOutExpo', function () {
 	            if (nowScroll >= length * size.item) {
 	                //滚动过得距离超过总长度  则向前跳转一次
 	                var newPos = step ? size.item * _this3.state.index : 0;
@@ -37137,24 +37320,14 @@
 	    },
 	    render: function render() {
 	        var _props3 = this.props;
-	        var direction = _props3.direction;
 	        var className = _props3.className;
 	        var children = _props3.children;
-	        var size = this.state.size;
 
 	        className = nj.utils.joinClass('nj-scroll', className);
 	        return React.createElement(
 	            'div',
 	            { className: className },
-	            React.createElement(
-	                'div',
-	                { ref: 'wrap', className: 'nj-scroll-wrap' },
-	                React.createElement(
-	                    'div',
-	                    { ref: 'items', className: 'nj-scroll-items clearfix', style: direction == 'x' ? { width: size.total } : {} },
-	                    children
-	                )
-	            )
+	            children
 	        );
 	    }
 	});
@@ -37167,9 +37340,8 @@
 	    displayName: 'ScrollItems',
 
 	    mixins: [mixins.childComponents.setParents([Scroll])],
-	    statics: { test: 111 },
 	    getInitialState: function getInitialState() {
-	        return { aa: 1 };
+	        return {};
 	    },
 	    componentDidMount: function componentDidMount() {
 	        directive.getChildComponents(this);
@@ -37209,17 +37381,25 @@
 	        var _props4 = this.props;
 	        var children = _props4.children;
 	        var _children = _props4._children;
+	        var className = _props4.className;
+
+	        className = nj.utils.joinClass('nj-scroll-item clearfix', className);
+	        var size = parentComponent.state.size;
 
 	        return React.createElement(
 	            'div',
-	            null,
-	            children.map(function (item, i) {
-	                return React.createElement(
-	                    'span',
-	                    { className: 'nj-scroll-item clearfix', ref: 'item' + i, key: i, style: itemStyle },
-	                    item
-	                );
-	            })
+	            { ref: 'wrap', className: 'nj-scroll-wrap' },
+	            React.createElement(
+	                'div',
+	                { ref: 'items', className: 'nj-scroll-items clearfix', style: horizontal ? { width: size.total } : {} },
+	                children.map(function (item, i) {
+	                    return React.createElement(
+	                        'span',
+	                        { className: className, ref: 'item' + i, key: i, style: itemStyle },
+	                        item
+	                    );
+	                })
+	            )
 	        );
 	    }
 	});
@@ -37238,16 +37418,22 @@
 	        parentComponent.scroll(index);
 	    },
 	    componentDidMount: function componentDidMount() {
+	        directive.getChildComponents(this);
+
 	        var parentComponent = this.state.parentComponent;
 
 	        parentComponent.onScrollEnd(function () {
 	            parentComponent.start();
 	        });
+	        parentComponent.state.page = this;
 	    },
 	    render: function render() {
 	        var _this4 = this;
 
-	        var parentComponent = this.state.parentComponent;
+	        // console.log(this.props)
+	        var _state5 = this.state;
+	        var parentComponent = _state5.parentComponent;
+	        var item = _state5.item;
 	        var _parentComponent$stat = parentComponent.state;
 	        var length = _parentComponent$stat.length;
 	        var index = _parentComponent$stat.index;
@@ -37256,15 +37442,22 @@
 	        for (var i = 0; i < length; i++) {
 	            items.push(i + 1);
 	        }
+	        var trigger = this.props.trigger;
+
 	        return React.createElement(
 	            'div',
 	            { className: 'nj-scroll-page' },
-	            items.map(function (n) {
+	            items.map(function (n, i) {
 	                var className = nj.utils.joinClass('-page-item', n - 1 == index && '-page-active');
-	                return React.createElement(
+	                var _item = typeof item == 'function' ? React.createElement('span', { dangerouslySetInnerHTML: { __html: item.call(_this4, i) } }) : n;
+	                return trigger == 'hover' ? React.createElement(
 	                    'span',
-	                    { onClick: _this4.handleClick.bind(_this4, n - 1), className: className, key: n },
-	                    n
+	                    { ref: 'item' + i, onMouseEnter: _this4.handleClick.bind(_this4, n - 1), className: className, key: n },
+	                    _item
+	                ) : React.createElement(
+	                    'span',
+	                    { ref: 'item' + i, onClick: _this4.handleClick.bind(_this4, n - 1), className: className, key: n },
+	                    _item
 	                );
 	            })
 	        );
@@ -37284,10 +37477,7 @@
 	    elementGroups: {
 	        'scroll': {
 	            children: ['scroll-items', 'scroll-page'],
-	            component: Scroll,
-	            wrapItem: function wrapItem(component) {
-	                return component.refs.items;
-	            }
+	            component: Scroll
 	        },
 	        'scroll-items': {
 	            component: ScrollItems,
@@ -37295,14 +37485,16 @@
 	                return component.refs['item' + i];
 	            }
 	        },
-	        'scroll-page': { component: ScrollPage }
+	        'scroll-page': {
+	            component: ScrollPage
+	        }
 	    },
 	    // wrap : component=>ReactDOM.findDOMNode(component),
 	    exports: exports
 	});
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37311,7 +37503,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _face = __webpack_require__(211);
+	var _face = __webpack_require__(212);
 
 	var _face2 = _interopRequireDefault(_face);
 
@@ -37321,7 +37513,31 @@
 	var render = _nj2.default.render;
 
 	module.exports = function (container) {
-
+	    var rs = 'http://css.mdbimg.com';
+	    _face2.default.config({
+	        themeItems: {
+	            'default': { url: rs + "/js/lib/Kindeditor/plugins/emoticons/images/" },
+	            'mdb': {
+	                name: '长颈鹿',
+	                url: rs + '/img/face/mdb/',
+	                item: { '0': '哎呀', '1': '傲慢', '2': '暴怒', '3': '鄙视', '4': '奋斗', '5': '愤怒', '6': '干什么', '7': '可爱', '8': '酷酷', '9': '流泪', '10': '秒杀',
+	                    '11': '哦错了', '12': '伤心', '13': '生气', '14': '思索', '15': '微笑', '16': '委屈', '17': '无语'
+	                },
+	                fix: ".png"
+	            },
+	            'dog': {
+	                name: '小狗',
+	                url: rs + '/img/face/dog/',
+	                item: {
+	                    '1': '微笑', '2': '喜欢', '3': '发呆', '4': '大哭', '5': '亲亲', '6': '发火', '7': '大笑', '8': '惊讶', '9': '伤心', '10': '冷汗',
+	                    '11': '可爱', '12': '加油', '13': '疑问', '14': '嘘', '15': '无语', '16': '晕', '17': '悲哀',
+	                    '18': '拜拜', '19': '汗', '20': '挖鼻孔', '21': '牛', '22': '尴尬', '23': '可怜', '24': '阴险', '25': '离开'
+	                },
+	                fix: ".gif"
+	            }
+	        },
+	        themes: ['dog', 'mdb', 'default']
+	    });
 	    _face2.default.create({
 	        nearby: 'show-face',
 	        insert: 'face-insert'
@@ -37334,7 +37550,7 @@
 	};
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37343,7 +37559,7 @@
 	 * 表情选择器
 	 */
 
-	var $ = __webpack_require__(185);
+	var $ = __webpack_require__(184);
 
 	var _require = __webpack_require__(2);
 
@@ -37351,9 +37567,9 @@
 	var render = _require.render;
 	var utils = _require.utils;
 
-	var Popover = __webpack_require__(212);
+	var Popover = __webpack_require__(213);
 
-	var _require2 = __webpack_require__(207);
+	var _require2 = __webpack_require__(208);
 
 	var Switch = _require2.Switch;
 	var SwitchMenu = _require2.SwitchMenu;
@@ -37375,12 +37591,15 @@
 	            options.insert = utils.dom(insert);
 	            return render(React.createElement(Face, options), options.popover.refs.wrap);
 	        },
+	        config: function config(options) {
+	            return $.extend(true, this._config, options);
+	        },
 
 	        _config: {
 	            themeItems: { //表情主题配置http://cache.soso.com/img/img/e200.gif
 	                "default": {
 	                    name: '默认表情',
-	                    url: 'http://css.mdbimg.com/js/lib/Kindeditor/plugins/emoticons/images/',
+	                    url: '/',
 	                    item: { '0': '微笑', '1': '撇嘴', '2': '色', '3': '发呆', '4': '得意', '5': '流泪', '6': '害羞', '7': '闭嘴', '8': '睡', '9': '大哭', '10': '尴尬',
 	                        '11': '发怒', '12': '调皮', '13': '龇牙', '14': '惊讶', '15': '难过', '16': '酷', '17': '冷汗', '18': '抓狂', '19': '吐', '20': '偷笑', '21': '可爱',
 	                        '22': '白眼', '23': '傲慢', '24': '饥饿', '25': '困', '26': '惊恐', '27': '流汗', '28': '憨笑', '29': '大兵', '30': '奋斗', '31': '咒骂', '32': '疑问',
@@ -37407,6 +37626,7 @@
 	        this.props.popover.onShow(function () {
 	            !_this.state.init && _this.loadFace();
 	        });
+	        this.insertEvent = utils.addEventQueue.call(this, 'onInsert');
 	    },
 	    loadFace: function loadFace() {
 	        var _state = this.state;
@@ -37440,8 +37660,10 @@
 	            text: text,
 	            content: this.replaceFace(text)
 	        };
+	        var Input = insert[0].$handle; //是否为Input表单组件
+	        Input.state.value = insert.val(); //setState方法为异步 所以不使用 直接同步赋值
 	        popover.setDisplay(false);
-	        // this.options.onInsert && this.options.onInsert.call(this, data);
+	        this.insertEvent.complete(data);
 	    },
 
 	    //提取表情,不传默认为当前表情插入对象val
@@ -37483,12 +37705,16 @@
 	                { ref: 'tab' },
 	                React.createElement(
 	                    'ul',
-	                    { className: 'clearfix' },
+	                    { className: 'nj-switch-menus clearfix' },
 	                    faces.map(function (item, i) {
 	                        return React.createElement(
 	                            SwitchMenu,
 	                            { key: i },
-	                            item.name
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                item.name
+	                            )
 	                        );
 	                    })
 	                ),
@@ -37594,7 +37820,7 @@
 	module.exports = Face;
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37607,8 +37833,8 @@
 	var ReactDOM = nj.ReactDOM;
 	var mixins = nj.mixins;
 
-	var align = __webpack_require__(198);
-	var $ = __webpack_require__(185);
+	var align = __webpack_require__(199);
+	var $ = __webpack_require__(184);
 
 	var Popover = React.createClass({
 	    displayName: 'Popover',
@@ -37720,13 +37946,19 @@
 	    render: function render() {
 	        var className = nj.utils.joinClass('nj-popover', this.state.className, this.props.name);
 	        var style = { transformOrigin: this.state.origin };
+	        var template = this.props.template;
+	        template = typeof template == 'function' ? template.call(this) : template;
+	        var body = template;
+	        if (typeof template == 'string') {
+	            body = React.createElement('span', { dangerouslySetInnerHTML: { __html: template } });
+	        }
 	        return React.createElement(
 	            'div',
 	            { className: className, style: style },
 	            React.createElement(
 	                'div',
 	                { className: 'nj-popover-inner', style: style, ref: 'wrap' },
-	                this.props.template
+	                body
 	            )
 	        );
 	    }
@@ -37735,7 +37967,7 @@
 	module.exports = Popover;
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37747,20 +37979,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(214).default;
-	var createLogger = __webpack_require__(215);
+	var thunkMiddleware = __webpack_require__(215).default;
+	var createLogger = __webpack_require__(216);
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(217);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(223);
+	var _require2 = __webpack_require__(224);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(238);
-	var rootReducer = __webpack_require__(244);
+	var App = __webpack_require__(239);
+	var rootReducer = __webpack_require__(245);
 
 	// const createStoreWithMiddleware = applyMiddleware(
 	//   thunkMiddleware, // 允许我们 dispatch() 函数
@@ -37785,7 +38017,7 @@
 	};
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -37808,7 +38040,7 @@
 	}
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38041,7 +38273,7 @@
 	module.exports = createLogger;
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38049,11 +38281,11 @@
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(217);
+	var _Provider = __webpack_require__(218);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(220);
+	var _connect = __webpack_require__(221);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -38063,7 +38295,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38071,9 +38303,9 @@
 	exports.__esModule = true;
 	exports["default"] = undefined;
 
-	var _react = __webpack_require__(218);
+	var _react = __webpack_require__(219);
 
-	var _storeShape = __webpack_require__(219);
+	var _storeShape = __webpack_require__(220);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
@@ -38147,7 +38379,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38156,14 +38388,14 @@
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _react = __webpack_require__(218);
+	var _react = __webpack_require__(219);
 
 	exports["default"] = _react.PropTypes.shape({
 	  subscribe: _react.PropTypes.func.isRequired,
@@ -38172,7 +38404,7 @@
 	});
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38182,29 +38414,29 @@
 	exports.__esModule = true;
 	exports["default"] = connect;
 
-	var _react = __webpack_require__(218);
+	var _react = __webpack_require__(219);
 
-	var _storeShape = __webpack_require__(219);
+	var _storeShape = __webpack_require__(220);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(221);
+	var _shallowEqual = __webpack_require__(222);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(222);
+	var _wrapActionCreators = __webpack_require__(223);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _isPlainObject = __webpack_require__(233);
+	var _isPlainObject = __webpack_require__(234);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(236);
+	var _hoistNonReactStatics = __webpack_require__(237);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(237);
+	var _invariant = __webpack_require__(238);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -38500,7 +38732,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38531,7 +38763,7 @@
 	}
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38539,7 +38771,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(223);
+	var _redux = __webpack_require__(224);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -38548,7 +38780,7 @@
 	}
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38556,27 +38788,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(224);
+	var _createStore = __webpack_require__(225);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(228);
+	var _combineReducers = __webpack_require__(229);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(230);
+	var _bindActionCreators = __webpack_require__(231);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(231);
+	var _applyMiddleware = __webpack_require__(232);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(232);
+	var _compose = __webpack_require__(233);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(229);
+	var _warning = __webpack_require__(230);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -38600,7 +38832,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38609,7 +38841,7 @@
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(225);
+	var _isPlainObject = __webpack_require__(226);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
@@ -38821,11 +39053,11 @@
 	}
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(226),
-	    isObjectLike = __webpack_require__(227);
+	var isHostObject = __webpack_require__(227),
+	    isObjectLike = __webpack_require__(228);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -38893,7 +39125,7 @@
 
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports) {
 
 	/**
@@ -38919,7 +39151,7 @@
 
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -38953,7 +39185,7 @@
 
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38961,13 +39193,13 @@
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(224);
+	var _createStore = __webpack_require__(225);
 
-	var _isPlainObject = __webpack_require__(225);
+	var _isPlainObject = __webpack_require__(226);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(229);
+	var _warning = __webpack_require__(230);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -39086,7 +39318,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39115,7 +39347,7 @@
 	}
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39171,7 +39403,7 @@
 	}
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39181,7 +39413,7 @@
 	exports.__esModule = true;
 	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(232);
+	var _compose = __webpack_require__(233);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -39233,7 +39465,7 @@
 	}
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39267,11 +39499,11 @@
 	}
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(234),
-	    isObjectLike = __webpack_require__(235);
+	var isHostObject = __webpack_require__(235),
+	    isObjectLike = __webpack_require__(236);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -39339,7 +39571,7 @@
 
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports) {
 
 	/**
@@ -39365,7 +39597,7 @@
 
 
 /***/ },
-/* 235 */
+/* 236 */
 /***/ function(module, exports) {
 
 	/**
@@ -39399,7 +39631,7 @@
 
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports) {
 
 	/**
@@ -39445,7 +39677,7 @@
 
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -39503,7 +39735,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39516,18 +39748,18 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(217);
 
 	var connect = _require.connect;
 
-	var AddComment = __webpack_require__(239);
-	var CommentList = __webpack_require__(240);
+	var AddComment = __webpack_require__(240);
+	var CommentList = __webpack_require__(241);
 
-	var _require2 = __webpack_require__(241);
+	var _require2 = __webpack_require__(242);
 
 	var addComment = _require2.addComment;
 
-	var fetch = __webpack_require__(242);
+	var fetch = __webpack_require__(243);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -39554,7 +39786,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39600,7 +39832,7 @@
 	};
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39634,17 +39866,21 @@
 	});
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(242);
+	var fetch = __webpack_require__(243);
 
 	var ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT';
+	// const ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT'
 
 	var REQUEST_POSTS = exports.REQUEST_POSTS = 'REQUEST_POSTS';
 	var RECEIVE_POSTS = exports.RECEIVE_POSTS = 'RECEIVE_POSTS';
@@ -39698,19 +39934,19 @@
 	};
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(243);
+	__webpack_require__(244);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -40105,7 +40341,7 @@
 
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40114,18 +40350,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(223);
+	var _require = __webpack_require__(224);
 
 	var combineReducers = _require.combineReducers;
 
-	var comments = __webpack_require__(245);
+	var comments = __webpack_require__(246);
 
 	module.exports = combineReducers({
 	  comments: comments
 	});
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40134,7 +40370,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(241);
+	var _require = __webpack_require__(242);
 
 	var ADD_COMMENT = _require.ADD_COMMENT;
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
@@ -40184,7 +40420,7 @@
 	};
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40196,20 +40432,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(214).default;
-	var createLogger = __webpack_require__(215);
+	var thunkMiddleware = __webpack_require__(215).default;
+	var createLogger = __webpack_require__(216);
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(217);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(223);
+	var _require2 = __webpack_require__(224);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(247);
-	var rootReducer = __webpack_require__(250);
+	var App = __webpack_require__(248);
+	var rootReducer = __webpack_require__(251);
 
 	module.exports = function (container) {
 	    var store = createStore(rootReducer, {}, applyMiddleware(thunkMiddleware, createLogger()));
@@ -40222,7 +40458,7 @@
 	};
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40235,17 +40471,17 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(216);
+	var _require = __webpack_require__(217);
 
 	var connect = _require.connect;
 
-	var SearchPhoto = __webpack_require__(248);
+	var SearchPhoto = __webpack_require__(249);
 
-	var _require2 = __webpack_require__(249);
+	var _require2 = __webpack_require__(250);
 
 	var searchPhoto = _require2.searchPhoto;
 
-	var fetch = __webpack_require__(242);
+	var fetch = __webpack_require__(243);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -40301,7 +40537,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40346,7 +40582,7 @@
 	};
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40354,7 +40590,7 @@
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(242);
+	var fetch = __webpack_require__(243);
 
 	var SEARCH_PHOTO = exports.SEARCH_PHOTO = 'SEARCH_PHOTO';
 
@@ -40399,7 +40635,7 @@
 	};
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40408,18 +40644,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(223);
+	var _require = __webpack_require__(224);
 
 	var combineReducers = _require.combineReducers;
 
-	var photos = __webpack_require__(251);
+	var photos = __webpack_require__(252);
 
 	module.exports = combineReducers({
 	  photos: photos
 	});
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40428,7 +40664,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(249);
+	var _require = __webpack_require__(250);
 
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
 	var RECEIVE_POSTS = _require.RECEIVE_POSTS;

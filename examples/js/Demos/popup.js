@@ -7,9 +7,7 @@ var $ = require('jquery')
 module.exports = (container)=>{
     var popup = Popup.create({
         title : 'Popup Title',
-        template : (
-            <div>12</div>
-        ),
+        template : '<div>12</div>',
         buttons : [
             {text:'确定'}, {text:'取消'}
         ]
