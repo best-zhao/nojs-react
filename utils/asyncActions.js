@@ -131,9 +131,8 @@ var Actions = module.exports = function(context){
                 }
                 _action && _action.fetchCompleteEvent.complete(json, conf)
             })
-            
             return promise;
         }
     }
-};
+}
 
