@@ -23,4 +23,9 @@ module.exports = (container)=>{
         demo.scroll($(this).hasClass('prev')?false:true);
         return false;
     })
+
+    Scroll.startOne('myscroll', {
+        pageTemplate : i=><div>p{i+1}-</div>
+    })
+
 }

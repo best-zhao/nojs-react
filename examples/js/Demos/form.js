@@ -1,6 +1,6 @@
 import nj from 'nj'
 const {React, render} = nj
-import {Form, Input, InputGroup} from 'nj/form'
+import {Form, Input, InputGroup, Select} from 'nj/form'
 
 const DemoNav = ()=>{
     var nav = ['normal','component','input-group']
@@ -52,7 +52,10 @@ const FormComponent = React.createClass({
                 <Input className="text" placeholder="email" type="email" />
                 <Input className="text" placeholder="mobile" type="mobile" />
             </InputGroup></div>
-            <button className="nj-button" disabled={!this.state.valid}>提交</button>
+            <div>
+            <Select required><option value="">0</option><option value="1">1</option><option value="2">2</option></Select>
+            </div>
+            <button className="nj-button">提交</button>
         </Form>
         )
     }

@@ -1,7 +1,10 @@
 /**
  * 获取组合组件之间的父子关系
+ * 通过point与rootID双重验证组件层级关系
  */
 var nj = require('../lib')
+// var {React, ReactDOM} = nj
+var ReactDOM = require('react-dom')
 var $ = require('jquery')
 
 var config = exports.config = {
@@ -35,7 +38,11 @@ var config = exports.config = {
             state.index = this.props.index
             state.parentComponent = this.props.parentComponent
         }
-        
+        return state
+    }, 
+    componentWillMount () {
+        var rootID = this._reactInternalInstance._rootNodeID //可以表现dom层级结构
+        var fn = this.constructor
         var point = fn.point = fn.instances.length//组件当前指针
         
         fn.instances.push({
@@ -43,6 +50,8 @@ var config = exports.config = {
             components : []
         })
 
+        var state = this.state
+        state.rootID = rootID
         //查找存在指针的父组件
         var parents = fn.parents || []
         var parentConstructor
@@ -54,9 +63,17 @@ var config = exports.config = {
             parentPoint = parentConstructor.point
             if( parentPoint != null ){
                 parentComponent = parentConstructor.instances[parentPoint]
+
+                var pid = parentComponent.handle.state.rootID
+                //通过rootID可以知道组件所处的层级结构 父组件rootID长度必须小于当前组件
+                //rootID.indexOf(pid)必须为0
+                if( rootID.indexOf(pid) ){
+                    continue
+                }
+                
                 //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
                 var index = 0
-                parentComponent.components.forEach((f)=>{
+                parentComponent.components.forEach(f=>{
                     if( fn===f.constructor ){
                         index++
                     }
@@ -69,20 +86,56 @@ var config = exports.config = {
                 state.parentComponent = parentComponent
                 break;
             }
-        }
-        if( parentComponent ){
-            state.parentComponent = parentComponent
-        }
-        return state
-    },
+        }        
+        // console.log(111,this.props.type,parentComponent)
+    },  
     componentDidMount  () {
         var fn = this.constructor
         this.state.childComponents = fn.instances[fn.instances.length-1].components
         fn.point = null
+        //标记在组件顶层dom上
+        ReactDOM.findDOMNode(this).$component = this
+        // console.log(222,this.props.type,this._reactInternalInstance._rootNodeID)
         //fn.parents = null
-    }
+    },
+    componentWillUnmount () {
+        //从父组件中移除
+        var {parentComponent} = this.state
+        if( parentComponent ){
+            var {childComponents} = parentComponent.state
+            var index = childComponents.indexOf(this)
+            childComponents.splice(index, 1)
+        }        
+    },
 }
 //设置组件可能存在父子组件关系的
 exports.setParents = function(parents){
     return $.extend(true, {}, config, {statics:{parents:parents}})
+}
+
+/**
+ * 当子组件是动态存在的时候 需要获取一次父组件
+ */
+exports.getParentComponent = function(){
+    var {parentComponent} = this.state
+    if( parentComponent ){
+        return
+    }
+    var selfNode = ReactDOM.findDOMNode(this)
+    //可能存在关系的父组件
+    var parents = this.constructor.parents || [] 
+
+    var body = document.body
+    var parent = selfNode
+    while ( parent = parent.parentNode ){
+        var handle = parent.$component
+        if( handle && parents.indexOf(handle.constructor)>=0 ){
+            this.state.parentComponent = handle
+            handle.state.childComponents.push(this)
+            break;
+        }
+        if( parent === body ){
+            break;
+        }
+    }
 }

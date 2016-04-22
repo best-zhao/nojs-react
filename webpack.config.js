@@ -1,6 +1,8 @@
 var webpack = require('webpack');
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 module.exports = {
   entry:{
+    seed : './examples/js/seed.js',
     index:[
       'webpack-dev-server/client?http://127.0.0.1:4000', // WebpackDevServer host and port
       'webpack/hot/only-dev-server',
@@ -13,6 +15,10 @@ module.exports = {
     filename: '[name].bundle.js'
   },
   plugins: [
+    new CommonsChunkPlugin({
+        name: "seed",
+        filename : 'seed.js'
+    }),
     new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {

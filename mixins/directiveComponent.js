@@ -5,20 +5,27 @@ import nj from '../lib'
 import $ from 'jquery'
 const {React, ReactDOM} = nj
 
+
+/**
+ * 标记需要手动启动的组件
+ * <nj-component start-id="mycomponent"></nj-component>
+ * Component.startOne('mycomponent', {})
+ */
+const start_id = 'start-id'
+
 const Directive = function(options){
     this.options = options || {}
-    $(()=>this.start(null,1))
 
     //exports 为某个或某类组件集合 对外提供的接口 
     const {exports, elementGroups} = this.options    
     
-
     //将指令对应的组件挂到exports上
     var rootComponent
     for( var i in elementGroups ){
         var com = exports[getComponentName(i)] = elementGroups[i].component
         if( !rootComponent ){//最外层的父组件
-            rootComponent = com
+            this.rootComponent = rootComponent = com
+            this.rootDirective = i
         }
         com.getByHandle = (handle)=> {
             for( var n=com.instances.length,i=n-1; i>=0; i-- ){
@@ -31,15 +38,22 @@ const Directive = function(options){
     }
 
     rootComponent.start = this.start.bind(this)
-    
+
+    //手动启动
+    rootComponent.startOne = (id, props, context) => {
+        var node = (context||document.body).querySelector('['+start_id+'="'+id+'"]')
+        if( node ){
+            node.removeAttribute(start_id)
+            return this.initial(node, this.rootDirective, null, 0, props)
+        }        
+    }
+
+    $(()=>this.start())    
 }
 
 Directive.prototype = {
-    start (container,f) {
-        const {elementGroups} = this.options
-        for( var i in elementGroups ){
-            this.directiveInit(i, container||document.body)
-        }
+    start (container) {        
+        this.directiveInit(this.rootDirective, container||document.body)
     },
     directiveInit (type, context, parentComponent) {
         if( !context ){
@@ -55,14 +69,24 @@ Directive.prototype = {
         })
         return components
     },
-    initial (node, type, parentComponent, index) {
-        var el = document.createElement('span')
-        node.parentNode.insertBefore(el, node);
-        node.parentNode.removeChild(node);
+    initial (node, type, parentComponent, index, props) {
 
         var Component = this.options.elementGroups[type].component
         if( Component ){
             var options = parseAttrs(nj.utils.getAttributes(node))
+
+            var noStart = options[start_id]//需要传入复杂参数时 以手动方式启动
+            if( noStart ){
+                return
+            }
+            var el = document.createElement('span')
+            node.parentNode.insertBefore(el, node);
+            node.parentNode.removeChild(node);
+
+            Object.assign(options, props) //合并手动启动传入的参数
+
+            // console.log(options)
+
             options._childNodes = nj.utils.toArray(node.childNodes)
             options._componentType = type
             options.text = options.text || node.innerText

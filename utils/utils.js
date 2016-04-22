@@ -351,10 +351,12 @@ module.exports = {
             //     options['defaultValue'] = attr.value
             //     continue
             // }
+            var value = attr.value
+            value = /true|false/.test(value) ? eval(value) : value
             if( needReplace[name] ){
-                options[needReplace[name]] = attr.value
+                options[needReplace[name]] = value
             }else{
-                options[name] = attr.value
+                options[name] = value
             }            
         }
         return options

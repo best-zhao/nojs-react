@@ -182,6 +182,11 @@
 
 	// })
 
+	window.noJS = window.noJS || {};
+	window.noJS.load = function (js) {
+	    document.write('<script src="' + js + '"></' + 'script>');
+	};
+
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
@@ -217,7 +222,7 @@
 	exports.i(__webpack_require__(7), "");
 
 	// module
-	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline;}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n", ""]);
+	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline;}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n.-page-item{display:inline-block;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n", ""]);
 
 	// exports
 
@@ -32369,10 +32374,12 @@
 	            //     options['defaultValue'] = attr.value
 	            //     continue
 	            // }
+	            var value = attr.value;
+	            value = /true|false/.test(value) ? eval(value) : value;
 	            if (needReplace[name]) {
-	                options[needReplace[name]] = attr.value;
+	                options[needReplace[name]] = value;
 	            } else {
-	                options[name] = attr.value;
+	                options[name] = value;
 	            }
 	        }
 	        return options;
@@ -32617,7 +32624,6 @@
 	                }
 	                _action && _action.fetchCompleteEvent.complete(json, conf);
 	            });
-
 	            return promise;
 	        }
 	    };
@@ -32674,8 +32680,11 @@
 
 	/**
 	 * 获取组合组件之间的父子关系
+	 * 通过point与rootID双重验证组件层级关系
 	 */
 	var nj = __webpack_require__(2);
+	// var {React, ReactDOM} = nj
+	var ReactDOM = __webpack_require__(183);
 	var $ = __webpack_require__(184);
 
 	var config = exports.config = {
@@ -32710,7 +32719,11 @@
 	            state.index = this.props.index;
 	            state.parentComponent = this.props.parentComponent;
 	        }
-
+	        return state;
+	    },
+	    componentWillMount: function componentWillMount() {
+	        var rootID = this._reactInternalInstance._rootNodeID; //可以表现dom层级结构
+	        var fn = this.constructor;
 	        var point = fn.point = fn.instances.length; //组件当前指针
 
 	        fn.instances.push({
@@ -32718,6 +32731,8 @@
 	            components: []
 	        });
 
+	        var state = this.state;
+	        state.rootID = rootID;
 	        //查找存在指针的父组件
 	        var parents = fn.parents || [];
 	        var parentConstructor;
@@ -32729,6 +32744,14 @@
 	            parentPoint = parentConstructor.point;
 	            if (parentPoint != null) {
 	                parentComponent = parentConstructor.instances[parentPoint];
+
+	                var pid = parentComponent.handle.state.rootID;
+	                //通过rootID可以知道组件所处的层级结构 父组件rootID长度必须小于当前组件
+	                //rootID.indexOf(pid)必须为0
+	                if (rootID.indexOf(pid)) {
+	                    continue;
+	                }
+
 	                //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
 	                var index = 0;
 	                parentComponent.components.forEach(function (f) {
@@ -32745,21 +32768,60 @@
 	                break;
 	            }
 	        }
-	        if (parentComponent) {
-	            state.parentComponent = parentComponent;
-	        }
-	        return state;
+	        // console.log(111,this.props.type,parentComponent)
 	    },
 	    componentDidMount: function componentDidMount() {
 	        var fn = this.constructor;
 	        this.state.childComponents = fn.instances[fn.instances.length - 1].components;
 	        fn.point = null;
+	        //标记在组件顶层dom上
+	        ReactDOM.findDOMNode(this).$component = this;
+	        // console.log(222,this.props.type,this._reactInternalInstance._rootNodeID)
 	        //fn.parents = null
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        //从父组件中移除
+	        var parentComponent = this.state.parentComponent;
+
+	        if (parentComponent) {
+	            var childComponents = parentComponent.state.childComponents;
+
+	            var index = childComponents.indexOf(this);
+	            childComponents.splice(index, 1);
+	        }
 	    }
 	};
 	//设置组件可能存在父子组件关系的
 	exports.setParents = function (parents) {
 	    return $.extend(true, {}, config, { statics: { parents: parents } });
+	};
+
+	/**
+	 * 当子组件是动态存在的时候 需要获取一次父组件
+	 */
+	exports.getParentComponent = function () {
+	    var parentComponent = this.state.parentComponent;
+
+	    if (parentComponent) {
+	        return;
+	    }
+	    var selfNode = ReactDOM.findDOMNode(this);
+	    //可能存在关系的父组件
+	    var parents = this.constructor.parents || [];
+
+	    var body = document.body;
+	    var parent = selfNode;
+	    while (parent = parent.parentNode) {
+	        var handle = parent.$component;
+	        if (handle && parents.indexOf(handle.constructor) >= 0) {
+	            this.state.parentComponent = handle;
+	            handle.state.childComponents.push(this);
+	            break;
+	        }
+	        if (parent === body) {
+	            break;
+	        }
+	    }
 	};
 
 /***/ },
@@ -35722,8 +35784,31 @@
 	                )
 	            ),
 	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    _form.Select,
+	                    { required: true },
+	                    React.createElement(
+	                        'option',
+	                        { value: '' },
+	                        '0'
+	                    ),
+	                    React.createElement(
+	                        'option',
+	                        { value: '1' },
+	                        '1'
+	                    ),
+	                    React.createElement(
+	                        'option',
+	                        { value: '2' },
+	                        '2'
+	                    )
+	                )
+	            ),
+	            React.createElement(
 	                'button',
-	                { className: 'nj-button', disabled: !this.state.valid },
+	                { className: 'nj-button' },
 	                '提交'
 	            )
 	        );
@@ -35813,8 +35898,9 @@
 	var formMixin = {
 	    //在组件外部手动更新验证状态 如异步场景
 
-	    setValid: function setValid(valid) {
-	        this.setState({ valid: valid, status: valid ? 'ok' : 'error' });
+	    setValid: function setValid(valid, nextState) {
+	        this.setState(Object.assign(nextState || {}, { valid: valid, status: valid ? 'ok' : 'error' }));
+	        this.verifyEvent.complete(valid);
 	    }
 	};
 
@@ -35873,8 +35959,9 @@
 	        valid = this.state.valid_all;
 	    }
 	    // console.log(valid,this.refs.input, this.state.value, this.state.status)
-	    this.state.status = valid == 'pending' ? 'pending' : valid ? 'ok' : 'error';
-	    this.state.valid = valid;
+	    var isFetching = valid == 'pending';
+	    this.state.status = isFetching ? 'pending' : valid ? 'ok' : 'error';
+	    this.state.valid = valid = isFetching ? false : valid;
 
 	    //input-group类 子组件输入时 需要更新父组件状态
 	    var parentComponent = this.state.parentComponent;
@@ -35893,7 +35980,7 @@
 	var Form = formDirectives['form'] = React.createClass({
 	    mixins: [mixins.childComponents.config],
 	    getDefaultProps: function getDefaultProps() {
-	        return { type: 'form', method: 'post', showicon: 'all', noValidate: true };
+	        return { type: 'form', method: 'post', showicon: 'error', noValidate: true };
 	    },
 	    handleSubmit: function handleSubmit(e) {
 	        var _this = this;
@@ -36000,9 +36087,10 @@
 	        };
 	    },
 	    getDefaultProps: function getDefaultProps(a) {
-	        return { type: 'input-group', showicon: 'all' };
+	        return { type: 'input-group', showicon: 'error' };
 	    },
 	    componentDidMount: function componentDidMount() {
+	        mixins.childComponents.getParentComponent.call(this);
 	        directive.getChildComponents(this);
 	    },
 	    verify: function verify(real, fromParent) {
@@ -36056,11 +36144,12 @@
 	        };
 	    },
 	    getDefaultProps: function getDefaultProps() {
-	        var props = { type: 'text' };
-	        // console.log(this.props)
-	        return props;
+	        return { type: 'text', trigger: 'keyup' };
 	    },
 	    verify: function verify(real, fromParent) {
+	        if (this.state.validing || /ok|pending/.test(this.state.status)) {
+	            return this.state.valid;
+	        }
 
 	        //更新input-group
 	        var parentComponent = this.state.parentComponent;
@@ -36069,13 +36158,17 @@
 	        }
 
 	        var valid = verifyField.call(this, real, fromParent);
+	        this.verifyEvent.complete(valid);
 	        //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
 	        //this.refs.input.focus()
 	        //}
 	        return valid;
 	    },
 	    componentDidMount: function componentDidMount() {
+	        mixins.childComponents.getParentComponent.call(this);
+
 	        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange');
+	        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
 	        //对外引用组件
 	        this.refs.input.$handle = this;
 	    },
@@ -36154,44 +36247,138 @@
 	        var value = _state.value;
 	        var parentComponent = _state.parentComponent;
 
-	        var className = [];
+	        var mark;
 	        if (rules.length && status) {
-	            var mark = true;
+	            mark = true;
 	            if (!rules.required && !value) {
 	                mark = false;
 	            }
 	            if (!dirty && (!parentComponent || parentComponent.state.action != 'submit')) {
 	                mark = false;
 	            }
-	            // console.log(mark,dirty, parentComponent.state.action, this.refs.input)
-	            mark && className.push('input-' + status);
 	        }
-	        this.props.className && className.push(this.props.className);
 
-	        var input = React.createElement('input', _extends({ ref: 'input' }, attrs, { onKeyUp: function onKeyUp() {
-	                _this3.verify(true);
-	            }, className: className.join(' '), valueLink: this.valueLink() }));
+	        //触发验证的事件类型
+	        var trigger = {
+	            keyup: 'onKeyUp',
+	            blur: 'onBlur'
+	        }[this.props.trigger];
 
-	        switch (type) {
-	            case 'checkbox':
-	                input = React.createElement('input', _extends({}, attrs, { ref: 'input', checkedLink: this.valueLink() }));
-	                break;
-	            case 'radio':
-	                input = React.createElement('input', _extends({}, attrs, { ref: 'input', checkedLink: this.valueLink() }));
-	                break;
-	            case 'textarea':
-	                input = React.createElement('textarea', _extends({}, attrs, { ref: 'input', onKeyUp: function onKeyUp() {
-	                        _this3.verify(true);
-	                    }, className: className.join(' '), valueLink: this.valueLink() }));
+	        var options = Object.assign({}, attrs, {
+	            ref: 'input'
+	        });
+	        if (type == 'checkbox' || type == 'radio') {
+	            options.checkedLink = this.valueLink();
+	        } else {
+	            options.valueLink = this.valueLink();
+	            options.className = nj.utils.joinClass(this.props.className, mark && 'input-' + status);
+	            options[trigger] = function () {
+	                return _this3.verify(true);
+	            };
 	        }
 	        return React.createElement(
 	            'label',
 	            null,
-	            input,
+	            type == 'textarea' ? React.createElement('textarea', options) : React.createElement('input', options),
 	            React.createElement(
 	                'span',
 	                null,
 	                this.props.text
+	            ),
+	            React.createElement(VerifyStatus, { field: this })
+	        );
+	    }
+	});
+	formDirectives['select'] = React.createClass({
+	    mixins: [mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
+	    getInitialState: function getInitialState() {
+	        return {
+	            dirty: false,
+	            valid: true,
+	            rules: getRules.call(this),
+	            value: this.props.defaultValue
+	        };
+	    },
+	    getDefaultProps: function getDefaultProps() {
+	        return { type: 'select' };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        mixins.childComponents.getParentComponent.call(this);
+	        directive.getChildComponents(this);
+
+	        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange');
+	        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
+	        this.refs.wrap.$handle = this;
+	    },
+	    verify: function verify(real, fromParent) {
+	        var parentComponent = this.state.parentComponent;
+	        if (parentComponent) {
+	            parentComponent.setState({ dirty: true });
+	        }
+
+	        var valid = verifyField.call(this, real, fromParent);
+	        this.verifyEvent.complete(valid);
+	        return valid;
+	    },
+	    valueLink: function valueLink() {
+	        var _this4 = this;
+
+	        var _valueLink = this.props.valueLink;
+	        var _value = _valueLink && _valueLink.value;
+
+	        //外部valueLink改变状态后 组件内部需同步
+	        if (_valueLink && _value !== this.state.value && _value != undefined) {
+	            this.state.value = _value;
+
+	            window.setTimeout(function () {
+	                valueLink.requestChange(_value, true);
+	            }, 10);
+	        }
+
+	        var valueLink = this.state.valueLink = {
+	            value: this.state.value,
+	            requestChange: function requestChange(newValue) {
+	                // console.log(this.refs.wrap.selectedOptions[0].value)
+	                _valueLink && _valueLink.requestChange(newValue); //合并外部双向绑定
+
+	                _this4.state.value = newValue;
+	                _this4.state.status = null;
+
+	                _this4.setState({
+	                    value: newValue,
+	                    dirty: true
+	                });
+
+	                var parentComponent = _this4.state.parentComponent;
+	                if (parentComponent) {
+	                    parentComponent.state.status = null;
+	                    parentComponent.state.dirty = true;
+	                }
+
+	                _this4.verify.call(_this4, false);
+	                _this4.changeEvent.complete();
+	            }
+	        };
+	        return valueLink;
+	    },
+	    render: function render() {
+	        var options = Object.assign({}, this.props, {
+	            ref: 'wrap',
+	            valueLink: this.valueLink()
+	        });
+	        //nj-select 获取的children 数组项为空的占位符
+	        var children = this.props.children;
+
+	        children = children && children.filter(function (item) {
+	            return item;
+	        });
+	        return React.createElement(
+	            'label',
+	            null,
+	            React.createElement(
+	                'select',
+	                options,
+	                children
 	            ),
 	            React.createElement(VerifyStatus, { field: this })
 	        );
@@ -36226,21 +36413,28 @@
 	                showmsg = false;
 	            }
 	        }
-	        var novalidName = field.state.novalidName;
-	        var novalidText = '';
-	        var ispending = field.state.valid == 'pending';
+	        var _field$state = field.state;
+	        var novalidName = _field$state.novalidName;
+	        var status = _field$state.status;
+	        var errortext = _field$state.errortext;
+	        var valid = _field$state.valid;
+	        var childComponents = _field$state.childComponents;
 
-	        // console.log(showmsg, field.state.valid,field.state.status,field.refs.input)
+	        var novalidText = '';
+	        var ispending = status == 'pending';
+
+	        // console.log(showmsg, valid, status, field.refs.input)
 
 	        if (showmsg) {
 	            if (ispending) {
 	                novalidText = 'loading……';
-	            } else if (!field.state.valid) {
-	                novalidText = field.props.errortext || statusText[novalidName] || '';
+	            } else if (!valid) {
+	                novalidText = errortext || field.props.errortext || statusText[novalidName] || '';
 	            }
 
-	            var showicon = parentComponent && parentComponent.props.showicon;
-	            if (showicon != 'all' && field.state.status != showicon) {
+	            var showicon = parentComponent ? parentComponent.props.showicon : field.props.showicon;
+	            if (showicon != 'all' && status != showicon && !ispending) {
+	                //ispending始终显示
 	                return null;
 	            }
 	            //适合'input-group'子项为text类
@@ -36248,8 +36442,8 @@
 	                if (!field.state.valid_all) {
 	                    //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态
 	                    return null;
-	                } else if (field.state.valid) {
-	                    var child = field.state.childComponents[0];
+	                } else if (valid) {
+	                    var child = childComponents[0];
 	                    if (child && textReg.test(child.props.type)) {
 	                        //已输入的全部通过 状态体现在子项上 group无需显示状态
 	                        return null;
@@ -36271,8 +36465,6 @@
 	        ) : null;
 	    }
 	});
-
-	var form = {};
 
 	var formRules = {
 	    required: function required(value) {
@@ -36341,21 +36533,23 @@
 	    }
 	};
 	//自定义规则
-	form.addRule = function (name, fn) {
+	Form.addRule = function (name, fn) {
 	    formRules[name] = fn;
 	};
 
 	var statusText = {
 	    required: '不能为空',
 	    email: '邮箱格式错误',
-	    mobile: '手机号码格式错误'
+	    mobile: '手机号码格式错误',
+	    url: 'url格式错误'
 	};
 
 	var directive = new Directive({
 	    elementGroups: {
-	        'form': { children: ['input-group', 'input'], component: formDirectives['form'] },
-	        'input-group': { children: ['input'], component: formDirectives['input-group'] },
-	        'input': { component: formDirectives['input'] }
+	        'form': { children: ['input-group', 'input', 'select'], component: formDirectives['form'] },
+	        'input-group': { children: ['input', 'select'], component: formDirectives['input-group'] },
+	        'input': { component: formDirectives['input'] },
+	        'select': { component: formDirectives['select'] }
 	    },
 	    exports: exports
 	});
@@ -36548,7 +36742,7 @@
 
 
 	// module
-	exports.push([module.id, "/*form*/\r\nnj-form,nj-input{display:inline-block;}\r\n.nj-form li.item{padding:0 15px 15px 0;clear:both;}\r\n.nj-form .fields{margin-left:97px}\r\n.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}\r\n.nj-form .short-text{width:90px;}\r\n.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}\r\n.nj-form textarea.text[rows]{height:auto}\r\n.nj-form textarea.text[cols]{width:auto}\r\n.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}\r\n.nj-form .lab i{color:#f06;margin-right:7px}\r\n.nj-form .date{display:inline-block;vertical-align:top;}\r\n.nj-form .date .text{width:90px;background-color:transparent}\r\n.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{\r\n  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}\r\n.nj-form select.text{width:auto;height:auto;}\r\n.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}\r\n.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}\r\n\r\n.nj-form .input-ok{border-color:#00B700;}\r\n.nj-form .input-pending{border-color:#f90;}\r\n.nj-form .input-error{border-color:red;}\r\n\r\n.nj-form-msg-ok:before{content:'\\E606';color:#00BE00;font:16px 'njicon';}\r\n.nj-form-msg-error:before{content:'\\E60A';color:red;font:16px 'njicon';}\r\n.nj-form-msg-error{color:red;}\r\n.nj-form-msg-pending:before{content:'\\E604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}\r\n.nj-form-msg-pending{color:#f90;}", ""]);
+	exports.push([module.id, "/*form*/\r\nnj-form,nj-input{display:inline-block;}\r\n.nj-form li.item{padding:0 15px 15px 0;clear:both;}\r\n.nj-form .fields{margin-left:97px}\r\n.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}\r\n.nj-form .short-text{width:90px;}\r\n.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}\r\n.nj-form textarea.text[rows]{height:auto}\r\n.nj-form textarea.text[cols]{width:auto}\r\n.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}\r\n.nj-form .lab i{color:#f06;margin-right:7px}\r\n.nj-form .date{display:inline-block;vertical-align:top;}\r\n.nj-form .date .text{width:90px;background-color:transparent}\r\n.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{\r\n  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}\r\n.nj-form select.text{width:auto;height:auto;}\r\n.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}\r\n.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}\r\n\r\nbody .nj-form .input-ok{border-color:#00B700;}\r\nbody .nj-form .input-pending{border-color:#f90;}\r\nbody .nj-form .input-error{border-color:red;}\r\n\r\n.nj-form-msg-ok:before{content:'\\E606';color:#00BE00;font:16px 'njicon';}\r\n.nj-form-msg-error:before{content:'\\E60A';color:red;font:16px 'njicon';}\r\n.nj-form-msg-error{color:red;}\r\n.nj-form-msg-pending:before{content:'\\E604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}\r\n.nj-form-msg-pending{color:#f90;}", ""]);
 
 	// exports
 
@@ -36579,13 +36773,18 @@
 	var React = _lib2.default.React;
 	var ReactDOM = _lib2.default.ReactDOM;
 
+	/**
+	 * 标记需要手动启动的组件
+	 * <nj-component start-id="mycomponent"></nj-component>
+	 * Component.startOne('mycomponent', {})
+	 */
+
+	var start_id = 'start-id';
+
 	var Directive = function Directive(options) {
 	    var _this = this;
 
 	    this.options = options || {};
-	    (0, _jquery2.default)(function () {
-	        return _this.start(null, 1);
-	    });
 
 	    //exports 为某个或某类组件集合 对外提供的接口
 	    var _options = this.options;
@@ -36599,7 +36798,8 @@
 	        var com = exports[getComponentName(i)] = elementGroups[i].component;
 	        if (!rootComponent) {
 	            //最外层的父组件
-	            rootComponent = com;
+	            this.rootComponent = rootComponent = com;
+	            this.rootDirective = i;
 	        }
 	        com.getByHandle = function (handle) {
 	            for (var n = com.instances.length, i = n - 1; i >= 0; i--) {
@@ -36612,15 +36812,24 @@
 	    }
 
 	    rootComponent.start = this.start.bind(this);
+
+	    //手动启动
+	    rootComponent.startOne = function (id, props, context) {
+	        var node = (context || document.body).querySelector('[' + start_id + '="' + id + '"]');
+	        if (node) {
+	            node.removeAttribute(start_id);
+	            return _this.initial(node, _this.rootDirective, null, 0, props);
+	        }
+	    };
+
+	    (0, _jquery2.default)(function () {
+	        return _this.start();
+	    });
 	};
 
 	Directive.prototype = {
-	    start: function start(container, f) {
-	        var elementGroups = this.options.elementGroups;
-
-	        for (var i in elementGroups) {
-	            this.directiveInit(i, container || document.body);
-	        }
+	    start: function start(container) {
+	        this.directiveInit(this.rootDirective, container || document.body);
 	    },
 	    directiveInit: function directiveInit(type, context, parentComponent) {
 	        var _this2 = this;
@@ -36638,14 +36847,24 @@
 	        });
 	        return components;
 	    },
-	    initial: function initial(node, type, parentComponent, index) {
-	        var el = document.createElement('span');
-	        node.parentNode.insertBefore(el, node);
-	        node.parentNode.removeChild(node);
+	    initial: function initial(node, type, parentComponent, index, props) {
 
 	        var Component = this.options.elementGroups[type].component;
 	        if (Component) {
 	            var options = parseAttrs(_lib2.default.utils.getAttributes(node));
+
+	            var noStart = options[start_id]; //需要传入复杂参数时 以手动方式启动
+	            if (noStart) {
+	                return;
+	            }
+	            var el = document.createElement('span');
+	            node.parentNode.insertBefore(el, node);
+	            node.parentNode.removeChild(node);
+
+	            Object.assign(options, props); //合并手动启动传入的参数
+
+	            // console.log(options)
+
 	            options._childNodes = _lib2.default.utils.toArray(node.childNodes);
 	            options._componentType = type;
 	            options.text = options.text || node.innerText;
@@ -36993,6 +37212,18 @@
 	        demo.scroll((0, _jquery2.default)(this).hasClass('prev') ? false : true);
 	        return false;
 	    });
+
+	    _scroll.Scroll.startOne('myscroll', {
+	        pageTemplate: function pageTemplate(i) {
+	            return React.createElement(
+	                'div',
+	                null,
+	                'p',
+	                i + 1,
+	                '-'
+	            );
+	        }
+	    });
 	};
 
 /***/ },
@@ -37057,35 +37288,39 @@
 	        this.props.computed && $(window).on('resize', function () {
 	            _this.reset();
 	        });
-	        this.reset();
-	        var _state = this.state;
-	        var length = _state.length;
-	        var view = _state.view;
-	        var step = _state.step;
-	        var size = _state.size;
-	        var itemsComponent = _state.itemsComponent;
-	        // console.log(length,view)
+	        setTimeout(function () {
+	            //computed情况下 scroll-items组件必须先计算完成后 这里才reset
+	            _this.reset();
 
-	        if (length <= view) {
-	            return;
-	        }
-	        var nextLast = length % view;
+	            var _state = _this.state;
+	            var length = _state.length;
+	            var view = _state.view;
+	            var step = _state.step;
+	            var size = _state.size;
+	            var itemsComponent = _state.itemsComponent;
+	            // console.log(length,view)
 
-	        //初始化的追加个数 保证next即可
-	        //next所需:view-nextLast
-	        //step==0连续滚动时 拷贝view个即可
-	        nextLast && this.append(0, step ? view - nextLast : view);
+	            if (length <= view) {
+	                return;
+	            }
+	            var nextLast = length % view;
 
-	        if (this.props.direction == 'y') {
-	            size.total = $(itemsComponent.refs.items).height();
-	        }
-	        this.start();
+	            //初始化的追加个数 保证next即可
+	            //next所需:view-nextLast
+	            //step==0连续滚动时 拷贝view个即可
+	            nextLast && _this.append(0, step ? view - nextLast : view);
 
-	        $(itemsComponent.refs.wrap).hover(function () {
-	            _this.stop();
-	        }, function () {
+	            if (_this.props.direction == 'y') {
+	                size.total = $(itemsComponent.refs.items).height();
+	            }
 	            _this.start();
-	        });
+
+	            $(itemsComponent.refs.wrap).hover(function () {
+	                _this.stop();
+	            }, function () {
+	                _this.start();
+	            });
+	        }, 1);
 	    },
 	    append: function append(start, appendLength) {
 	        /*
@@ -37196,7 +37431,6 @@
 	        };
 	        if (horizontal) {
 	            size.total = this.state.totalLength * size.item;
-	            // this.con.width(this.state.size.total);
 	        }
 	        this.state.view = Math.ceil(size.box / size.item);
 	        if (step == 'view') {
@@ -37333,7 +37567,8 @@
 	});
 	Scroll.PropTypes = {
 	    step: React.PropTypes.number,
-	    time: React.PropTypes.number
+	    time: React.PropTypes.number,
+	    pageTemplate: React.PropTypes.func
 	};
 
 	var ScrollItems = React.createClass({
@@ -37351,36 +37586,48 @@
 	        parentComponent.state.totalLength = parentComponent.state.length = this.props.children.length;
 	        //父组件中通过itemsComponent来调用
 	        parentComponent.state.itemsComponent = this;
-	    },
-	    render: function render() {
-	        var parentComponent = this.state.parentComponent;
-	        // if( !parentComponent ){
-	        //     console.log(1)
-	        //     return null
-	        // }
 
+	        //适应多分辨率时 设置computed=true可以自动为this.item设置尺寸 因为css中无法设置
 	        var _parentComponent$prop = parentComponent.props;
 	        var direction = _parentComponent$prop.direction;
 	        var computed = _parentComponent$prop.computed;
 
 	        var horizontal = direction == 'x';
 	        var itemStyle = { display: horizontal ? 'inline-block' : 'block' };
-	        //适应多分辨率时 设置computed=true可以自动为this.item设置尺寸 因为css中无法设置
+
 	        if (computed) {
 	            var value;
+	            var wrap = $(this.refs.wrap);
 	            if (horizontal) {
-	                value = parentComponent.wrap.width();
+	                value = wrap.width();
 	                itemStyle.width = value;
 	                itemStyle.height = value / computed;
 	            } else {
-	                value = parentComponent.wrap.height();
+	                value = wrap.height();
 	                itemStyle.width = value * computed;
 	                itemStyle.height = value;
 	            }
 	        }
+	        this.setState({ itemStyle: itemStyle });
+	    },
+	    handleTouch: function handleTouch(e) {
+	        console.log(e.touches[0]);
+	    },
+	    render: function render() {
+	        var _state5 = this.state;
+	        var parentComponent = _state5.parentComponent;
+	        var itemStyle = _state5.itemStyle;
+	        // if( !parentComponent ){
+	        //     console.log(1)
+	        //     return null
+	        // }
+
+	        var direction = parentComponent.props.direction;
+
+	        var horizontal = direction == 'x';
+
 	        var _props4 = this.props;
 	        var children = _props4.children;
-	        var _children = _props4._children;
 	        var className = _props4.className;
 
 	        className = nj.utils.joinClass('nj-scroll-item clearfix', className);
@@ -37388,7 +37635,7 @@
 
 	        return React.createElement(
 	            'div',
-	            { ref: 'wrap', className: 'nj-scroll-wrap' },
+	            { ref: 'wrap', _onTouchMove: this.handleTouch, className: 'nj-scroll-wrap' },
 	            React.createElement(
 	                'div',
 	                { ref: 'items', className: 'nj-scroll-items clearfix', style: horizontal ? { width: size.total } : {} },
@@ -37431,9 +37678,7 @@
 	        var _this4 = this;
 
 	        // console.log(this.props)
-	        var _state5 = this.state;
-	        var parentComponent = _state5.parentComponent;
-	        var item = _state5.item;
+	        var parentComponent = this.state.parentComponent;
 	        var _parentComponent$stat = parentComponent.state;
 	        var length = _parentComponent$stat.length;
 	        var index = _parentComponent$stat.index;
@@ -37444,22 +37689,33 @@
 	        }
 	        var trigger = this.props.trigger;
 
+	        var template = this.props.template || parentComponent.props.pageTemplate;
 	        return React.createElement(
 	            'div',
 	            { className: 'nj-scroll-page' },
-	            items.map(function (n, i) {
-	                var className = nj.utils.joinClass('-page-item', n - 1 == index && '-page-active');
-	                var _item = typeof item == 'function' ? React.createElement('span', { dangerouslySetInnerHTML: { __html: item.call(_this4, i) } }) : n;
-	                return trigger == 'hover' ? React.createElement(
-	                    'span',
-	                    { ref: 'item' + i, onMouseEnter: _this4.handleClick.bind(_this4, n - 1), className: className, key: n },
-	                    _item
-	                ) : React.createElement(
-	                    'span',
-	                    { ref: 'item' + i, onClick: _this4.handleClick.bind(_this4, n - 1), className: className, key: n },
-	                    _item
-	                );
-	            })
+	            React.createElement(
+	                'div',
+	                { className: '-page-inner' },
+	                items.map(function (n, i) {
+	                    var tmpl = typeof template == 'function' && template.call(_this4, i);
+	                    var child = tmpl || n;
+	                    var options = {
+	                        ref: 'item' + i,
+	                        className: nj.utils.joinClass('-page-item', n - 1 == index && '-page-active'),
+	                        key: n
+	                    };
+	                    if (typeof tmpl == 'string') {
+	                        options.dangerouslySetInnerHTML = { __html: tmpl };
+	                        child = null;
+	                    }
+	                    options[trigger == 'hover' ? 'onMouseEnter' : 'onClick'] = _this4.handleClick.bind(_this4, n - 1);
+	                    return React.createElement(
+	                        'span',
+	                        options,
+	                        child
+	                    );
+	                })
+	            )
 	        );
 	    }
 	});
@@ -37516,27 +37772,9 @@
 	    var rs = 'http://css.mdbimg.com';
 	    _face2.default.config({
 	        themeItems: {
-	            'default': { url: rs + "/js/lib/Kindeditor/plugins/emoticons/images/" },
-	            'mdb': {
-	                name: '长颈鹿',
-	                url: rs + '/img/face/mdb/',
-	                item: { '0': '哎呀', '1': '傲慢', '2': '暴怒', '3': '鄙视', '4': '奋斗', '5': '愤怒', '6': '干什么', '7': '可爱', '8': '酷酷', '9': '流泪', '10': '秒杀',
-	                    '11': '哦错了', '12': '伤心', '13': '生气', '14': '思索', '15': '微笑', '16': '委屈', '17': '无语'
-	                },
-	                fix: ".png"
-	            },
-	            'dog': {
-	                name: '小狗',
-	                url: rs + '/img/face/dog/',
-	                item: {
-	                    '1': '微笑', '2': '喜欢', '3': '发呆', '4': '大哭', '5': '亲亲', '6': '发火', '7': '大笑', '8': '惊讶', '9': '伤心', '10': '冷汗',
-	                    '11': '可爱', '12': '加油', '13': '疑问', '14': '嘘', '15': '无语', '16': '晕', '17': '悲哀',
-	                    '18': '拜拜', '19': '汗', '20': '挖鼻孔', '21': '牛', '22': '尴尬', '23': '可怜', '24': '阴险', '25': '离开'
-	                },
-	                fix: ".gif"
-	            }
+	            'default': { url: rs + "/js/lib/Kindeditor/plugins/emoticons/images/" }
 	        },
-	        themes: ['dog', 'mdb', 'default']
+	        themes: ['default']
 	    });
 	    _face2.default.create({
 	        nearby: 'show-face',
@@ -37661,7 +37899,10 @@
 	            content: this.replaceFace(text)
 	        };
 	        var Input = insert[0].$handle; //是否为Input表单组件
-	        Input.state.value = insert.val(); //setState方法为异步 所以不使用 直接同步赋值
+	        if (Input) {
+	            //setState方法为异步 所以不使用 直接同步赋值
+	            Input.state.value = insert.val();
+	        }
 	        popover.setDisplay(false);
 	        this.insertEvent.complete(data);
 	    },
