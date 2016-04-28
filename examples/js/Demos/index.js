@@ -2,9 +2,10 @@
  * 文档中的demo实例
  */
 
-var components = ['popup', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos']
+var components = ['popup', 'popover', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos']
 ;[
     require('./popup'),
+    require('./popover'),
     require('./tree'),
     require('./form'),
     require('./switch'),

@@ -1,3 +1,3 @@
 import nj from 'nj'
 
-console.log(1,'seed')
+// console.log(1,'seed')

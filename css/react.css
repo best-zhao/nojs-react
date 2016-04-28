@@ -24,7 +24,7 @@
 .d_show{display:block}
 .d_hide{display:none}
                     
-.nj-layer-wrap,.ng-layer-wrap{display:inline;}
+.nj-layer-wrap,.ng-layer-wrap{display:inline}
 .nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;
     background:rgba(0,0,0,.2);
     
@@ -44,7 +44,7 @@
 .nj-popup ._foot button{margin:0 5px;}
 .nj-popup ._foot .nj-button-flat{margin:0;}
 
-.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}
+.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.9)}
 .popup-tip ._body{padding:0 20px 20px;color:#000;}
 .popup-tip .tip-area{text-align:center;line-height:30px;}
 .popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}
@@ -59,7 +59,7 @@
 .nj-icon-warn:before{content:'\e609';color:#f60;}
 .nj-icon-error:before{content:'\e60a';color:red;}
 
-
+.nj-popover{position:absolute;}
 .nj-popover-inner{background:#fff;border:1px solid #ddd\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}
 
 
@@ -107,3 +107,7 @@ nj-scroll-items{display:inline-block;overflow:hidden;}
 .nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}
 .nj-face-pop .pack li:hover{border-color:#aaa;}
 .nj-face-pop .pack img{width:100%;height:100%;}
+
+
+
+nj-form,nj-input{display:inline-block;}

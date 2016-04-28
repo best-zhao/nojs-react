@@ -44,7 +44,10 @@ module.exports = {
           var args = Array.prototype.slice.call(arguments)
           var res
           queue.forEach(function(fn){
-              res = fn.apply(self, args)
+              var _res = fn.apply(self, args)
+              if( _res!==undefined ){
+                res = _res
+              }
           })
           return res
         }
@@ -96,7 +99,7 @@ module.exports = {
             opera: /opera/.test(u) 
         }, state;
         function check( name ){
-            //多个用逗号隔开 如'ie6 ie7'
+            //多个用空格隔开 如'ie6 ie7'
             state = false;
             name = name.split(' ');
             $.each( name, function( i, val ){

@@ -27,14 +27,14 @@ const Directive = function(options){
             this.rootComponent = rootComponent = com
             this.rootDirective = i
         }
-        com.getByHandle = (handle)=> {
+        com.getByHandle = ((com)=>(handle)=>{
             for( var n=com.instances.length,i=n-1; i>=0; i-- ){
                 var item = com.instances[i].handle
                 if( item.props.handle == handle ){
                     return item
                 }
             }
-        }
+        })(com)
     }
 
     rootComponent.start = this.start.bind(this)
@@ -71,7 +71,8 @@ Directive.prototype = {
     },
     initial (node, type, parentComponent, index, props) {
 
-        var Component = this.options.elementGroups[type].component
+        var componentItem = this.options.elementGroups[type]
+        var Component = componentItem.component
         if( Component ){
             var options = parseAttrs(nj.utils.getAttributes(node))
 
@@ -95,7 +96,7 @@ Directive.prototype = {
             var componentInfo = this.options.elementGroups[type]
             var componentChildren = componentInfo.children || []
             
-            if( options._childNodes.length ){
+            if( options._childNodes.length && componentItem.wrapItem ){
                 options.children = []
                 //先在props.children中占位 必须是有效的元素节点
                 options._children = options._childNodes.filter(n=>{

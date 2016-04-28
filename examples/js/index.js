@@ -26,7 +26,7 @@ $.getJSON('./menu.json').then(json=>{
                     demo(container)
                 }, 10)
             }
-            Prism.highlightAll(true)
+            // Prism.highlightAll(true)
         }
     }
     render(<Frame {...frameOptions}/>, document.getElementById('frameContainer'))

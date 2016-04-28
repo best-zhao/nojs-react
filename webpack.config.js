@@ -4,8 +4,8 @@ module.exports = {
   entry:{
     seed : './examples/js/seed.js',
     index:[
-      'webpack-dev-server/client?http://127.0.0.1:4000', // WebpackDevServer host and port
-      'webpack/hot/only-dev-server',
+      // 'webpack-dev-server/client?http://127.0.0.1:4000', // WebpackDevServer host and port
+      // 'webpack/hot/only-dev-server',
       './examples/js/index.js'
     ]
   },
@@ -19,7 +19,7 @@ module.exports = {
         name: "seed",
         filename : 'seed.js'
     }),
-    new webpack.HotModuleReplacementPlugin()
+    // new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
     alias: {
@@ -31,7 +31,7 @@ module.exports = {
       test: /\.js$/,
       exclude: /node_modules/,
       //react-hot!jsx-loader?harmony
-      loader: 'react-hot!babel?presets[]=react,presets[]=es2015'
+      loader: 'babel?presets[]=react,presets[]=es2015'
     }, {
       test: /\.less/,
       loader: 'style-loader!css-loader!less-loader'

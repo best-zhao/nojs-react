@@ -100,7 +100,7 @@
 	                    demo(container);
 	                }, 10);
 	            }
-	            Prism.highlightAll(true);
+	            // Prism.highlightAll(true)
 	        }
 	    };
 	    render(React.createElement(_frame.Frame, frameOptions), document.getElementById('frameContainer'));
@@ -182,6 +182,15 @@
 
 	// })
 
+	/**
+	 * html标签指令组件 兼容ie处理
+	 * 保证nojs-react在head处引入并执行
+	 */
+	'form|input|input-group|select|scroll|scroll-items|scroll-page|switch|switch-menu|switch-item'.split('|').forEach(function (dir) {
+	    var tagName = 'nj-' + dir;
+	    document.createElement(tagName);
+	});
+
 	window.noJS = window.noJS || {};
 	window.noJS.load = function (js) {
 	    document.write('<script src="' + js + '"></' + 'script>');
@@ -222,7 +231,7 @@
 	exports.i(__webpack_require__(7), "");
 
 	// module
-	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline;}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.85)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n.-page-item{display:inline-block;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n", ""]);
+	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}       \r\n.nj-icon:before{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;z-index:199;width:480px;\r\n  transition:transform .3s,opacity .3s;}\r\n.nj-popup.popup-active{z-index:201;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.9)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n.nj-popover{position:absolute;}\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}\r\n\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;background:#999;background:none\\9;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-flat{background:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n.-page-item{display:inline-block;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n\r\n\r\n\r\nnj-form,nj-input{display:inline-block;}", ""]);
 
 	// exports
 
@@ -32070,7 +32079,10 @@
 	            var args = Array.prototype.slice.call(arguments);
 	            var res;
 	            queue.forEach(function (fn) {
-	                res = fn.apply(self, args);
+	                var _res = fn.apply(self, args);
+	                if (_res !== undefined) {
+	                    res = _res;
+	                }
 	            });
 	            return res;
 	        }
@@ -32125,7 +32137,7 @@
 	        },
 	            state;
 	        function check(name) {
-	            //多个用逗号隔开 如'ie6 ie7'
+	            //多个用空格隔开 如'ie6 ie7'
 	            state = false;
 	            name = name.split(' ');
 	            $.each(name, function (i, val) {
@@ -32511,7 +32523,7 @@
 	        }
 	    }
 
-	    //创建事件
+	    //创建action
 	    function Action(options) {
 	        this.options = options;
 	        this.init();
@@ -32524,27 +32536,61 @@
 	            this.fetchCompleteEvent = context.addEventQueue.call(this, 'onFetchComplete');
 	        }
 	    };
+	    var eventsType = ['onFetchBefore', 'onFetch', 'onFetchComplete'];
+	    //通过action.config().onFetchBefore来添加一些全局事件 事件会保存在Action.events相应的数组中 等添加action时再绑定事件到action
+	    Action.events = {};
+	    eventsType.forEach(function (e) {
+	        Action.events[e] = [];
+	    });
 
 	    return {
 	        //配置默认选项
 	        config: function config(options) {
 	            _config2 = $.extend(true, _config2, options);
+
+	            var eventExports = {};
+	            eventsType.forEach(function (e) {
+	                eventExports[e] = function (fn) {
+	                    //添加事件到队列中
+	                    Action.events[e].push(fn);
+	                    //已创建的action 绑定一次
+	                    for (var i in Events) {
+	                        Events[i][e](fn);
+	                    }
+
+	                    return eventExports;
+	                };
+	            });
+	            return eventExports;
 	        },
-	        //添加事件
+	        //添加action
 	        add: function add(name, options) {
 	            options = $.extend(true, {}, _config2, options);
 	            options.reverse && parseConf(options);
-	            return Events[name] = new Action(options);
+	            var action = Events[name] = new Action(options);
+
+	            var events = $.extend(true, {}, Action.events);
+
+	            //绑定全局添加的事件
+	            for (var i in events) {
+	                var f,
+	                    fns = events[i];
+	                while (f = fns.shift()) {
+	                    action[i](f);
+	                }
+	            }
+	            return action;
 	        },
 	        get: function get(name) {
 	            return Events[name];
 	        },
 	        //绑定事件
 	        on: function on(action, options) {
+	            var self = this;
 	            if ($.type(action) == 'object') {
 	                //批量添加
 	                for (var i in action) {
-	                    Actions.on(i, action[i]);
+	                    self.on(i, action[i]);
 	                }
 	                return;
 	            }
@@ -32557,7 +32603,7 @@
 	            }
 	            target.on('click', function () {
 	                //dom上使用data-state属性标示初始状态，如已关注标示为1,否则为0或不标示
-	                Actions.trigger(action, $.extend({}, options, { target: this, state: $(this).data('state') }));
+	                self.trigger(action, $.extend({}, options, { target: this, state: $(this).data('state') }));
 	                return this.tagName.toLowerCase() == 'input' ? true : false;
 	            });
 	        },
@@ -35063,7 +35109,7 @@
 	 * 文档中的demo实例
 	 */
 
-	var components = ['popup', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos'];[__webpack_require__(197), __webpack_require__(201), __webpack_require__(202), __webpack_require__(207), __webpack_require__(209), __webpack_require__(211), __webpack_require__(214), __webpack_require__(247)].forEach(function (fn, i) {
+	var components = ['popup', 'popover', 'tree', 'form', 'switch', 'scroll', 'face', 'comments', 'photos'];[__webpack_require__(197), __webpack_require__(201), __webpack_require__(203), __webpack_require__(204), __webpack_require__(209), __webpack_require__(211), __webpack_require__(213), __webpack_require__(215), __webpack_require__(248)].forEach(function (fn, i) {
 	    exports[components[i]] = fn;
 	});
 
@@ -35406,6 +35452,12 @@
 	    var screen = this.nearby && this.nearby[0] === window;
 	    //this.position = options.position || (screen ? {top:50, left:50} : {top:100, left:0});
 	    this.position = $.extend(screen ? { top: 50, left: 50 } : { top: 100, left: 0 }, options.position);
+	    if (this.position.right !== undefined) {
+	        delete this.position.left;
+	    }
+	    if (this.position.bottom !== undefined) {
+	        delete this.position.top;
+	    }
 
 	    //relative=true 表示定位方式同css背景定位方式
 	    this.relative = options.relative != undefined ? options.relative : screen ? true : false;
@@ -35638,6 +35690,202 @@
 
 	'use strict';
 
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var render = nj.render;
+
+	var Popover = __webpack_require__(202);
+	var $ = __webpack_require__(184);
+
+	module.exports = function (container) {
+	    var pop = render(React.createElement(Popover, { nearby: 'demo-popover-button', template: '123' }), document.getElementById('demo-popover-wrap'));
+	    // console.log(pop)
+	    // pop.refs.pop.setDisplay(true)
+	};
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * 弹出层
+	 */
+	var nj = __webpack_require__(3);
+	var React = nj.React;
+	var ReactDOM = nj.ReactDOM;
+	var mixins = nj.mixins;
+
+	var align = __webpack_require__(199);
+	var $ = __webpack_require__(184);
+
+	var Popover = React.createClass({
+	    displayName: 'Popover',
+
+	    statics: {
+	        create: function create(options) {
+	            options = options || {};
+	            return ReactDOM.render(React.createElement(Popover, options), nj.utils.createContainer('nj-popover-container nj-layer-wrap'));
+	        }
+	    },
+	    mixins: [align, mixins.setDisplay],
+	    getDefaultProps: function getDefaultProps() {
+	        return { mode: 'hover', effect: 'scale' };
+	    },
+	    getInitialState: function getInitialState() {
+	        return { origin: '0 0', nearby: nj.utils.dom(this.props.nearby) };
+	    },
+	    getOrigin: function getOrigin(position) {
+	        var pos = position || this.props.position || {};
+	        var origin = [0, 0];
+	        if (pos.left != undefined) {
+	            origin[0] = 0;
+	        } else if (pos.right != undefined) {
+	            origin[0] = '100%';
+	        }
+	        if (pos.top != undefined) {
+	            origin[1] = 0;
+	        } else if (pos.bottom != undefined) {
+	            origin[1] = '100%';
+	        }
+	        this.state.origin = origin.join(' ');
+	        // this.setState({origin:this.state.origin})
+	        return this.state.origin;
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var _this = this;
+
+	        // var el = $(ReactDOM.findDOMNode(this))
+	        var self = this;
+	        var nearby = this.state.nearby;
+
+	        if (!nearby) {
+	            return;
+	        }
+	        var layerEl = $(this.refs.layer.layer.children[0]);
+
+	        this.setAlign({
+	            nearby: nearby,
+	            element: layerEl,
+	            relative: this.props.relative,
+	            position: this.props.position,
+	            onTurn: function onTurn(turnPosition) {
+	                self.getOrigin(turnPosition);
+	            }
+	        });
+
+	        var mode = this.props.mode;
+
+	        function show(element) {
+	            self.state.nearby = element;
+	            self.getOrigin();
+	            self.setDisplay(true);
+	        }
+	        var delay;
+	        var handleFromPop;
+	        function hide() {
+	            if (handleFromPop) {
+	                handleFromPop = null;
+	                return;
+	            }
+	            delay = window.setTimeout(function () {
+	                self.setDisplay(false);
+	            }, 10);
+	        }
+	        if (mode == 'hover') {
+	            nearby.hover(function () {
+	                self.setDisplay(false);
+	                window.clearTimeout(delay);
+	                show(this);
+	            }, hide);
+
+	            layerEl.hover(function () {
+	                window.clearTimeout(delay);
+	            }, hide);
+	        } else if (mode == 'click') {
+	            nearby.click(function (e) {
+	                self.state.visible ? self.setDisplay(false) : show(this);
+	                e.stopPropagation();
+	                e.preventDefault();
+	            });
+	            $(document).click(hide);
+	            layerEl.click(function (e) {
+	                handleFromPop = true;
+	            });
+	        }
+
+	        var showClassName = this.props.showClassName || 'nj-popover-nearby';
+	        this.onShow(function () {
+	            _this.align.set({
+	                nearby: _this.state.nearby
+	            });
+	            $(_this.state.nearby).addClass(showClassName);
+	        }).onHide(function () {
+	            $(_this.state.nearby).removeClass(showClassName);
+	        });
+	    },
+	    renderLayer: function renderLayer() {
+	        var className = nj.utils.joinClass('nj-popover', this.state.className, this.props.name);
+	        var style = { transformOrigin: this.state.origin };
+	        var template = this.props.template;
+	        template = typeof template == 'function' ? template.call(this) : template;
+	        var body = template;
+	        if (typeof template == 'string') {
+	            body = React.createElement('span', { dangerouslySetInnerHTML: { __html: template } });
+	        }
+	        return React.createElement(
+	            'div',
+	            { className: className, style: style },
+	            React.createElement(
+	                'div',
+	                { className: 'nj-popover-inner', style: style },
+	                body
+	            )
+	        );
+	    },
+	    render: function render() {
+	        return React.createElement(Layer, { ref: 'layer', render: this.renderLayer });
+	    }
+	});
+
+	// var Pop = React.createClass({
+	//     componentDidMount () {
+	//         var wrap = nj.utils.createContainer('nj-popover-container nj-layer-wrap')
+	//         this.popover = ReactDOM.render(<Popover {...this.props} />, wrap)
+	//     },
+	//     render :()=>null
+	// })
+
+	var Layer = React.createClass({
+	    displayName: 'Layer',
+	    renderLayer: function renderLayer() {
+	        if (!this.layer) {
+	            this.layer = nj.utils.createContainer('nj-popover-container nj-layer-wrap');
+	        }
+	        var layerElement = this.props.render();
+	        ReactDOM.unstable_renderSubtreeIntoContainer(this, layerElement, this.layer);
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.renderLayer();
+	    },
+	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	        this.renderLayer();
+	    },
+
+	    render: function render() {
+	        return null;
+	    }
+	});
+
+	module.exports = Popover;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var _nj = __webpack_require__(2);
 
 	var _nj2 = _interopRequireDefault(_nj);
@@ -35691,7 +35939,7 @@
 	};
 
 /***/ },
-/* 202 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35700,7 +35948,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _form = __webpack_require__(203);
+	var _form = __webpack_require__(205);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35835,7 +36083,7 @@
 	};
 
 /***/ },
-/* 203 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35845,7 +36093,7 @@
 	/*
 	 * form 表单验证
 	 */
-	__webpack_require__(204);
+	__webpack_require__(206);
 	var nj = __webpack_require__(3);
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
@@ -35853,7 +36101,7 @@
 
 	var $ = __webpack_require__(184);
 
-	var Directive = __webpack_require__(206).default;
+	var Directive = __webpack_require__(208).default;
 
 	var formDirectives = {};
 
@@ -36262,7 +36510,7 @@
 	        var trigger = {
 	            keyup: 'onKeyUp',
 	            blur: 'onBlur'
-	        }[this.props.trigger];
+	        }[this.props.trigger || parentComponent.props.trigger];
 
 	        var options = Object.assign({}, attrs, {
 	            ref: 'input'
@@ -36272,8 +36520,10 @@
 	        } else {
 	            options.valueLink = this.valueLink();
 	            options.className = nj.utils.joinClass(this.props.className, mark && 'input-' + status);
-	            options[trigger] = function () {
-	                return _this3.verify(true);
+	            var _event = options[trigger];
+	            options[trigger] = function (e) {
+	                _event && _event(e); //外部添加的事件
+	                _this3.verify(true);
 	            };
 	        }
 	        return React.createElement(
@@ -36708,13 +36958,13 @@
 	};
 
 /***/ },
-/* 204 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(205);
+	var content = __webpack_require__(207);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(8)(content, {"insertAt":"top"});
@@ -36734,7 +36984,7 @@
 	}
 
 /***/ },
-/* 205 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(6)();
@@ -36742,13 +36992,13 @@
 
 
 	// module
-	exports.push([module.id, "/*form*/\r\nnj-form,nj-input{display:inline-block;}\r\n.nj-form li.item{padding:0 15px 15px 0;clear:both;}\r\n.nj-form .fields{margin-left:97px}\r\n.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}\r\n.nj-form .short-text{width:90px;}\r\n.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}\r\n.nj-form textarea.text[rows]{height:auto}\r\n.nj-form textarea.text[cols]{width:auto}\r\n.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}\r\n.nj-form .lab i{color:#f06;margin-right:7px}\r\n.nj-form .date{display:inline-block;vertical-align:top;}\r\n.nj-form .date .text{width:90px;background-color:transparent}\r\n.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{\r\n  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}\r\n.nj-form select.text{width:auto;height:auto;}\r\n.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}\r\n.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}\r\n\r\nbody .nj-form .input-ok{border-color:#00B700;}\r\nbody .nj-form .input-pending{border-color:#f90;}\r\nbody .nj-form .input-error{border-color:red;}\r\n\r\n.nj-form-msg-ok:before{content:'\\E606';color:#00BE00;font:16px 'njicon';}\r\n.nj-form-msg-error:before{content:'\\E60A';color:red;font:16px 'njicon';}\r\n.nj-form-msg-error{color:red;}\r\n.nj-form-msg-pending:before{content:'\\E604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}\r\n.nj-form-msg-pending{color:#f90;}", ""]);
+	exports.push([module.id, "/*form*/\r\n.nj-form li.item{padding:0 15px 15px 0;clear:both;}\r\n.nj-form .fields{margin-left:97px}\r\n.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}\r\n.nj-form .short-text{width:90px;}\r\n.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}\r\n.nj-form textarea.text[rows]{height:auto}\r\n.nj-form textarea.text[cols]{width:auto}\r\n.nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}\r\n.nj-form .lab i{color:#f06;margin-right:7px}\r\n.nj-form .date{display:inline-block;vertical-align:top;}\r\n.nj-form .date .text{width:90px;background-color:transparent}\r\n.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{\r\n  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}\r\n.nj-form select.text{width:auto;height:auto;}\r\n.nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}\r\n.nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}\r\n\r\nbody .nj-form .input-ok{border-color:#00B700;}\r\nbody .nj-form .input-pending{border-color:#f90;}\r\nbody .nj-form .input-error{border-color:red;}\r\n\r\n.nj-form-msg-ok:before{content:'\\E606';color:#00BE00;font:16px 'njicon';}\r\n.nj-form-msg-error:before{content:'\\E60A';color:red;font:16px 'njicon';}\r\n.nj-form-msg-error{color:red;}\r\n.nj-form-msg-pending:before{content:'\\E604';animation:njRotate 1s linear infinite;font:16px 'njicon';display:inline-block;margin-right:6px;}\r\n.nj-form-msg-pending{color:#f90;}", ""]);
 
 	// exports
 
 
 /***/ },
-/* 206 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36801,14 +37051,16 @@
 	            this.rootComponent = rootComponent = com;
 	            this.rootDirective = i;
 	        }
-	        com.getByHandle = function (handle) {
-	            for (var n = com.instances.length, i = n - 1; i >= 0; i--) {
-	                var item = com.instances[i].handle;
-	                if (item.props.handle == handle) {
-	                    return item;
+	        com.getByHandle = function (com) {
+	            return function (handle) {
+	                for (var n = com.instances.length, i = n - 1; i >= 0; i--) {
+	                    var item = com.instances[i].handle;
+	                    if (item.props.handle == handle) {
+	                        return item;
+	                    }
 	                }
-	            }
-	        };
+	            };
+	        }(com);
 	    }
 
 	    rootComponent.start = this.start.bind(this);
@@ -36849,7 +37101,8 @@
 	    },
 	    initial: function initial(node, type, parentComponent, index, props) {
 
-	        var Component = this.options.elementGroups[type].component;
+	        var componentItem = this.options.elementGroups[type];
+	        var Component = componentItem.component;
 	        if (Component) {
 	            var options = parseAttrs(_lib2.default.utils.getAttributes(node));
 
@@ -36873,7 +37126,7 @@
 	            var componentInfo = this.options.elementGroups[type];
 	            var componentChildren = componentInfo.children || [];
 
-	            if (options._childNodes.length) {
+	            if (options._childNodes.length && componentItem.wrapItem) {
 	                options.children = [];
 	                //先在props.children中占位 必须是有效的元素节点
 	                options._children = options._childNodes.filter(function (n) {
@@ -36972,7 +37225,7 @@
 	exports.default = Directive;
 
 /***/ },
-/* 207 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36981,7 +37234,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _switch = __webpack_require__(208);
+	var _switch = __webpack_require__(210);
 
 	var _switch2 = _interopRequireDefault(_switch);
 
@@ -37040,7 +37293,7 @@
 	};
 
 /***/ },
-/* 208 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37056,7 +37309,7 @@
 
 	var $ = __webpack_require__(184);
 
-	var Directive = __webpack_require__(206).default;
+	var Directive = __webpack_require__(208).default;
 
 	var Switch = React.createClass({
 	    displayName: 'Switch',
@@ -37158,7 +37411,7 @@
 	});
 
 /***/ },
-/* 209 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37167,7 +37420,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _scroll = __webpack_require__(210);
+	var _scroll = __webpack_require__(212);
 
 	var _jquery = __webpack_require__(184);
 
@@ -37227,7 +37480,7 @@
 	};
 
 /***/ },
-/* 210 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37241,7 +37494,7 @@
 	var mixins = nj.mixins;
 
 	var $ = __webpack_require__(184);
-	var Directive = __webpack_require__(206).default;
+	var Directive = __webpack_require__(208).default;
 
 	var Scroll = React.createClass({
 	    displayName: 'Scroll',
@@ -37750,7 +38003,7 @@
 	});
 
 /***/ },
-/* 211 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37759,7 +38012,7 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
-	var _face = __webpack_require__(212);
+	var _face = __webpack_require__(214);
 
 	var _face2 = _interopRequireDefault(_face);
 
@@ -37788,7 +38041,7 @@
 	};
 
 /***/ },
-/* 212 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37805,9 +38058,9 @@
 	var render = _require.render;
 	var utils = _require.utils;
 
-	var Popover = __webpack_require__(213);
+	var Popover = __webpack_require__(202);
 
-	var _require2 = __webpack_require__(208);
+	var _require2 = __webpack_require__(210);
 
 	var Switch = _require2.Switch;
 	var SwitchMenu = _require2.SwitchMenu;
@@ -38000,7 +38253,7 @@
 	insertOnCursor.prototype = {
 	    //初始化对象以支持光标处插入内容      
 	    setCaret: function setCaret() {
-	        if (!utils.browser('ie')) {
+	        if (!document.selection) {
 	            return;
 	        }
 	        var T = this;
@@ -38061,154 +38314,7 @@
 	module.exports = Face;
 
 /***/ },
-/* 213 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	/**
-	 * 弹出层
-	 */
-	var nj = __webpack_require__(3);
-	var React = nj.React;
-	var ReactDOM = nj.ReactDOM;
-	var mixins = nj.mixins;
-
-	var align = __webpack_require__(199);
-	var $ = __webpack_require__(184);
-
-	var Popover = React.createClass({
-	    displayName: 'Popover',
-
-	    statics: {
-	        create: function create(options) {
-	            options = options || {};
-	            return ReactDOM.render(React.createElement(Popover, options), nj.utils.createContainer('nj-popover-container nj-layer-wrap'));
-	        }
-	    },
-	    mixins: [align, mixins.setDisplay, React.addons.LinkedStateMixin],
-	    getInitialState: function getInitialState() {
-	        return { origin: '0 0', nearby: nj.utils.dom(this.props.nearby) };
-	    },
-	    getDefaultProps: function getDefaultProps() {
-	        return { mode: 'hover', effect: 'scale' };
-	    },
-	    getOrigin: function getOrigin(position) {
-	        var pos = position || this.props.position || {};
-	        var origin = [0, 0];
-	        if (pos.left != undefined) {
-	            origin[0] = 0;
-	        } else if (pos.right != undefined) {
-	            origin[0] = '100%';
-	        }
-	        if (pos.top != undefined) {
-	            origin[1] = 0;
-	        } else if (pos.bottom != undefined) {
-	            origin[1] = '100%';
-	        }
-	        this.state.origin = origin.join(' ');
-	        this.setState({ origin: this.state.origin });
-	        return this.state.origin;
-	    },
-	    componentDidMount: function componentDidMount() {
-	        var _this = this;
-
-	        var self = this;
-	        var nearby = this.state.nearby;
-	        if (!nearby) {
-	            return;
-	        }
-	        var el = $(ReactDOM.findDOMNode(this));
-
-	        this.setAlign({
-	            nearby: nearby,
-	            element: el,
-	            relative: this.props.relative,
-	            position: this.props.position,
-	            onTurn: function onTurn(turnPosition) {
-	                self.getOrigin(turnPosition);
-	            }
-	        });
-
-	        var mode = this.props.mode;
-
-	        function show(element) {
-	            self.state.nearby = element;
-	            self.setDisplay(true);
-	        }
-	        var delay;
-	        var handleFromPop;
-	        function hide() {
-	            if (handleFromPop) {
-	                handleFromPop = null;
-	                return;
-	            }
-	            delay = window.setTimeout(function () {
-	                self.setDisplay(false);
-	            }, 10);
-	        }
-	        if (mode == 'hover') {
-	            nearby.hover(function () {
-	                self.setDisplay(false);
-	                window.clearTimeout(delay);
-	                show(this);
-	            }, hide);
-	            // nearby.hover(function(){
-	            //     window.clearTimeout(delay)
-	            //     show(this)
-	            // }, hide)
-
-	            el.hover(function () {
-	                window.clearTimeout(delay);
-	            }, hide);
-	        } else if (mode == 'click') {
-	            nearby.click(function (e) {
-	                self.state.visible ? self.setDisplay(false) : show(this);
-	                e.stopPropagation();
-	                e.preventDefault();
-	            });
-	            $(document).click(hide);
-	            el.click(function (e) {
-	                handleFromPop = true;
-	            });
-	        }
-
-	        var showClassName = this.props.showClassName || 'nj-popover-nearby';
-	        this.onShow(function () {
-	            self.getOrigin();
-	            _this.align.set({
-	                nearby: _this.state.nearby
-	            });
-	            $(_this.state.nearby).addClass(showClassName);
-	        }).onHide(function () {
-	            $(_this.state.nearby).removeClass(showClassName);
-	        });
-	    },
-	    render: function render() {
-	        var className = nj.utils.joinClass('nj-popover', this.state.className, this.props.name);
-	        var style = { transformOrigin: this.state.origin };
-	        var template = this.props.template;
-	        template = typeof template == 'function' ? template.call(this) : template;
-	        var body = template;
-	        if (typeof template == 'string') {
-	            body = React.createElement('span', { dangerouslySetInnerHTML: { __html: template } });
-	        }
-	        return React.createElement(
-	            'div',
-	            { className: className, style: style },
-	            React.createElement(
-	                'div',
-	                { className: 'nj-popover-inner', style: style, ref: 'wrap' },
-	                body
-	            )
-	        );
-	    }
-	});
-
-	module.exports = Popover;
-
-/***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38220,20 +38326,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(215).default;
-	var createLogger = __webpack_require__(216);
+	var thunkMiddleware = __webpack_require__(216).default;
+	var createLogger = __webpack_require__(217);
 
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(218);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(224);
+	var _require2 = __webpack_require__(225);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(239);
-	var rootReducer = __webpack_require__(245);
+	var App = __webpack_require__(240);
+	var rootReducer = __webpack_require__(246);
 
 	// const createStoreWithMiddleware = applyMiddleware(
 	//   thunkMiddleware, // 允许我们 dispatch() 函数
@@ -38258,7 +38364,7 @@
 	};
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38281,7 +38387,7 @@
 	}
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38514,7 +38620,7 @@
 	module.exports = createLogger;
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38522,11 +38628,11 @@
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(218);
+	var _Provider = __webpack_require__(219);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(221);
+	var _connect = __webpack_require__(222);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -38536,7 +38642,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38544,9 +38650,9 @@
 	exports.__esModule = true;
 	exports["default"] = undefined;
 
-	var _react = __webpack_require__(219);
+	var _react = __webpack_require__(220);
 
-	var _storeShape = __webpack_require__(220);
+	var _storeShape = __webpack_require__(221);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
@@ -38620,7 +38726,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38629,14 +38735,14 @@
 
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _react = __webpack_require__(219);
+	var _react = __webpack_require__(220);
 
 	exports["default"] = _react.PropTypes.shape({
 	  subscribe: _react.PropTypes.func.isRequired,
@@ -38645,7 +38751,7 @@
 	});
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -38655,29 +38761,29 @@
 	exports.__esModule = true;
 	exports["default"] = connect;
 
-	var _react = __webpack_require__(219);
+	var _react = __webpack_require__(220);
 
-	var _storeShape = __webpack_require__(220);
+	var _storeShape = __webpack_require__(221);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(222);
+	var _shallowEqual = __webpack_require__(223);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(223);
+	var _wrapActionCreators = __webpack_require__(224);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _isPlainObject = __webpack_require__(234);
+	var _isPlainObject = __webpack_require__(235);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(237);
+	var _hoistNonReactStatics = __webpack_require__(238);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(238);
+	var _invariant = __webpack_require__(239);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -38973,7 +39079,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39004,7 +39110,7 @@
 	}
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39012,7 +39118,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(224);
+	var _redux = __webpack_require__(225);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -39021,7 +39127,7 @@
 	}
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -39029,27 +39135,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(225);
+	var _createStore = __webpack_require__(226);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(229);
+	var _combineReducers = __webpack_require__(230);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(231);
+	var _bindActionCreators = __webpack_require__(232);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(232);
+	var _applyMiddleware = __webpack_require__(233);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(233);
+	var _compose = __webpack_require__(234);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(230);
+	var _warning = __webpack_require__(231);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -39073,7 +39179,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39082,7 +39188,7 @@
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(226);
+	var _isPlainObject = __webpack_require__(227);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
@@ -39294,11 +39400,11 @@
 	}
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(227),
-	    isObjectLike = __webpack_require__(228);
+	var isHostObject = __webpack_require__(228),
+	    isObjectLike = __webpack_require__(229);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -39366,7 +39472,7 @@
 
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -39392,7 +39498,7 @@
 
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports) {
 
 	/**
@@ -39426,7 +39532,7 @@
 
 
 /***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -39434,13 +39540,13 @@
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(225);
+	var _createStore = __webpack_require__(226);
 
-	var _isPlainObject = __webpack_require__(226);
+	var _isPlainObject = __webpack_require__(227);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(230);
+	var _warning = __webpack_require__(231);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -39559,7 +39665,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39588,7 +39694,7 @@
 	}
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39644,7 +39750,7 @@
 	}
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39654,7 +39760,7 @@
 	exports.__esModule = true;
 	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(233);
+	var _compose = __webpack_require__(234);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -39706,7 +39812,7 @@
 	}
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39740,11 +39846,11 @@
 	}
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isHostObject = __webpack_require__(235),
-	    isObjectLike = __webpack_require__(236);
+	var isHostObject = __webpack_require__(236),
+	    isObjectLike = __webpack_require__(237);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -39812,7 +39918,7 @@
 
 
 /***/ },
-/* 235 */
+/* 236 */
 /***/ function(module, exports) {
 
 	/**
@@ -39838,7 +39944,7 @@
 
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports) {
 
 	/**
@@ -39872,7 +39978,7 @@
 
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports) {
 
 	/**
@@ -39918,7 +40024,7 @@
 
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -39976,7 +40082,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39989,18 +40095,18 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(218);
 
 	var connect = _require.connect;
 
-	var AddComment = __webpack_require__(240);
-	var CommentList = __webpack_require__(241);
+	var AddComment = __webpack_require__(241);
+	var CommentList = __webpack_require__(242);
 
-	var _require2 = __webpack_require__(242);
+	var _require2 = __webpack_require__(243);
 
 	var addComment = _require2.addComment;
 
-	var fetch = __webpack_require__(243);
+	var fetch = __webpack_require__(244);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -40027,7 +40133,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40073,7 +40179,7 @@
 	};
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40107,7 +40213,7 @@
 	});
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40118,7 +40224,7 @@
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(243);
+	var fetch = __webpack_require__(244);
 
 	var ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT';
 	// const ADD_COMMENT = exports.ADD_COMMENT = 'ADD_COMMENT'
@@ -40175,19 +40281,19 @@
 	};
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(244);
+	__webpack_require__(245);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -40582,7 +40688,7 @@
 
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40591,18 +40697,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(224);
+	var _require = __webpack_require__(225);
 
 	var combineReducers = _require.combineReducers;
 
-	var comments = __webpack_require__(246);
+	var comments = __webpack_require__(247);
 
 	module.exports = combineReducers({
 	  comments: comments
 	});
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40611,7 +40717,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(242);
+	var _require = __webpack_require__(243);
 
 	var ADD_COMMENT = _require.ADD_COMMENT;
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
@@ -40661,7 +40767,7 @@
 	};
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40673,20 +40779,20 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var thunkMiddleware = __webpack_require__(215).default;
-	var createLogger = __webpack_require__(216);
+	var thunkMiddleware = __webpack_require__(216).default;
+	var createLogger = __webpack_require__(217);
 
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(218);
 
 	var Provider = _require.Provider;
 
-	var _require2 = __webpack_require__(224);
+	var _require2 = __webpack_require__(225);
 
 	var createStore = _require2.createStore;
 	var applyMiddleware = _require2.applyMiddleware;
 
-	var App = __webpack_require__(248);
-	var rootReducer = __webpack_require__(251);
+	var App = __webpack_require__(249);
+	var rootReducer = __webpack_require__(252);
 
 	module.exports = function (container) {
 	    var store = createStore(rootReducer, {}, applyMiddleware(thunkMiddleware, createLogger()));
@@ -40699,7 +40805,7 @@
 	};
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40712,17 +40818,17 @@
 	var React = nj.React;
 	var ReactDOM = nj.ReactDOM;
 
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(218);
 
 	var connect = _require.connect;
 
-	var SearchPhoto = __webpack_require__(249);
+	var SearchPhoto = __webpack_require__(250);
 
-	var _require2 = __webpack_require__(250);
+	var _require2 = __webpack_require__(251);
 
 	var searchPhoto = _require2.searchPhoto;
 
-	var fetch = __webpack_require__(243);
+	var fetch = __webpack_require__(244);
 
 	var App = React.createClass({
 	    displayName: 'App',
@@ -40778,7 +40884,7 @@
 	module.exports = connect(select)(App);
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40823,7 +40929,7 @@
 	};
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40831,7 +40937,7 @@
 	/**
 	 * actions
 	 */
-	var fetch = __webpack_require__(243);
+	var fetch = __webpack_require__(244);
 
 	var SEARCH_PHOTO = exports.SEARCH_PHOTO = 'SEARCH_PHOTO';
 
@@ -40876,7 +40982,7 @@
 	};
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40885,18 +40991,18 @@
 	 * reducers
 	 */
 
-	var _require = __webpack_require__(224);
+	var _require = __webpack_require__(225);
 
 	var combineReducers = _require.combineReducers;
 
-	var photos = __webpack_require__(252);
+	var photos = __webpack_require__(253);
 
 	module.exports = combineReducers({
 	  photos: photos
 	});
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40905,7 +41011,7 @@
 	 * reducers comments
 	 */
 
-	var _require = __webpack_require__(250);
+	var _require = __webpack_require__(251);
 
 	var REQUEST_POSTS = _require.REQUEST_POSTS;
 	var RECEIVE_POSTS = _require.RECEIVE_POSTS;

@@ -27,7 +27,7 @@ var Actions = module.exports = function(context){
         }
     }
 
-    //创建事件
+    //创建action
     function Action(options){
         this.options = options
         this.init()
@@ -40,26 +40,59 @@ var Actions = module.exports = function(context){
             this.fetchCompleteEvent = context.addEventQueue.call(this, 'onFetchComplete')
         }
     }
+    const eventsType = ['onFetchBefore', 'onFetch', 'onFetchComplete'];
+    //通过action.config().onFetchBefore来添加一些全局事件 事件会保存在Action.events相应的数组中 等添加action时再绑定事件到action
+    Action.events = {}
+    eventsType.forEach(e=>{
+        Action.events[e] = []
+    })
 
     return {
         //配置默认选项
         config : function(options){
             config = $.extend(true, config, options);
+
+            var eventExports = {};
+            eventsType.forEach(e=>{
+                eventExports[e] = fn=>{
+                    //添加事件到队列中
+                    Action.events[e].push(fn)
+                    //已创建的action 绑定一次
+                    for( var i in Events ){
+                        Events[i][e](fn)
+                    }
+                    
+                    return eventExports
+                }
+            })
+            return eventExports
         },
-        //添加事件
+        //添加action
         add : function(name, options){
             options = $.extend(true, {}, config, options);
             options.reverse && parseConf(options);
-            return Events[name] = new Action(options)
+            var action = Events[name] = new Action(options)
+
+            var events = $.extend(true, {}, Action.events);
+
+            //绑定全局添加的事件
+            for( var i in events ){
+                var f, fns = events[i]
+                while( f = fns.shift() ){
+                    action[i](f)
+                }
+            }
+            return action
         },
         get : function(name){
             return Events[name]
         },
         //绑定事件
         on : function(action, options){
+            var self = this
             if( $.type(action)=='object' ){//批量添加
                 for( var i in action ){
-                    Actions.on(i, action[i]);
+                    self.on(i, action[i]);
                 }
                 return;
             }
@@ -72,7 +105,7 @@ var Actions = module.exports = function(context){
             }
             target.on('click', function(){
                 //dom上使用data-state属性标示初始状态，如已关注标示为1,否则为0或不标示
-                Actions.trigger( action, $.extend( {}, options, {target:this, state:$(this).data('state')} ));
+                self.trigger( action, $.extend( {}, options, {target:this, state:$(this).data('state')} ));
                 return this.tagName.toLowerCase()=='input' ? true : false;
             })
         },
