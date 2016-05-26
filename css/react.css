@@ -1,13 +1,13 @@
 @import url(animation.css);
 @font-face {
   font-family:'njicon';
-  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot'); /* IE9*/
-  src: url('//at.alicdn.com/t/font_1456800212_0684001.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('//at.alicdn.com/t/font_1456800212_0684001.woff') format('woff'), /* chrome、firefox */
-  url('//at.alicdn.com/t/font_1456800212_0684001.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-  url('//at.alicdn.com/t/font_1456800212_0684001.svg#iconfont') format('svg'); /* iOS 4.1- */
-}       
-.nj-icon:before{font:16px 'njicon';display:inline-block;}
+  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot'); /* IE9*/
+  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('//at.alicdn.com/t/font_1462433854_5701883.woff') format('woff'), /* chrome、firefox */
+  url('//at.alicdn.com/t/font_1462433854_5701883.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('//at.alicdn.com/t/font_1462433854_5701883.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+.nj-icon:before,.nj-icon-sharp:after{font:16px 'njicon';display:inline-block;}
 
 .nj-icon-menu:before{content:'\e605';}
 .nj-icon-left:before{content:'\e607';}
@@ -25,16 +25,16 @@
 .d_hide{display:none}
                     
 .nj-layer-wrap,.ng-layer-wrap{display:inline}
-.nj-mask div{position:fixed;top:0;left:0;z-index:200;width:100%;height:100%;transition:opacity 0.4s;
+.nj-mask div{position:fixed;top:0;left:0;z-index:901;width:100%;height:100%;transition:opacity 0.4s;
     background:rgba(0,0,0,.2);
     
 }
 
 
 /*popup*/
-.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\9;z-index:199;width:480px;
+.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\9;z-index:900;width:480px;
   transition:transform .3s,opacity .3s;}
-.nj-popup.popup-active{z-index:201;}
+.nj-popup.popup-active{z-index:902;}
 .nj-popup ._head{padding:9px 15px;font-size:14px;}
 .nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}
 .nj-popup ._close:before{content:'\e600';font:14px/1 'njicon';}
@@ -59,9 +59,35 @@
 .nj-icon-warn:before{content:'\e609';color:#f60;}
 .nj-icon-error:before{content:'\e60a';color:red;}
 
-.nj-popover{position:absolute;}
-.nj-popover-inner{background:#fff;border:1px solid #ddd\9;z-index:190;width:auto;box-shadow:1px 1px 5px rgba(0,0,0,.2);}
 
+/*<i class="nj-icon nj-icon-sharp"></i>空心尖角*/
+.nj-icon-sharp:before,.nj-icon-sharp:after{
+  content:'\e60d';position:absolute;top:0;left:0;color:#aaa;font-size:14px;}
+.nj-icon-sharp:after{color:#fff;}
+.nj-icon-sharp{position:absolute;width:6px;overflow:hidden;font-weight:800;line-height:1;}
+
+.nj-icon-sharp-top{width:14px;height:7px;left:50%;top:1px;margin-left:-7px}
+.nj-icon-sharp-top:after{margin-top:1px;}
+
+.nj-icon-sharp-left{left:-6px;top:50%;margin-top:-8px;width:6px;height:14px;}
+.nj-icon-sharp-left:after{margin:0 0 0 1px;}
+
+.nj-icon-sharp-bottom{width:14px;height:7px;left:50%;bottom:-7px;margin-left:-7px}
+.nj-icon-sharp-bottom:before{top:-8px;}
+.nj-icon-sharp-bottom:after{top:-9px;}
+
+
+.nj-popover{position:absolute;z-index:800;}
+.nj-popover-inner{background:#fff;border:1px solid #ddd\9;z-index:190;width:auto;
+  box-shadow:0px 2px 5px rgba(0,0,0,.2);}
+.nj-popover-sharp-top{padding-top:7px;}
+.nj-popover-sharp-left{padding-left:7px;}
+.nj-popover-sharp-right{padding-right:7px;}
+.nj-popover-sharp-bottom{padding-bottom:7px;}
+.nj-popover-sharp-top .nj-popover-inner,
+.nj-popover-sharp-left .nj-popover-inner,
+.nj-popover-sharp-right .nj-popover-inner,
+.nj-popover-sharp-bottom .nj-popover-inner{border:1px solid #d4d4d4;}
 
 /*buttons*/
 .nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;
@@ -110,4 +136,10 @@ nj-scroll-items{display:inline-block;overflow:hidden;}
 
 
 
-nj-form,nj-input{display:inline-block;}
+/*auto-complete*/
+.auto-complete-pop li{padding:2px 15px;cursor:default;}
+.auto-complete-pop li:hover{background:#f6f6f6;}
+.auto-complete-pop .active{background:#f0f0f0;}
+
+nj-form,nj-input,nj-switch,nj-switch-menu,nj-switch-item{display:inline-block;}
+nj-switch-item:not(:first-child){display:none;}

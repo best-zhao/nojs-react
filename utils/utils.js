@@ -57,11 +57,31 @@ module.exports = {
         }
         this[eventName] = add.bind(this)
         typeof when=='function' && when.call(this, complete)
+        this.props && this.props[eventName] && add.call(this, this.props[eventName])
         return {
           add : add,
           complete : complete,
           end : end
         }
+    },
+
+    /**
+     * 手动触发事件
+     * @type  事件类型
+     * @element  触发事件dom对象
+     */
+    fireEvent (type, element) {
+        var result = false;  
+        //IE fire event  
+        if (element.fireEvent) {  
+          result = element.fireEvent('on'+type);  
+        //DOM2 fire event  
+        } else if (document.createEvent) {  
+          var ev = document.createEvent('HTMLEvents');  
+          ev.initEvent(type, false, true);  
+          result = element.dispatchEvent(ev);
+        }
+        result && element[type]()
     },
 
     //检测元素是否存在真实dom中
@@ -79,6 +99,38 @@ module.exports = {
         if( parent ){
             return true
         }
+    },
+    parseCss3 (css) {
+        var u = navigator.userAgent.toLowerCase(),
+            type = $.type(css),
+            browser = '';
+        
+        if( type=='string' ){
+            css = css.split(';');
+        }
+        if( type!='array' || !css.length ){
+            return browser;
+        }
+            
+        if( this.browser('ie') ){
+            if( parseInt(this.browser.version)<9 ){
+                return browser;
+            }
+            browser = '-ms-';
+        }else if( /webkit/.test(u) ){
+            browser = '-webkit-';
+        }else if( this.browser('firefox') ){
+            browser = '-moz-';
+        }else if( this.browser('opera') ){
+            browser = '-o-';
+        }
+        
+        $.each(css, function(i, v){
+            if( v ){
+                css[i] = browser+v+';'+v;
+            }
+        });
+        return css.join(';');
     },
     browser : function(){
         //检测浏览器

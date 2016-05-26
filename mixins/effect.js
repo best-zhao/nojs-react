@@ -23,6 +23,11 @@ module.exports = {
         this.setState({visible:visible, className:className}) 
 
         this[visible ? '_showEvents' : '_hideEvents'].complete()
+
+        // setTimeout(e=>{
+        //     className = nj.utils.joinClass(effect[visible?1:0], visible?'nj-show':'nj-hide', effect[2])
+        //     this.setState({visible:visible, className:className}) 
+        // }, 0)
     },
     effects () {
         var effects = {

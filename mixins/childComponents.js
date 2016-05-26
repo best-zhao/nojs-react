@@ -67,7 +67,8 @@ var config = exports.config = {
                 var pid = parentComponent.handle.state.rootID
                 //通过rootID可以知道组件所处的层级结构 父组件rootID长度必须小于当前组件
                 //rootID.indexOf(pid)必须为0
-                if( rootID.indexOf(pid) ){
+                
+                if( rootID && rootID.indexOf(pid) ){
                     continue
                 }
                 
