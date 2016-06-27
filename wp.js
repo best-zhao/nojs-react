@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 module.exports = {
   entry:{
     seed : './examples/js/seed.js',
