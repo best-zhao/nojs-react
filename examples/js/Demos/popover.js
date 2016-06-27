@@ -23,7 +23,7 @@ var $ = require('jquery')
 // }, 500)
 
 module.exports = (container)=>{
-    Popover.create({
+    var pop = Popover.create({
         nearby : 'demo-popover-button',
         template : <ul className="pop-menu">
             <li>
@@ -45,6 +45,8 @@ module.exports = (container)=>{
         sharp : true,
         // trigger : 'click'
     })
+
+    console.log(pop)
 
     // var pop = render(<Popover nearby="demo-popover-button" template="123" />, document.getElementById('demo-popover-wrap'))
 }

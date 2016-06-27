@@ -108,6 +108,7 @@ var Actions = module.exports = function(context){
                 self.trigger( action, $.extend( {}, options, {target:this, state:$(this).data('state')} ));
                 return this.tagName.toLowerCase()=='input' ? true : false;
             })
+            return Events[action]
         },
         //触发事件
         trigger : function(action, options){

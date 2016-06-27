@@ -38,20 +38,22 @@ var config = exports.config = {
             state.index = this.props.index
             state.parentComponent = this.props.parentComponent
         }
-        return state
-    }, 
-    componentWillMount () {
-        var rootID = this._reactInternalInstance._rootNodeID //可以表现dom层级结构
-        var fn = this.constructor
         var point = fn.point = fn.instances.length//组件当前指针
         
         fn.instances.push({
             handle : this,
             components : []
         })
-
+        return state
+    },  
+    /*componentWillMount () {
+        this.state.type=='switch' && console.log(0, this.state)
+    },  */ 
+    componentWillMount  () {
+        
+        var fn = this.constructor
         var state = this.state
-        state.rootID = rootID
+
         //查找存在指针的父组件
         var parents = fn.parents || []
         var parentConstructor
@@ -60,17 +62,10 @@ var config = exports.config = {
 
         for( var i=0; i<parents.length; i++ ){
             parentConstructor = parents[i]
-            parentPoint = parentConstructor.point
+            parentPoint = parentConstructor.point     
+                   
             if( parentPoint != null ){
-                parentComponent = parentConstructor.instances[parentPoint]
-
-                var pid = parentComponent.handle.state.rootID
-                //通过rootID可以知道组件所处的层级结构 父组件rootID长度必须小于当前组件
-                //rootID.indexOf(pid)必须为0
-                
-                if( rootID && rootID.indexOf(pid) ){
-                    continue
-                }
+                parentComponent = parentConstructor.instances[parentPoint]                
                 
                 //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
                 var index = 0
@@ -87,17 +82,18 @@ var config = exports.config = {
                 state.parentComponent = parentComponent
                 break;
             }
-        }        
-        // console.log(111,this.props.type,parentComponent)
-    },  
-    componentDidMount  () {
-        var fn = this.constructor
-        this.state.childComponents = fn.instances[fn.instances.length-1].components
-        fn.point = null
-        //标记在组件顶层dom上
-        ReactDOM.findDOMNode(this).$component = this
+        }
+
+        state.childComponents = fn.instances[fn.instances.length-1].components
+        
         // console.log(222,this.props.type,this._reactInternalInstance._rootNodeID)
         //fn.parents = null
+    },  
+    componentDidMount () {
+        var fn = this.constructor
+        //标记在组件顶层dom上
+        ReactDOM.findDOMNode(this).$component = this
+        fn.point = null
     },
     componentWillUnmount () {
         //从父组件中移除

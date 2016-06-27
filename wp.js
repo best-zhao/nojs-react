@@ -1,15 +1,20 @@
 var webpack = require('webpack');
 module.exports = {
   entry:{
-    index:[      
-      './examples/js/index.js'
-    ]
+    seed : './examples/js/seed.js',
+    index : './examples/js/index.js'
   },
   output: {
     path: __dirname + '/examples/dist/',
     publicPath: "/examples/dist/",
     filename: '[name].bundle.js'
   },
+  plugins: [
+    new CommonsChunkPlugin({
+        name: "seed",
+        filename : 'seed.js'
+    })
+  ],
   resolve: {
     alias: {
       nj: __dirname+'/lib'

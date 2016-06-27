@@ -14,3 +14,5 @@
 .nj-tree ._checkbox input{float:left;margin:6px 4px 0 2px}
 .nj-tree .more{position:relative;overflow:visible}
 .nj-tree .more a{color:#bbb}
+
+option[disabled]{color:#bbb;}

@@ -7,6 +7,7 @@ module.exports = {
     getInitialState () {
         this._showEvents = nj.utils.addEventQueue.call(this, 'onShow')
         this._hideEvents = nj.utils.addEventQueue.call(this, 'onHide')
+        this._changeDisplay = nj.utils.addEventQueue.call(this, 'onDisplayChange')
 
         return {
             visible : false, 
@@ -17,17 +18,16 @@ module.exports = {
         if( this.state.visible==visible ){
             return
         }
+        if( this._changeDisplay.complete(visible)===false ){
+            return
+        }
+        this.state.visible=visible 
         var effect = this.effects()
         var className = nj.utils.joinClass(effect[visible?1:0], visible?'nj-show':'nj-hide', effect[2])
         //effect[2]始终存在的样式
         this.setState({visible:visible, className:className}) 
 
         this[visible ? '_showEvents' : '_hideEvents'].complete()
-
-        // setTimeout(e=>{
-        //     className = nj.utils.joinClass(effect[visible?1:0], visible?'nj-show':'nj-hide', effect[2])
-        //     this.setState({visible:visible, className:className}) 
-        // }, 0)
     },
     effects () {
         var effects = {

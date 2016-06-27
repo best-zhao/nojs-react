@@ -1,7 +1,8 @@
 /*form*/
 .nj-form li.item{padding:0 15px 15px 0;clear:both;}
 .nj-form .fields{margin-left:97px}
-.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;background:#fff;margin-right:7px}
+.nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;
+    background:#fff;margin-right:7px;display:inline-block;}
 .nj-form .short-text{width:90px;}
 .nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}
 .nj-form textarea.text[rows]{height:auto}
