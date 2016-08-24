@@ -104,6 +104,10 @@
 
 	var _nj2 = _interopRequireDefault(_nj);
 
+	var _mobile = __webpack_require__(297);
+
+	var _mobile2 = _interopRequireDefault(_mobile);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
@@ -149,38 +153,6 @@
 	        return t == d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
 	    }
 	});
-	// var components = []
-
-	// components.forEach(function(name){
-	//     var selector = '[nj-'+name+']'
-	//     var elements = document.body.querySelectorAll(selector)
-	//     elements = Array.prototype.slice.call(elements)
-
-	//     if( !elements.length ){
-	//         return
-	//     }
-
-	//     function init(require){
-	//         var Component = require('./'+name)
-	//         elements.forEach(function(el){
-	//             // var component = ReactDOM.render(
-	//             //   <Component />, el
-	//             // )
-	//             //console.log(component)
-	//             Component.init(el)
-	//         })   
-	//     }
-
-	//     switch (name) {
-	//         case 'switch':
-	//             require.ensure(['./switch'], init);
-	//             break;
-	//         default:
-	//             //
-	//             break;
-	//     }
-
-	// })
 
 	/**
 	 * fetch: 针对IE低版本处理
@@ -231,7 +203,7 @@
 	};
 
 	$(function () {
-	    $(document).delegate(nj_selector, 'mousedown', addMui);
+	    $(document).delegate(nj_selector, 'click', addMui);
 	});
 
 	exports.Mui = React.createClass({
@@ -255,39 +227,45 @@
 	            };
 	        }
 	    },
+	    getDefaultProps: function getDefaultProps() {
+	        return { tag: 'div' };
+	    },
 	    getInitialState: function getInitialState() {
-	        return { timer: null };
+	        return { animate: [] };
 	    },
 	    handleClick: function handleClick(e) {
 	        var _this = this;
 
-	        var _state = this.state;
-	        var animate = _state.animate;
-	        var timer = _state.timer;
+	        var animate = this.state.animate;
 
 	        var style = exports.Mui.style(e, ReactDOM.findDOMNode(this));
-	        timer && window.clearTimeout(timer);
-	        timer = window.setTimeout(function (e) {
-	            return _this.setState({ animate: null });
-	        }, 2000);
-	        this.setState({ animate: true, style: style, timer: timer });
+	        var index = animate.length;
+
+	        var timer = window.setTimeout(function (e) {
+	            animate.shift();
+	            _this.setState({ animate: animate });
+	        }, 3000);
+	        animate.push(timer);
+
+	        this.setState({ animate: animate, style: style });
+	        var onClick = this.props.onClick;
+
+	        onClick && onClick(e);
 	    },
 	    render: function render() {
-	        var _state2 = this.state;
-	        var animate = _state2.animate;
-	        var style = _state2.style;
+	        var tag = this.props.tag;
+	        var _state = this.state;
+	        var animate = _state.animate;
+	        var style = _state.style;
 
 	        var className = exports.utils.joinClass(this.props.className, animate && 'nj-mui-active', 'nj-mui-item');
-	        return React.createElement(
-	            'div',
-	            { onClick: this.handleClick, className: className },
-	            this.props.children,
-	            animate && React.createElement(
+	        return React.createElement(tag, Object.assign({}, this.props, { onClick: this.handleClick, className: className }), this.props.children, animate.map(function (item, i) {
+	            return React.createElement(
 	                'div',
-	                { className: 'nj-mui' },
+	                { className: 'nj-mui', key: item },
 	                React.createElement('span', { style: style })
-	            )
-	        );
+	            );
+	        }));
 	    }
 	});
 
@@ -326,7 +304,7 @@
 	exports.i(__webpack_require__(6), "");
 
 	// module
-	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}\r\n.nj-icon:before,.nj-icon-sharp:before,.nj-icon-sharp:after{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:901;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;\r\n  transition:transform .3s,opacity .3s;z-index:900;width:440px;}\r\n.nj-popup.popup-active{z-index:902;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.9)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n/*<i class=\"nj-icon nj-icon-sharp\"></i>空心尖角*/\r\n.nj-icon-sharp:before,.nj-icon-sharp:after{\r\n  content:'\\E60D';position:absolute;color:#aaa;font-size:14px;}\r\n.nj-icon-sharp:after{color:#fff;}\r\n.nj-icon-sharp{position:absolute;width:6px;overflow:hidden;font-weight:800;line-height:1;}\r\n\r\n.nj-icon-sharp-top{width:14px;height:7px;left:50%;top:1px;margin-left:-7px}\r\n.nj-icon-sharp-top:before{top:0;left:0;}\r\n.nj-icon-sharp-top:after{top:1px;left:0;}\r\n\r\n.nj-icon-sharp-left{left:2px;top:50%;margin-top:-8px;width:6px;height:14px;}\r\n.nj-icon-sharp-left:before{left:0;top:0;}\r\n.nj-icon-sharp-left:after{left:1px;top:0;}\r\n\r\n.nj-icon-sharp-bottom{width:14px;height:7px;left:50%;bottom:-7px;margin-left:-7px}\r\n.nj-icon-sharp-bottom:before{bottom:0;left:0;}\r\n.nj-icon-sharp-bottom:after{bottom:1px;left:0;}\r\n\r\n\r\n.nj-popover{position:absolute;z-index:800;}\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;\r\n  box-shadow:0px 2px 5px rgba(0,0,0,.2);}\r\n.nj-popover-sharp-top{padding-top:7px;}\r\n.nj-popover-sharp-left{padding-left:7px;}\r\n.nj-popover-sharp-right{padding-right:7px;}\r\n.nj-popover-sharp-bottom{padding-bottom:7px;}\r\n.nj-popover-sharp-top .nj-popover-inner,\r\n.nj-popover-sharp-left .nj-popover-inner,\r\n.nj-popover-sharp-right .nj-popover-inner,\r\n.nj-popover-sharp-bottom .nj-popover-inner{border:1px solid #d4d4d4;}\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;background:rgba(0,0,0,0.5);opacity:0;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-default .nj-mui span{background:#bbb;}\r\n.nj-button-flat{background:none;border:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px;}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\nbutton.nj-button-small{min-width:auto;}\r\n\r\n\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n.-page-item{display:inline-block;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n\r\n\r\n\r\n/*auto-complete*/\r\n.auto-complete-pop li{cursor:default;line-height:31px;}\r\n.auto-complete-pop .nj-mui-item{padding:0 15px;}\r\n.auto-complete-pop li:hover{background:#f2f2f2;}\r\n.auto-complete-pop .active{background:#e8e8e8;}\r\n.auto-complete-pop .nj-mui span{background:#aaa}\r\n\r\nnj-form,nj-input,nj-switch,nj-switch-menu,nj-switch-item{display:inline-block;}\r\nnj-switch-item:not(:first-child){display:none;}", ""]);
+	exports.push([module.id, "@font-face {\r\n  font-family:'njicon';\r\n  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot'); /* IE9*/\r\n  src: url('//at.alicdn.com/t/font_1462433854_5701883.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.woff') format('woff'), /* chrome、firefox */\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\r\n  url('//at.alicdn.com/t/font_1462433854_5701883.svg#iconfont') format('svg'); /* iOS 4.1- */\r\n}\r\n.nj-icon:before,.nj-icon-sharp:before,.nj-icon-sharp:after{font:16px 'njicon';display:inline-block;}\r\n\r\n.nj-icon-menu:before{content:'\\E605';}\r\n.nj-icon-left:before{content:'\\E607';}\r\n.nj-icon-right:before{content:'\\E608';}\r\n.nj-icon-close{cursor:pointer;}\r\n.nj-icon-close:hover{color:red;}\r\n.nj-icon-close:before{content:'\\E600';font-size:14px;}\r\n\r\n.nj-icon-arrow-bottom:before{content:'\\E601';}\r\n\r\n\r\n.v_show{visibility:visible}\r\n.v_hide{visibility:hidden}\r\n.d_show{display:block}\r\n.d_hide{display:none}\r\n                    \r\n.nj-layer-wrap,.ng-layer-wrap{display:inline}\r\n.nj-mask div{position:fixed;top:0;left:0;z-index:901;width:100%;height:100%;transition:opacity 0.4s;\r\n    background:rgba(0,0,0,.2);\r\n    \r\n}\r\n\r\n\r\n/*popup*/\r\n.nj-popup{position:fixed;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);border:1px solid #ddd\\9;\r\n  transition:transform .3s,opacity .3s;z-index:900;width:440px;}\r\n.nj-popup.popup-active{z-index:902;}\r\n.nj-popup ._head{padding:9px 15px;font-size:14px;}\r\n.nj-popup ._close{position:absolute;right:9px;top:9px;cursor:pointer}\r\n.nj-popup ._close:before{content:'\\E600';font:14px/1 'njicon';}\r\n.nj-popup ._close:hover{color:red;}\r\n.nj-popup ._body{padding:20px;}\r\n.nj-popup ._foot{padding:9px 20px 20px;text-align:center;bottom:0;left:0;width:100%;box-sizing:border-box;}\r\n.nj-popup ._foot button{margin:0 5px;}\r\n.nj-popup ._foot .nj-button-flat{margin:0;}\r\n\r\n.popup-tip{width:auto;min-width:240px;background:rgba(255,255,255,.9)}\r\n.popup-tip ._body{padding:0 20px 20px;color:#000;}\r\n.popup-tip .tip-area{text-align:center;line-height:30px;}\r\n.popup-tip .nj-icon:before{font-size:30px;display:inline-block;vertical-align:top;margin-right:9px;line-height:30px;}\r\n.popup-tip .tip_text{color:#666;}\r\n\r\n.popup-confirm .nj-icon-warn{float:left;}\r\n.popup-confirm ._content{padding:7px 0 0 35px;}\r\n\r\n/*loading*/\r\n.nj-icon-loading:before{content:'\\E604';animation:njRotate 1s linear infinite;color:#999;}\r\n.nj-icon-ok:before{content:'\\E606';color:#00BE00;}\r\n.nj-icon-warn:before{content:'\\E609';color:#f60;}\r\n.nj-icon-error:before{content:'\\E60A';color:red;}\r\n\r\n\r\n/*<i class=\"nj-icon nj-icon-sharp\"></i>空心尖角*/\r\n.nj-icon-sharp:before,.nj-icon-sharp:after{\r\n  content:'\\E60D';position:absolute;color:#aaa;font-size:14px;}\r\n.nj-icon-sharp:after{color:#fff;}\r\n.nj-icon-sharp{position:absolute;width:6px;overflow:hidden;font-weight:800;line-height:1;}\r\n\r\n.nj-icon-sharp-top{width:14px;height:7px;left:50%;top:1px;margin-left:-7px}\r\n.nj-icon-sharp-top:before{top:0;left:0;}\r\n.nj-icon-sharp-top:after{top:1px;left:0;}\r\n\r\n.nj-icon-sharp-left{left:2px;top:50%;margin-top:-8px;width:6px;height:14px;}\r\n.nj-icon-sharp-left:before{left:0;top:0;}\r\n.nj-icon-sharp-left:after{left:1px;top:0;}\r\n\r\n.nj-icon-sharp-bottom{width:14px;height:7px;left:50%;bottom:1px;margin-left:-7px}\r\n.nj-icon-sharp-bottom:before{bottom:0;left:0;}\r\n.nj-icon-sharp-bottom:after{bottom:1px;left:0;}\r\n\r\n\r\n.nj-popover{position:absolute;z-index:800;}\r\n.nj-popover-inner{background:#fff;border:1px solid #ddd\\9;z-index:190;width:auto;\r\n  box-shadow:0px 2px 5px rgba(0,0,0,.2);}\r\n.nj-popover-sharp-top{padding-top:7px;}\r\n.nj-popover-sharp-left{padding-left:7px;}\r\n.nj-popover-sharp-right{padding-right:7px;}\r\n.nj-popover-sharp-bottom{padding-bottom:7px;}\r\n.nj-popover-sharp-top .nj-popover-inner,\r\n.nj-popover-sharp-left .nj-popover-inner,\r\n.nj-popover-sharp-right .nj-popover-inner,\r\n.nj-popover-sharp-bottom .nj-popover-inner{border:1px solid #d4d4d4;}\r\n\r\n/*buttons*/\r\n.nj-button{padding:0 18px;cursor:pointer;border:none;color:#333;background:#fff;position:relative;border-radius:2px;overflow:visible;\r\n  box-shadow:0px 1px 3px rgba(0,0,0,.12), 0px 1px 4px rgba(0,0,0,0.12);font:13px/31px 'arial','microsoft yahei';transition:all .2s;}\r\n\r\n.nj-button:before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;background:rgba(0,0,0,0.5);opacity:0;\r\n  border:1px solid\\9;border-color:#F7F7F7 #e8e8e8 #dcdcdc\\9;transition:all .3s;border-radius:3px;}\r\n.nj-button:not([disabled]):hover:before{opacity:0.2;}\r\n.nj-button:active{position:relative;box-shadow:1px 1px 2px rgba(0,0,0,.16),0 3px 9px rgba(0,0,0,.16);}\r\n.nj-button:not([disabled]):active:before,.nj-button-active:before{opacity:0.35;}\r\n\r\n.nj-button-default .nj-mui span{background:#bbb;}\r\n.nj-button-flat{background:none;border:none;box-shadow:none!important;padding:0 12px;min-width:auto!important;}\r\n.nj-button-gray{background:#aaa;}\r\n.nj-button-red{background:#FF4081;}\r\n.nj-button-blue{background:#0BF;}\r\n\r\n.nj-button-gray,.nj-button-red,.nj-button-blue{color:#fff;}\r\n.nj-button-gray:before,.nj-button-red:before,.nj-button-blue:before{background:#fff;background:none\\9;border:none\\9;}\r\n\r\n.nj-button+.nj-button{margin-left:9px;}\r\n\r\n.nj-button-small{line-height:25px;font-size:12px;padding:0 9px;}\r\n.nj-button-big{padding:0 36px;font-size:114%;}\r\nbutton.nj-button{min-width:80px;}\r\nbutton.nj-button-small{min-width:auto;}\r\n\r\n\r\n\r\n/*垂直水平居中*/\r\n.ct-img{display:table-cell;vertical-align:middle;text-align:center}\r\n.ct-img img{vertical-align:middle;max-width:100%;max-height:100%;}\r\n\r\n.nj-page *{margin:0 3px;}\r\n\r\n\r\n.nj-scroll-wrap{width:100%;height:100%;overflow:hidden;}\r\n.nj-scroll-item{overflow:hidden;}\r\nnj-scroll-items{display:inline-block;overflow:hidden;}\r\n.-page-item{display:inline-block;}\r\n\r\n.nj-face-pop{width:400px;}\r\n.nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}\r\n.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;cursor:pointer;}\r\n.nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}\r\n.nj-face-pop .nj-switch-item{padding:15px;}\r\n.nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}\r\n.nj-face-pop .pack li:hover{border-color:#aaa;}\r\n.nj-face-pop .pack img{width:100%;height:100%;}\r\n\r\n\r\n\r\n/*auto-complete*/\r\n.auto-complete-pop li{cursor:default;line-height:31px;}\r\n.auto-complete-pop .nj-mui-item{padding:0 15px;}\r\n.auto-complete-pop li:hover{background:#f2f2f2;}\r\n.auto-complete-pop .active{background:#e8e8e8;}\r\n.auto-complete-pop .nj-mui span{background:#aaa}\r\n\r\nnj-form,nj-input,nj-switch,nj-switch-menu,nj-switch-item{display:inline-block;}\r\nnj-switch-item:not(:first-child){display:none;}", ""]);
 
 	// exports
 
@@ -396,7 +374,7 @@
 
 
 	// module
-	exports.push([module.id, "/*loading 旋转*/\r\n@keyframes njRotate{\r\n    0%   {transform:rotate(0deg);}\r\n    50%   {transform:rotate(260deg);}\r\n    100%   {transform:rotate(360deg);}\r\n}\r\n\r\n/*drop effect*/\r\n.drop_pop{\r\n    transition:transform .3s,opacity .3s;\r\n    -webkit-transform:translate(0,-15px);\r\n    -moz-transform:translate(0,-15px);\r\n    -ms-transform:translate(0,-15px);\r\n    transform:translate(0,-15px);\r\n    opacity:0;\r\n    visibility: hidden;    \r\n}\r\n.drop_pop.nj-hide{-webkit-animation:dropUp .3s;-moz-animation:dropUp .3s;-ms-animation:dropUp .3s;}\r\n.drop_pop.nj-hide .drop_pop{visibility:hidden;}/*弹窗隐藏时 内部未隐藏的内容会遮挡页面 ??*/\r\n@-webkit-keyframes dropUp {\r\n  0% {-webkit-transform:translate(0,0);visibility:visible}\r\n  100% {-webkit-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-moz-keyframes dropUp {\r\n  0% {-moz-transform:translate(0,0);visibility:visible}\r\n  100% {-moz-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-ms-keyframes dropUp {\r\n  0% {-ms-transform:translate(0,0);visibility:visible}\r\n  100% {-ms-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n.drop_pop_show{\r\n    -webkit-transform:translate(0,0);\r\n    -moz-transform:translate(0,0);\r\n    -ms-transform:translate(0,0);\r\n    transform:translate(0,0);\r\n    opacity:1;\r\n    visibility: visible;\r\n}\r\n\r\n/*fade effect*/\r\n.fade-in{animation:fadeIn 0.4s;opacity:1;}\r\n.fade-out{animation:fadeOut 0.4s;animation-fill-mode:forwards;opacity:0;visibility:hidden;}\r\n@keyframes fadeIn{\r\n    0% {opacity:0;}\r\n    100% {opacity:1;}\r\n}\r\n@keyframes fadeOut{\r\n    0% {opacity:1;}\r\n    100% {opacity:0;visibility:hidden;}\r\n}\r\n\r\n/*scale effect*/\r\n.scale-pop{opacity:0;visibility:hidden;}\r\n.scale-pop.nj-show{opacity:1;visibility:visible;animation:scaleIn .25s cubic-bezier(0.23, 1, 0.32, 1);}\r\n.scale-pop.nj-show .nj-popover-inner{animation:scaleInInner 1s cubic-bezier(0.23, 1, 0.32, 1);}\r\n.scale-pop.nj-hide{animation:scaleOut .3s}\r\n@keyframes scaleIn{\r\n    0% {transform: scale(0,0);opacity:0}\r\n    100% {transform: scale(1,1);opacity: 1}\r\n}\r\n@keyframes scaleInInner{\r\n    0% {transform: scale(1,.4);}\r\n    100% {transform: scale(1,1);}\r\n}\r\n@keyframes scaleOut{\r\n    0% {visibility:visible;transform: scale(1,1);opacity: 1}\r\n    100% {visibility:hidden;transform: scale(0,0);}\r\n}\r\n\r\n.nj-mui-active{position:relative;overflow:hidden;}\r\n.nj-mui{height:100%;width:100%;position:absolute;top:0px;left:0px;overflow:hidden;border-radius:4px}\r\n.nj-mui span{position:absolute;top:0;left:0;background:#fff;\r\n    animation:mui 1.5s cubic-bezier(0.23, 1, 0.32, 1);animation-fill-mode:forwards;\r\n    border-radius: 50%; opacity:0; transform:scale(0); \r\n    transition:opacity 2s cubic-bezier(0.23, 1, 0.32, 1),transform 1s cubic-bezier(0.23, 1, 0.32, 1); \r\n}\r\n@keyframes mui{\r\n    0%  {opacity:0;transform: scale(0);}\r\n    50% {opacity:0.3;transform: scale(1);}\r\n    100%{opacity:0;transform: scale(1);}\r\n}", ""]);
+	exports.push([module.id, "/*loading 旋转*/\r\n@keyframes njRotate{\r\n    0%   {transform:rotate(0deg);}\r\n    50%   {transform:rotate(260deg);}\r\n    100%   {transform:rotate(360deg);}\r\n}\r\n\r\n/*drop effect*/\r\n.drop_pop{\r\n    transition:transform .3s,opacity .3s;\r\n    -webkit-transform:translate(0,-15px);\r\n    -moz-transform:translate(0,-15px);\r\n    -ms-transform:translate(0,-15px);\r\n    transform:translate(0,-15px);\r\n    opacity:0;\r\n    visibility: hidden;    \r\n}\r\n.drop_pop.nj-hide{-webkit-animation:dropUp .3s;-moz-animation:dropUp .3s;-ms-animation:dropUp .3s;}\r\n.drop_pop.nj-hide .drop_pop{visibility:hidden;}/*弹窗隐藏时 内部未隐藏的内容会遮挡页面 ??*/\r\n@-webkit-keyframes dropUp {\r\n  0% {-webkit-transform:translate(0,0);visibility:visible}\r\n  100% {-webkit-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-moz-keyframes dropUp {\r\n  0% {-moz-transform:translate(0,0);visibility:visible}\r\n  100% {-moz-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n@-ms-keyframes dropUp {\r\n  0% {-ms-transform:translate(0,0);visibility:visible}\r\n  100% {-ms-transform:translate(0,-15px);visibility:hidden}\r\n}\r\n.drop_pop_show{\r\n    -webkit-transform:translate(0,0);\r\n    -moz-transform:translate(0,0);\r\n    -ms-transform:translate(0,0);\r\n    transform:translate(0,0);\r\n    opacity:1;\r\n    visibility: visible;\r\n}\r\n\r\n/*fade effect*/\r\n.fade-in{animation:fadeIn 0.4s;opacity:1;}\r\n.fade-out{animation:fadeOut 0.4s;animation-fill-mode:forwards;opacity:0;visibility:hidden;}\r\n@keyframes fadeIn{\r\n    0% {opacity:0;}\r\n    100% {opacity:1;}\r\n}\r\n@keyframes fadeOut{\r\n    0% {opacity:1;visibility:visible;}\r\n    100% {opacity:0;visibility:hidden;}\r\n}\r\n\r\n/*scale effect*/\r\n.scale-pop{opacity:0;visibility:hidden;}\r\n.scale-pop.nj-show{opacity:1;visibility:visible;animation:scaleIn .25s cubic-bezier(0.23, 1, 0.32, 1);}\r\n.scale-pop.nj-show .nj-popover-inner{animation:scaleInInner 1s cubic-bezier(0.23, 1, 0.32, 1);}\r\n.scale-pop.nj-hide{animation:scaleOut .3s}\r\n@keyframes scaleIn{\r\n    0% {transform: scale(0,0);opacity:0}\r\n    100% {transform: scale(1,1);opacity: 1}\r\n}\r\n@keyframes scaleInInner{\r\n    0% {transform: scale(1,.4);}\r\n    100% {transform: scale(1,1);}\r\n}\r\n@keyframes scaleOut{\r\n    0% {visibility:visible;transform: scale(1,1);opacity: 1}\r\n    100% {visibility:hidden;transform: scale(0,0);}\r\n}\r\n\r\n.nj-mui-active{position:relative;overflow:hidden;}\r\n.nj-mui{height:100%;width:100%;position:absolute;top:0px;left:0px;overflow:hidden;border-radius:4px}\r\n.nj-mui span{position:absolute;top:0;left:0;background:#fff;\r\n    animation:mui 2s cubic-bezier(0.23, 1, 0.32, 1), mui_scale 1s cubic-bezier(0.23, 1, 0.32, 1);animation-fill-mode:forwards;\r\n    border-radius: 50%; opacity:0; transform:scale(0); \r\n    transition:opacity 2s cubic-bezier(0.23, 1, 0.32, 1),transform 1s cubic-bezier(0.23, 1, 0.32, 1); \r\n}\r\n@keyframes mui{\r\n    0%  {opacity:0;}\r\n    10% {opacity:0.3;}\r\n    100%{opacity:0;}\r\n}\r\n@keyframes mui_scale{\r\n    0%  {transform: scale(0);}\r\n    100%{transform: scale(1);}\r\n}", ""]);
 
 	// exports
 
@@ -33982,18 +33960,11 @@
 	            }
 	            conf = $.extend(true, conf, options); //合并得到最终选项               
 
-	            if (_action && _action.fetchBeforeEvent.complete(conf) === false) {
-	                return;
-	            }
-
 	            target = $(target);
 	            target.data('ajaxState', true);
 
-	            var promise1 = $.ajax(conf);
-	            var promise2 = _action && _action.fetchEvent.complete(promise1, conf);
-	            var promise = promise1 || promise2;
-
-	            promise = promise.then(function (json) {
+	            //如果需要post跨域的情况  需要在onFetchBefore事件中阻止ajax提交 在post对应的success中调用conf._callback
+	            conf._callback = function (json) {
 	                target.data('ajaxState', null);
 	                if (json.status == 1 && _config.reverse) {
 	                    //还原反向动作状态
@@ -34001,7 +33972,18 @@
 	                    target.data('state', conf.state);
 	                }
 	                _action && _action.fetchCompleteEvent.complete(json, conf);
-	            });
+	            };
+
+	            if (_action && _action.fetchBeforeEvent.complete(conf) === false) {
+	                return _action;
+	            }
+
+	            var promise1 = $.ajax(conf);
+	            var promise2 = _action && _action.fetchEvent.complete(promise1, conf);
+	            var promise = promise2 || promise1;
+
+	            promise = promise.then(conf._callback);
+
 	            return promise;
 	        }
 	    };
@@ -35649,6 +35631,185 @@
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
+
+/***/ },
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */,
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 * 移动端适配
+	 */
+	var docEl = document.documentElement;
+	var devicePixelRatio = window.devicePixelRatio;
+
+	var getDeviceWidth = function getDeviceWidth() {
+	    var width = docEl.getBoundingClientRect().width;
+	    if (width / dpr > 540) {
+	        width = 540 * dpr;
+	    }
+	    var rem = width / 10;
+	    docEl.style.fontSize = rem + 'px';
+	    return rem;
+	};
+
+	var isAndroid = window.navigator.appVersion.match(/android/gi);
+	var isIPhone = window.navigator.appVersion.match(/iphone/gi);
+	var dpr = undefined;
+	if (isIPhone) {
+	    if (devicePixelRatio >= 3) {
+	        dpr = 3;
+	    } else if (devicePixelRatio >= 2) {
+	        dpr = 2;
+	    } else {
+	        dpr = 1;
+	    }
+	} else {
+	    dpr = 1;
+	}
+	var scale = 1 / dpr;
+
+	docEl.setAttribute('data-dpr', dpr);
+
+	var metaEl = document.querySelector('meta[name="viewport"]');
+	if (!metaEl) {
+	    metaEl = document.createElement('meta');
+	    metaEl.setAttribute('name', 'viewport');
+	    metaEl.setAttribute('content', 'width=device-width,initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
+	    if (docEl.firstElementChild) {
+	        docEl.firstElementChild.appendChild(metaEl);
+	    } else {
+	        var wrap = document.createElement('div');
+	        wrap.appendChild(metaEl);
+	        document.write(wrap.innerHTML);
+	    }
+	}
+
+	var tid = undefined;
+	window.addEventListener('resize', function () {
+	    clearTimeout(tid);
+	    tid = setTimeout(getDeviceWidth, 300);
+	}, false);
+	window.addEventListener('pageshow', function (e) {
+	    if (e.persisted) {
+	        clearTimeout(tid);
+	        tid = setTimeout(getDeviceWidth, 300);
+	    }
+	}, false);
+
+	if (document.readyState === 'complete') {
+	    document.body.style.fontSize = 12 * dpr + 'px';
+	} else {
+	    document.addEventListener('DOMContentLoaded', function (e) {
+	        document.body.style.fontSize = 12 * dpr + 'px';
+	    }, false);
+	}
+
+	getDeviceWidth();
 
 /***/ }
 /******/ ]);
