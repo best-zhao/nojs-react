@@ -74,7 +74,7 @@
 .nj-icon-sharp-left:before{left:0;top:0;}
 .nj-icon-sharp-left:after{left:1px;top:0;}
 
-.nj-icon-sharp-bottom{width:14px;height:7px;left:50%;bottom:-7px;margin-left:-7px}
+.nj-icon-sharp-bottom{width:14px;height:7px;left:50%;bottom:1px;margin-left:-7px}
 .nj-icon-sharp-bottom:before{bottom:0;left:0;}
 .nj-icon-sharp-bottom:after{bottom:1px;left:0;}
 
@@ -133,7 +133,7 @@ nj-scroll-items{display:inline-block;overflow:hidden;}
 
 .nj-face-pop{width:400px;}
 .nj-face-pop .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}
-.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;}
+.nj-face-pop .nj-switch-menu{float:left;padding:5px 20px;border-right:1px solid #ddd;cursor:pointer;}
 .nj-face-pop .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}
 .nj-face-pop .nj-switch-item{padding:15px;}
 .nj-face-pop .pack li{float:left;width:24px;height:24px;border: 1px solid #fff;cursor:pointer;}

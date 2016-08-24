@@ -40,6 +40,8 @@ const FormComponent = React.createClass({
             alert('验证通过')
             e.preventDefault()
         })
+        console.log(this.refs.textarea.props)
+        // this.refs.textarea.setState({value: '<div>1234</div>'})
     },
     render () {
         return (
@@ -59,6 +61,8 @@ const FormComponent = React.createClass({
             <div>
                 <Select required><option value="">0</option><option value="1">1</option><option value="2">2</option></Select>
             </div>
+            <Input type="textarea" ref="textarea" html="<div>1</div><div>2</div>"></Input>
+            
             <button className="nj-button">提交</button>
         </Form>
         )

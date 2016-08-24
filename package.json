@@ -1,17 +1,19 @@
 {
   "dependencies": {
+    "es6-promise": "^3.1.2",
+    "fetch-detector": "^1.0.0",
+    "fetch-ie8": "^1.4.2",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^1.8.3",
     "marked": "^0.3.5",
     "react": "latest",
     "react-dom": "latest",
     "react-redux": "^4.4.1",
+    "react-router": "^2.7.0",
     "redux": "^3.3.1",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.0.1",
-    "es6-promise": "^3.1.2",
-    "fetch-detector": "^1.0.0",
-    "fetch-ie8": "^1.4.2"
+    "wilddog": "^0.7.2"
   },
   "description": "",
   "devDependencies": {
@@ -44,10 +46,10 @@
   "name": "nojs-react",
   "scripts": {
     "start": "node ./server.js",
-    "build" : "webpack --config ./wp.js",
-    "push" : "git add . && git commit -am 'push' && git push origin master",
-    "page" : "npm run build && git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git add . && git commit -am 'update' && git push origin gh-pages && git checkout master",
+    "build": "webpack --config ./wp.js",
+    "push": "git add . && git commit -am 'push' && git push origin master",
+    "page": "npm run build && git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git add . && git commit -am 'update' && git push origin gh-pages && git checkout master",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.0.387"
+  "version": "1.0.389"
 }

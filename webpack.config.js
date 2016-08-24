@@ -1,14 +1,18 @@
 var webpack = require('webpack');
 var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
+
+var entrys = {
+  'seed' : './examples/js/seed.js',
+  'index' : './examples/js/index.js',
+  'admin' : './examples/js/Admin/index.js'
+}
+for( var i in entrys ){
+  entrys[i] = [
+    'webpack-dev-server/client?http://127.0.0.1:4000','webpack/hot/only-dev-server', entrys[i]
+  ]  
+}
 module.exports = {
-  entry:{
-    seed : './examples/js/seed.js',
-    index:[
-      // 'webpack-dev-server/client?http://127.0.0.1:4000', // WebpackDevServer host and port
-      // 'webpack/hot/only-dev-server',
-      './examples/js/index.js'
-    ]
-  },
+  entry:entrys,
   output: {
     path: __dirname + '/examples/dist/',
     publicPath: "/examples/dist/",
@@ -19,7 +23,7 @@ module.exports = {
         name: "seed",
         filename : 'seed.js'
     }),
-    // new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
     alias: {

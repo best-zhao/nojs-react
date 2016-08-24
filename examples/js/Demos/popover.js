@@ -46,7 +46,7 @@ module.exports = (container)=>{
         // trigger : 'click'
     })
 
-    console.log(pop)
+    // console.log(pop)
 
     // var pop = render(<Popover nearby="demo-popover-button" template="123" />, document.getElementById('demo-popover-wrap'))
 }

@@ -146,25 +146,29 @@ var Actions = module.exports = function(context){
             }
             conf = $.extend(true, conf, options);//合并得到最终选项                
             
-            if( _action && _action.fetchBeforeEvent.complete(conf)===false ){
-                return
-            }
-            
             target = $(target);
             target.data('ajaxState', true);
-            
-            var promise1 = $.ajax(conf)
-            var promise2 = _action && _action.fetchEvent.complete(promise1, conf)
-            var promise = promise1 || promise2
 
-            promise = promise.then(json=>{                
+            //如果需要post跨域的情况  需要在onFetchBefore事件中阻止ajax提交 在post对应的success中调用conf._callback
+            conf._callback = json=>{       
                 target.data('ajaxState', null);
                 if( json.status == 1 && _config.reverse ){//还原反向动作状态
                     conf.state = _config.state = reverse ? null : 1;
                     target.data('state', conf.state);
                 }
                 _action && _action.fetchCompleteEvent.complete(json, conf)
-            })
+            }
+
+            if( _action && _action.fetchBeforeEvent.complete(conf)===false ){
+                return _action
+            }            
+            
+            var promise1 = $.ajax(conf)
+            var promise2 = _action && _action.fetchEvent.complete(promise1, conf)
+            var promise = promise2 || promise1
+
+            promise = promise.then(conf._callback)
+            
             return promise;
         }
     }

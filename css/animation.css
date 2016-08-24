@@ -46,7 +46,7 @@
     100% {opacity:1;}
 }
 @keyframes fadeOut{
-    0% {opacity:1;}
+    0% {opacity:1;visibility:visible;}
     100% {opacity:0;visibility:hidden;}
 }
 
@@ -71,12 +71,16 @@
 .nj-mui-active{position:relative;overflow:hidden;}
 .nj-mui{height:100%;width:100%;position:absolute;top:0px;left:0px;overflow:hidden;border-radius:4px}
 .nj-mui span{position:absolute;top:0;left:0;background:#fff;
-    animation:mui 1.5s cubic-bezier(0.23, 1, 0.32, 1);animation-fill-mode:forwards;
+    animation:mui 2s cubic-bezier(0.23, 1, 0.32, 1), mui_scale 1s cubic-bezier(0.23, 1, 0.32, 1);animation-fill-mode:forwards;
     border-radius: 50%; opacity:0; transform:scale(0); 
     transition:opacity 2s cubic-bezier(0.23, 1, 0.32, 1),transform 1s cubic-bezier(0.23, 1, 0.32, 1); 
 }
 @keyframes mui{
-    0%  {opacity:0;transform: scale(0);}
-    50% {opacity:0.3;transform: scale(1);}
-    100%{opacity:0;transform: scale(1);}
+    0%  {opacity:0;}
+    10% {opacity:0.3;}
+    100%{opacity:0;}
+}
+@keyframes mui_scale{
+    0%  {transform: scale(0);}
+    100%{transform: scale(1);}
 }

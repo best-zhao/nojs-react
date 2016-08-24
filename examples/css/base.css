@@ -22,7 +22,7 @@ h4 span{font-size:14px;font-weight:100;color:#666;}
 
 
 .nj-tree .item:hover{background:#EAE5E2;}
-.nj-tree .selected,.nj_tree .selected:hover{background:#E4DAD4;}
+.nj-tree .selected,.nj-tree .selected:hover{background:#E4DAD4;}
 
 .demo-nav{margin:0 0 40px;line-height:1;}
 .demo-nav a{color:#666;padding:0 5px;}

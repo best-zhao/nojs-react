@@ -5,3 +5,6 @@ html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}
 .nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}
 .nj-frame-inner{padding:40px;margin:0 auto}
 
+
+[data-dpr] .nj-frame-side{width:4rem}
+[data-dpr] .nj-frame-content{margin-left:4rem}

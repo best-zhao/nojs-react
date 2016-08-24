@@ -1,3 +1,2 @@
 import nj from 'nj'
-
-// console.log(1,'seed')
+import Mobile from '../../utils/mobile'

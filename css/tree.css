@@ -1,6 +1,6 @@
 /*tree*/
 .nj-tree li{width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;clear:both}
-.nj-tree .item{display:block;color:#333;margin:0 0 1px;transition:background .1s;padding:0 1.2em;height:24px;line-height:2;cursor:default;}
+.nj-tree .item{display:block;color:#333;margin:0 0 1px;transition:background .1s;padding:0 1.2em;height:2.8em;line-height:2.8;cursor:default;}
 .nj-tree .item:hover{background:#f4f4f4;text-decoration:none}
 .nj-tree ._icon,.nj-tree ._line{float:left;width:17px;height:100%;overflow:hidden;color:#888;line-height:1.8;font-size:14px;}
 .nj-tree ._icon{width:15px;}
@@ -16,3 +16,6 @@
 .nj-tree .more a{color:#bbb}
 
 option[disabled]{color:#bbb;}
+
+.nj-tree .nj-mui-item ._icon, .nj-tree .nj-mui-item ._text{position:relative;z-index:20;}
+.nj-tree .nj-mui span{background:#aaa;}
