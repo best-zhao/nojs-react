@@ -27,7 +27,7 @@ webpackJsonp([0],[
 	var React = _nj2.default.React;
 	var render = _nj2.default.render;
 
-	_jquery2.default.getJSON('/examples/menu.json').then(function (json) {
+	_jquery2.default.getJSON('./examples/menu.json').then(function (json) {
 	    var frameOptions = {
 	        logo: React.createElement(
 	            'h1',

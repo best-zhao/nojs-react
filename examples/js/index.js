@@ -7,7 +7,7 @@ import {Frame} from 'nj/frame'
 import Demo from './Demos/'
 
 
-$.getJSON('/examples/menu.json').then(json=>{
+$.getJSON('./examples/menu.json').then(json=>{
     const frameOptions = {
         logo : <h1>nojs-react</h1>,
         menu : json.data,
