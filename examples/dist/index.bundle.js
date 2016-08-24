@@ -27,13 +27,62 @@ webpackJsonp([0],[
 	var React = _nj2.default.React;
 	var render = _nj2.default.render;
 
+	var Logo = React.createClass({
+	    displayName: 'Logo',
+	    getInitialState: function getInitialState() {
+	        var authData = ref.getAuth();
+	        return authData ? { uid: authData.uid, username: authData.qq.username } : {};
+	    },
+	    sign: function sign(signin, e) {
+	        var _this = this;
+
+	        if (signin) {
+	            authWidthQQ(function (error, authData) {
+	                _this.setState({ uid: authData.uid, username: authData.qq.username });
+	            });
+	        } else {
+	            ref.unauth(function () {
+	                _this.setState({ uid: null, username: null });
+	            });
+	        }
+	    },
+	    render: function render() {
+	        var _state = this.state;
+	        var uid = _state.uid;
+	        var username = _state.username;
+
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'h1',
+	                null,
+	                'nojs-react'
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: '_foot' },
+	                uid ? React.createElement(
+	                    'span',
+	                    null,
+	                    username,
+	                    React.createElement(
+	                        'a',
+	                        { href: 'javascript:void(0)', onClick: this.sign.bind(this, false) },
+	                        '退出'
+	                    )
+	                ) : React.createElement(
+	                    'a',
+	                    { href: 'javascript:void(0)', onClick: this.sign.bind(this, true) },
+	                    'QQ登陆'
+	                )
+	            )
+	        );
+	    }
+	});
 	_jquery2.default.getJSON('./examples/menu.json').then(function (json) {
 	    var frameOptions = {
-	        logo: React.createElement(
-	            'h1',
-	            null,
-	            'nojs-react'
-	        ),
+	        logo: React.createElement(Logo, null),
 	        menu: json.data,
 	        parseUrl: function parseUrl(url, node) {
 	            return node ? './examples/doc/' + url + '.md' : url;
@@ -67,11 +116,34 @@ webpackJsonp([0],[
 	    console.log(2, error);
 	    // 处理请求失败打错误
 	});
-	MenusRef.orderByChild("name").on("child_added", function (snapshot) {
-	    console.log(snapshot.key() + " was " + snapshot.val().name + " meters tall");
-	});
 
 	// MenusRef.push({"id":3, "name":"Popup", "parentid":1, "link":"popup"})
+
+	// 创建一个回调来处理终端用户认证的结果
+	function authHandler(error, authData) {
+	    if (error) {
+	        console.log("Login Failed!", error);
+	    } else {
+	        console.log("Authenticated successfully with payload:", authData);
+	    }
+	}
+	// 弹出OAuth认证
+	var authWidthQQ = function authWidthQQ(callback) {
+	    return ref.authWithOAuthPopup("qq", function (error, authData) {
+	        authHandler(error, authData);
+	        callback && callback(error, authData);
+	    });
+	};
+
+	//监控终端用户的认证状态
+	function authDataCallback(authData) {
+	    if (authData) {
+	        console.log(authData, "User " + authData.uid + " is logged in with " + authData.provider);
+	    } else {
+	        console.log("User is logged out");
+	    }
+	}
+	ref.onAuth(authDataCallback);
 
 /***/ },
 /* 1 */,
@@ -1744,7 +1816,7 @@ webpackJsonp([0],[
 
 
 	// module
-	exports.push([module.id, "html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}\r\n.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;padding:25px 0;}\r\n.nj-frame-logo{padding:0 20px 20px;}\r\n.nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}\r\n.nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}\r\n.nj-frame-inner{padding:40px;margin:0 auto}\r\n\r\n\r\n[data-dpr] .nj-frame-side{width:4rem}\r\n[data-dpr] .nj-frame-content{margin-left:4rem}", ""]);
+	exports.push([module.id, "html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}\r\n.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;}\r\n.nj-frame-logo{padding:25px 20px 20px;}\r\n.nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}\r\n.nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}\r\n.nj-frame-inner{padding:40px;margin:0 auto}\r\n\r\n\r\n[data-dpr] .nj-frame-side{width:4rem}\r\n[data-dpr] .nj-frame-content{margin-left:4rem}", ""]);
 
 	// exports
 

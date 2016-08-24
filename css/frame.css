@@ -1,6 +1,6 @@
 html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}
-.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;padding:25px 0;}
-.nj-frame-logo{padding:0 20px 20px;}
+.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;}
+.nj-frame-logo{padding:25px 20px 20px;}
 .nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}
 .nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}
 .nj-frame-inner{padding:40px;margin:0 auto}

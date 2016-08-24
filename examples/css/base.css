@@ -3,6 +3,7 @@
 
 body{font:12px/1.6 arial,'microsoft yahei';color:#666;}
 *{margin:0;padding:0;}
+a{text-decoration:none}
 ul,li{list-style:none;}
 input,button,select{outline:none}
 .clearfix:after{content:"";display:block;height:0;clear:both;visibility:hidden}
@@ -35,5 +36,6 @@ h4 span{font-size:14px;font-weight:100;color:#666;}
 .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}
 .nj-switch-item{padding:15px;}
 
-
-
+.nj-frame-side ._foot{position:absolute;bottom:10px;left:10px;z-index:50}
+.nj-frame-side ._foot a{color:#999}
+.nj-frame-side ._foot a:hover{color:#000}
