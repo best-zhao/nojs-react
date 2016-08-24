@@ -12,7 +12,7 @@ $.getJSON('./examples/menu.json').then(json=>{
         logo : <h1>nojs-react</h1>,
         menu : json.data,
         parseUrl (url, node) {
-            return node ? '/examples/doc/'+url+'.md' : url
+            return node ? './examples/doc/'+url+'.md' : url
         },
         parseContent (html, fromUrl) {
             return /.md$/.test(fromUrl) ? Marked(html) : html

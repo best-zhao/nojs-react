@@ -36,7 +36,7 @@ webpackJsonp([0],[
 	        ),
 	        menu: json.data,
 	        parseUrl: function parseUrl(url, node) {
-	            return node ? '/examples/doc/' + url + '.md' : url;
+	            return node ? './examples/doc/' + url + '.md' : url;
 	        },
 	        parseContent: function parseContent(html, fromUrl) {
 	            return (/.md$/.test(fromUrl) ? (0, _marked2.default)(html) : html
