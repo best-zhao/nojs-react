@@ -27,7 +27,7 @@ webpackJsonp([0],[
 	var React = _nj2.default.React;
 	var render = _nj2.default.render;
 
-	_jquery2.default.getJSON('./menu.json').then(function (json) {
+	_jquery2.default.getJSON('/examples/menu.json').then(function (json) {
 	    var frameOptions = {
 	        logo: React.createElement(
 	            'h1',
@@ -36,7 +36,7 @@ webpackJsonp([0],[
 	        ),
 	        menu: json.data,
 	        parseUrl: function parseUrl(url, node) {
-	            return node ? 'doc/' + url + '.md' : url;
+	            return node ? '/examples/doc/' + url + '.md' : url;
 	        },
 	        parseContent: function parseContent(html, fromUrl) {
 	            return (/.md$/.test(fromUrl) ? (0, _marked2.default)(html) : html
