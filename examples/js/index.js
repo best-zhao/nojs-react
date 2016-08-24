@@ -7,12 +7,12 @@ import {Frame} from 'nj/frame'
 import Demo from './Demos/'
 
 
-$.getJSON('./menu.json').then(json=>{
+$.getJSON('/examples/menu.json').then(json=>{
     const frameOptions = {
         logo : <h1>nojs-react</h1>,
         menu : json.data,
         parseUrl (url, node) {
-            return node ? 'doc/'+url+'.md' : url
+            return node ? '/examples/doc/'+url+'.md' : url
         },
         parseContent (html, fromUrl) {
             return /.md$/.test(fromUrl) ? Marked(html) : html
