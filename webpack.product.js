@@ -19,7 +19,7 @@ module.exports = {
   entry:entrys,
   output: {
     path: rs+'/dist/',
-    publicPath: '/docs/dist/',  
+    publicPath: 'dist/',  
     filename: '[name].bundle.js',
     chunkFilename: "c/[name].bundle.js?t=[chunkhash]"
   },
