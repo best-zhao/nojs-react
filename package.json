@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node ./server.js",
-    "build": "webpack --config ./webpack.product.js",
+    "build": "webpack --config ./webpack.product.js -p",
     "babel" : "babel src --out-dir dist",
     "push": "git add . && git commit -am 'push' && git push origin master",
     "page": "npm run build && git add . && git commit -am 'update' && git checkout gh-pages && git merge master && git add . && git commit -am 'update' && git push origin gh-pages && git checkout master",
