@@ -1,0 +1,9 @@
+{
+    "entry" : {
+        "seed" : "/seed.js",
+        "index" : "/index.js"  
+    },
+    "resolve" : {
+        "alias": {}
+    }
+}

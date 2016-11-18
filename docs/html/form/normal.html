@@ -1,0 +1,31 @@
+<div id="demo-nav"></div>
+<div class="mb30">通过nj-form标签指令直接在html中创建表单</div>
+<nj-form class="nj-form">
+    <ul>
+        <li class="item">
+            <span class="lab"><i class="red">*</i>Username:</span>
+            <div class="fields">
+                <nj-input class="text" required></nj-input>
+            </div>
+        </li>
+        <li class="item">
+            <span class="lab"><i class="red">*</i>Email:</span>
+            <div class="fields">
+                <nj-input class="text" type="email" required></nj-input>
+                <nj-select required>
+                    <option value="">0</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </nj-select>
+                <nj-input class="text" type="textarea">12</nj-input>
+            </div>
+        </li>
+        <li class="item">
+            <div class="fields">
+                <button class="nj-button nj-button-blue " type="submit">提交</button>
+            </div>
+        </li>
+    </ul>
+</nj-form>
+
+<p><a href="form/component.html">通过React组件创建表单</a></p>

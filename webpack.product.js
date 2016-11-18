@@ -6,12 +6,12 @@ var config = require('./webpack.json')
 
 var entrys = config.entry
 for( var i in entrys ){
-  entrys[i] = [
-    'webpack-dev-server/client?http://127.0.0.1:4000', 'webpack/hot/only-dev-server', js+entrys[i]
-  ]
+  entrys[i] = js+entrys[i]  
 }
+
+
 var resolve = config.resolve
-resolve.alias.nj = __dirname+'/src/lib'
+resolve.alias.nj = __dirname+'/dist/lib'
 resolve.alias.js = js
 resolve.alias.css = rs+'/css'
 
@@ -19,7 +19,7 @@ module.exports = {
   entry:entrys,
   output: {
     path: rs+'/dist/',
-    publicPath: '/docs/dist/',
+    publicPath: '/docs/dist/',  
     filename: '[name].bundle.js',
     chunkFilename: "c/[name].bundle.js?t=[chunkhash]"
   },
@@ -30,9 +30,9 @@ module.exports = {
         filename : 'seed.js'
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"development"'
-    }),
-    new webpack.HotModuleReplacementPlugin()
+      'process.env.NODE_ENV': '"production"'
+    })
+    
   ],  
   module: {
     loaders: [{

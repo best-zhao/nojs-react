@@ -1,4 +1,4 @@
-html,body,#frameContainer,.nj-frame{height:100%;width:100%;overflow:hidden;}
+html,body,.frame-container,.nj-frame{height:100%;width:100%;overflow:hidden;}
 .nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;}
 .nj-frame-logo{padding:25px 20px 20px;}
 .nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}
