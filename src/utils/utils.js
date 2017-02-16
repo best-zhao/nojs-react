@@ -68,6 +68,32 @@ module.exports = {
         }
     },
 
+    stopScroll : function( object, callback ){
+        if( !object ){
+            return
+        }
+        //自定义鼠标滚轮事件
+        var scrollFunc = function(e){ 
+            e = e || window.event;  
+            if( e.wheelDelta ){//IE/Opera/Chrome 
+                e.returnValue = false;//阻止网页滚动条滚动
+            }else if(e.detail){//Firefox 
+                e.preventDefault(); 
+            }
+            callback && callback(e);
+        } 
+        var moveFunc = function(e){
+            scrollFunc(e)
+            // e.stopPropagation();
+        }
+        if(document.addEventListener){//firefox
+            object.addEventListener( "DOMMouseScroll", scrollFunc, false );
+            object.addEventListener( "touchmove", moveFunc, false );
+        }
+        object.onmousewheel = scrollFunc;//IE/Opera/Chrome/Safari 
+        object.ontouchmove = moveFunc
+    },
+    
     /**
      * 手动触发事件
      * @type  事件类型
@@ -410,7 +436,8 @@ module.exports = {
             'rowspan' : 'rowSpan',
             'colspan' : 'colSpan',
             'defaultvalue' : 'defaultValue',
-            'enctype' : 'encType'
+            'enctype' : 'encType',
+            'readonly' : 'readOnly'
         }
         for( var i=0,n=attrs.length;i<n;i++ ){
             var attr = attrs[i]

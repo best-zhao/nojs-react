@@ -7,6 +7,21 @@ var $ = require('jquery')
 var Directive = require('../mixins/directiveComponent').default
 require('./touch')
 
+/* 
+ * [jQuery animate动画扩展]
+ * http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js
+ * easeIn：加速度缓动；
+ * easeOut：减速度缓动；
+ * easeInOut：先加速度至50%，再减速度完成动画
+ */    
+$.extend($.easing, {
+    //指数曲线缓动
+    easeOutExpo: function (x, t, b, c, d) {
+        return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+    }
+});
+
+
 var Scroll = React.createClass({
     mixins : [mixins.childComponents.config],
     getDefaultProps () {
@@ -94,7 +109,7 @@ var Scroll = React.createClass({
     append (start, appendLength) {
         /*
          * 使用向后追加元素的方式来实现不间断滚动
-         * 初始化追加一次 ；每次滚动完毕后追加
+         * 初始化追加一次 ；每次滚动完毕后检测是否追加
          */
         var {repeat, length, size, itemsComponent} = this.state
         if( !repeat ){

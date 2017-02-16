@@ -23,19 +23,21 @@ const Menu = React.createClass({
         defaultNode && tree.select(defaultNode)
     },
     render () {
-        let {defaultNode, menu} = this.props
+        let {defaultNode, menu, sidebar} = this.props
+        let tree = <div className="nj-tree">
+            <Tree ref="tree" 
+                data={menu} 
+                onChange={this.changeHandle} 
+                defaultNode={defaultNode}
+                //使用Link组件更新路由 css控制Link覆盖文字之上
+                defineName={item=><span>{item.link ? <Link to={'/'+item.id}></Link> : null} {item.name}</span> }
+            />
+        </div>            
+        if( typeof sidebar=='function' ){
+            tree = sidebar(tree)
+        }
         return <div className="grid-menu">
-            <div className="grid-inner">
-                <div className="nj-tree">
-                    <Tree ref="tree" 
-                        data={menu} 
-                        onChange={this.changeHandle} 
-                        defaultNode={defaultNode}
-                        //使用Link组件更新路由 css控制Link覆盖文字之上
-                        defineName={item=><span>{item.link ? <Link to={'/'+item.id}></Link> : null} {item.name}</span> }
-                    />
-                </div>
-            </div>
+            <div className="grid-inner">{tree}</div>
         </div>
     }
 })

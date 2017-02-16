@@ -58,7 +58,7 @@ var alertpop = Popup.confirm({
 <pre><code class="language-javascript">
 {
     buttons : [
-        {text:'确定', className:'nj-button'}, handle (e) {
+        {text:'确定', className:'nj-button', handle (e) {
             //按钮点击事件
             console.log(e) 
             
@@ -68,7 +68,7 @@ var alertpop = Popup.confirm({
             //返回的值在then事件中获取
             return true 
         },
-        {text:'取消', className:'nj-button'}}
+        {text:'取消', className:'nj-button'}
     ]
 }
 </code>

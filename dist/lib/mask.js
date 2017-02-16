@@ -34,6 +34,11 @@ var Mask = React.createClass({
       }
     };
   }(),
+  componentDidMount: function componentDidMount() {
+    utils.stopScroll(ReactDOM.findDOMNode(this), function (e) {
+      e.preventDefault();
+    });
+  },
   render: function render() {
     var _state = this.state;
     var name = _state.name;

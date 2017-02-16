@@ -5,7 +5,7 @@ var nj = require('./nojs-react')
 var {React, ReactDOM, mixins, utils, Mui} = nj
 var $ = require('jquery')
 var Popover = require('./popover')
-var fetch = require('isomorphic-fetch')
+// var fetch = require('isomorphic-fetch')
 
 var Autocomplete = module.exports = React.createClass({
     getDefaultProps () {
@@ -125,20 +125,20 @@ var Autocomplete = module.exports = React.createClass({
     },
     filter (value) {
         var container = this.refs.container
-        if( !value ){
-            var results = this.props.results || []
-            this.setState({results})
-            this.setDisplay(results.length?true:false)
-            return
-        }
-        var {data, source, getItem, max} = this.props
-
+        
         var done = results => {
             results = results.slice(0,max)
             this.setState({results, index:null})
-            this.setDisplay(true)
-            this.completeEvent.complete(results)
+            this.setDisplay(results.length?true:false)
+            this.completeEvent.complete(results, this.refs.input.value)
         }
+
+        if( !value ){
+            var results = this.props.results || []
+            done(results)            
+            return
+        }
+        var {data, source, getItem, max} = this.props
 
         if( data ){
             var results = data.filter(item=>{
@@ -154,10 +154,13 @@ var Autocomplete = module.exports = React.createClass({
                 done(_data)
                 return
             }
-            var promise = fetch(source+value, {
-                credentials: 'include',
-                headers : {'X-Requested-With':'XMLHttpRequest'}
-            }).then(res=>res.json())
+            var promise = $.getJSON(source+value)
+            // var promise = fetch(source+value, {
+            //     credentials: 'include',
+            //     method : 'GET',
+            //     mode: "no-cors",
+            //     headers : {'X-Requested-With':'XMLHttpRequest'}
+            // }).then(res=>res.json())
 
             promise = this.fetchEvent.complete(promise, value) || promise
 

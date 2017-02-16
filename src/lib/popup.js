@@ -118,12 +118,13 @@ var Statics = {
       show (type, message, options) {
         options = options || {}
         Popup.tip.hide()
+        var timer = typeof options.timer!='undefined' ? options.timer : 1500
         if( type=='loading' ){
             message = message || 'loading……'
-        }else{
-            var timer = setTimeout(function(){
+        }else if( timer ){
+            setTimeout(function(){
                 tip.setDisplay(false)
-            }, 1500)
+            }, timer)
         }
         var tip = Popup.tip.handle = Popup.alert({
             title : '',
@@ -175,6 +176,7 @@ var Popup = React.createClass({
   componentDidMount () {
     this.setAlign({
       nearby : window,
+      position : this.props.position,
       element : ReactDOM.findDOMNode(this)
     })
 
@@ -184,7 +186,9 @@ var Popup = React.createClass({
       
       //当前焦点弹窗
       setFocusPop(this)
-      this.align.set()
+      this.align.set({
+        position : this.props.position
+      })
 
     }).onHide(function(){
       focusPops.pop()

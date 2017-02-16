@@ -156,7 +156,6 @@ var Popover = React.createClass({
             }
             
             this.onDisplayChange(visible=>{
-                // console.log(visible, this.keepVisible)
                 if( !visible && this.keepVisible ){
                     this.keepVisible = null
                     return false
@@ -179,6 +178,8 @@ var Popover = React.createClass({
             }
         }
 
+        this.state.trigger = trigger
+
         var showClassName = this.props.showClassName || 'nj-popover-nearby'
         this.onShow(()=>{
             self.getOrigin()   
@@ -186,12 +187,13 @@ var Popover = React.createClass({
 
             layerBind()
 
-
-
             if( this.align ){
-                this.align.set({
-                    nearby : this.state.nearby
-                })
+                //当鼠标在多个相近得nearby间快速扫动时，align定位不会及时更新 所以加延时处理
+                setTimeout(e=>{
+                    this.align.set({
+                        nearby : this.state.nearby
+                    })
+                }, 0)
             }else{
                 this.setAlign(Object.assign({}, this.props, {
                   nearby : this.state.nearby,
@@ -252,8 +254,11 @@ var Popover = React.createClass({
 var docWatch = (function(){
     var initial
     var pops = []
-    var hide = ()=>window.setTimeout(e=>{
+    var hide = (e)=>window.setTimeout(i=>{
         pops.forEach(pop=>{
+            if( pop.state.trigger=='focus' && e.target===pop.state.nearby ){
+                return
+            }
             pop.setDisplay(false)
         })
     }, 0)

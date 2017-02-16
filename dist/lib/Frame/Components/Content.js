@@ -35,20 +35,7 @@ var Content = _react2.default.createClass({
         return {};
     },
     componentDidMount: function componentDidMount() {
-        var el = (0, _reactDom.findDOMNode)(this);
-        var self = this;
-        (0, _jquery2.default)(el).delegate('a', 'click', function (e) {
-            var target = this.target;
-            if (!target) {
-                e.preventDefault();
-                var href = encodeURIComponent(this.getAttribute('href'));
-                var _self$props$params = self.props.params;
-                var id = _self$props$params.id;
-                var url = _self$props$params.url;
-
-                href && self.context.router.push('/' + id + '/' + href);
-            }
-        });
+        this.jump();
         this.context.router.setRouteLeaveHook(this.props.route, this.routerWillLeave);
     },
     routerWillLeave: function routerWillLeave(nextLocation) {
@@ -59,16 +46,33 @@ var Content = _react2.default.createClass({
         // if (!this.state.isSaved)
         //return '确认要离开？';
     },
-    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        //组件初始化渲染完毕时 menuData不存在 
-        //父Container会再次传递menuData过来触发componentWillReceiveProps事件
-        var menuData = nextProps.menuData;
-        var _nextProps$params = nextProps.params;
-        var id = _nextProps$params.id;
-        var url = _nextProps$params.url;
+    jump: function jump(props) {
+        var _ref = props || this.props;
 
-        var node = menuData && menuData[id];
+        var _ref$routes = _slicedToArray(_ref.routes, 1);
+
+        var rootProps = _ref$routes[0].props;
+        var _ref$params = _ref.params;
+        var id = _ref$params.id;
+        var url = _ref$params.url;
+        var menu = rootProps.menu;
+        //获取当前节点
+
+        var node = menu.filter(function (n) {
+            return n.id == id;
+        })[0];
         this.load(url || node && node.link, id);
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var params = this.props.params;
+        var nParams = nextProps.params;
+
+        (nParams.id != params.id || nParams.url != params.url) && this.jump(nextProps);
+        //     //组件初始化渲染完毕时 menuData不存在 
+        //     //父Container会再次传递menuData过来触发componentWillReceiveProps事件
+        //     const {menuData, params:{id, url}} = nextProps
+        //     let node = menuData && menuData[id]
+        //     this.load(url||node&&node.link, id)
     },
     load: function load(url, id) {
         var _this = this;
@@ -92,41 +96,36 @@ var Content = _react2.default.createClass({
                 html = htmlParse(html, { id: id, url: url });
             }
             _this.setState({ html: html }, function (e) {
-                var menuData = _this.props.menuData;
+                var _props = _this.props;
+                var menu = _props.menu;
+                var parent = _props.parent;
 
                 onComplete && onComplete({ id: id, url: url });
+
                 //更新html后 需要加载相应组件
                 var pageName = scripts[url] || scripts[id];
-
                 if (!scripts[url] && scripts[id]) {
                     //只有id匹配 需检查url是否跟id所在节点的link是否匹配
-                    if (url != menuData[id].link) {
+                    var node = menu.filter(function (n) {
+                        return n.id == id;
+                    })[0];
+                    if (url != node.link) {
                         return;
                     }
                 }
                 pageName && require("bundle!js/" + pageName)(function (p) {
                     _this.constructor.leaveEvent = p.onLeave;
                     p.init && p.init({ id: id, url: url });
-                    //this.renderComponent()
                 });
+
+                setTimeout(function (e) {
+                    return parent.forceUpdate();
+                }, 1);
             });
         }).fail(function (data) {
             //console.log(this.props.params, data)
         });
     },
-
-    // renderComponent () {
-    //     let el = $(findDOMNode(this))
-    //     let components = [{'name':'datepicker'}];
-    //     components.forEach(item=>{
-    //         let {name, module=name} = item
-    //         require("bundle!js/Component/" + module)(Component=>{
-    //             el.find('[data-render="'+name+'"]').each(function(){
-    //                 render(<Component />, this)
-    //             })
-    //         })            
-    //     })
-    // },
     render: function render() {
         var _state$html = this.state.html;
         var html = _state$html === undefined ? '' : _state$html;

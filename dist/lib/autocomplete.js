@@ -14,7 +14,7 @@ var Mui = nj.Mui;
 
 var $ = require('jquery');
 var Popover = require('./popover');
-var fetch = require('isomorphic-fetch');
+// var fetch = require('isomorphic-fetch')
 
 var Autocomplete = module.exports = React.createClass({
     displayName: 'exports',
@@ -162,10 +162,17 @@ var Autocomplete = module.exports = React.createClass({
         var _this4 = this;
 
         var container = this.refs.container;
+
+        var done = function done(results) {
+            results = results.slice(0, max);
+            _this4.setState({ results: results, index: null });
+            _this4.setDisplay(results.length ? true : false);
+            _this4.completeEvent.complete(results, _this4.refs.input.value);
+        };
+
         if (!value) {
             var results = this.props.results || [];
-            this.setState({ results: results });
-            this.setDisplay(results.length ? true : false);
+            done(results);
             return;
         }
         var _props = this.props;
@@ -174,13 +181,6 @@ var Autocomplete = module.exports = React.createClass({
         var getItem = _props.getItem;
         var max = _props.max;
 
-
-        var done = function done(results) {
-            results = results.slice(0, max);
-            _this4.setState({ results: results, index: null });
-            _this4.setDisplay(true);
-            _this4.completeEvent.complete(results);
-        };
 
         if (data) {
             var results = data.filter(function (item) {
@@ -197,12 +197,13 @@ var Autocomplete = module.exports = React.createClass({
                 done(_data);
                 return;
             }
-            var promise = fetch(source + value, {
-                credentials: 'include',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            }).then(function (res) {
-                return res.json();
-            });
+            var promise = $.getJSON(source + value);
+            // var promise = fetch(source+value, {
+            //     credentials: 'include',
+            //     method : 'GET',
+            //     mode: "no-cors",
+            //     headers : {'X-Requested-With':'XMLHttpRequest'}
+            // }).then(res=>res.json())
 
             promise = this.fetchEvent.complete(promise, value) || promise;
 

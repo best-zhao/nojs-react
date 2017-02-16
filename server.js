@@ -3,7 +3,7 @@ var WebpackDevServer = require('webpack-dev-server');
 var config = require('./webpack.config');
 
 var app = new WebpackDevServer(webpack(config), {
-  publicPath: config.output.publicPath,
+  publicPath: 'http://127.0.0.1:4000/docs/dist/',
   hot: true,
   inline: true,
   noInfo: false,

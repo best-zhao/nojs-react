@@ -3,10 +3,8 @@ import {render} from 'react-dom'
 import {Router, Route, browserHistory, hashHistory, IndexRedirect} from 'react-router'
 import Container from './Components/Container'
 import Content from './Components/Content'
-// import * as Conf from './conf'
 
-// import injectTapEventPlugin from 'react-tap-event-plugin';
-// injectTapEventPlugin();
+require('../../../css/frame.css')
 
 const Root = (props) => {
   return (

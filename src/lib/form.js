@@ -65,7 +65,7 @@ var verifyChildComponents = function(real){
             if( !_valid ){
                 // console.log(1,item.props.name, item.state.status)
                 valid = _valid
-                // console.log(valid,item.props.name)
+                
             }
         }
     })
@@ -77,12 +77,14 @@ var verifyChildComponents = function(real){
 var verifyField = function(real, fromParent) {
     var textField
 
+    let {validing, status, value, _value, dirty} = this.state
     
-    if( this.state.validing || this.state.status=='ok' & this.state.valid ){
+    //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
+    if( validing || (status && value===_value && dirty) ){
         // console.log(2,this.props.name, this.state.validing , this.state.status, this.state.valid)
         return this.state.valid
     }
-    var value = this.state.value
+    
     real = real===false ? false : (real||true)
     this.state.validing = true
 
@@ -129,6 +131,7 @@ var verifyField = function(real, fromParent) {
         parentComponent.verify(parentComponent.props.type=='form'?false:true)
     }
     this.state.validing = null
+    this.state._value = value//记录此次验证时的value
     // fromParent && console.log(real,valid)
     real && this.setState({valid:valid})
     return valid
@@ -137,7 +140,7 @@ var verifyField = function(real, fromParent) {
 var Form = formDirectives['form'] = React.createClass({
     mixins : [mixins.childComponents.config],    
     getDefaultProps () {
-        return {type:'form', method:'post',showicon:'error',noValidate:true}
+        return {type:'form', showicon:'error',noValidate:true}
     },    
     handleSubmit (e) {
         e = e || window.event
@@ -170,26 +173,12 @@ var Form = formDirectives['form'] = React.createClass({
         //     })
         //     e.preventDefault()
         // }
-        this.submitEvent.complete(e)
-        // console.log('submit', valid)
-        // if( e.isDefaultPrevented() ){//调用preventDefault阻止默认事件
-        //     return
-        // }
+        this.submitEvent.complete(e)        
     },
     submit (options) {//从外部触发submit动作
         var el = this.refs.wrap
-        var result = false;  
-        if (el.fireEvent) {  //IE fire event 
-          // el.onsubmit = (e)=>{
-          //   this.handleSubmit(e)
-          // }
-          result = el.fireEvent('onsubmit');  
-        } else if (document.createEvent) {  
-          var ev = document.createEvent('HTMLEvents');  
-          ev.initEvent('submit', false, true);  
-          result = el.dispatchEvent(ev);
-        }
-        result && el.submit()//表单提交是异步的 所以下面return不是正确的valid
+        nj.utils.fireEvent('submit', el)
+        //表单提交是异步的 所以下面return不是正确的valid
         return this.state.valid
     },
     reset () {
@@ -451,6 +440,8 @@ formDirectives['select'] = React.createClass({
         this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify')
         this.refs.wrap.$handle = this
+        //同步初始select初始值到state
+        this.state.value = this.refs.wrap.value
 
         this.forceUpdate()//for nj-select
     },
@@ -748,7 +739,7 @@ Form.fill = function(options){
         if( type=='radio' ){
             _item = item.filter('[value="'+value+'"]')
             _item.click()
-            _item.attr('checked', 'checked');
+            _item.attr('checked', true);
             handle && handle.setState({value}, e=>handle.verify(false))
             
         }else if( type=='checkbox' && $.type(value)=='array' ){
@@ -838,7 +829,7 @@ Form.post = function(options){
         }
         
         iframe.remove();
-        noForm && _form.remove()
+        noForm && $(_form).remove()
         iframe = null;
     }
     options.beforeSend && options.beforeSend.call(options);

@@ -27,10 +27,11 @@ var Page = React.createClass({
         this.setState({pages:this.getPages(nextProps)})
     },
     componentDidMount () {
-        // var {onChange} = this.props
-        // setTimeout(()=>{
-        //     onChange && onChange(this.setData(this.state.page))
-        // }, 10)
+        var {onChange} = this.props
+        var {page} = this.state
+        setTimeout(()=>{
+            onChange && onChange(page, page, this.setData(this.state.page))
+        }, 10)
     },
     getPages (props) {
         props = props || this.props
@@ -70,13 +71,13 @@ var Page = React.createClass({
         var pages = this.getPages()//总页数
         // console.log(page,pages,this.props.data.length,this.props.perpage)
         return (
-        <div className={'nj-page '+this.props.className}>
-            {page>1&&(<a href="" onClick={this.handleChange.bind(this,1)}>首页</a>)}
-            {page>1&&(<a href="" onClick={this.handleChange.bind(this,'prev')}>上一页</a>)}
-            {this.state.page}/{pages}
-            {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,'next')}>下一页</a>}
-            {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,pages)}>尾页</a>}
-        </div>
+            <div className={'nj-page '+this.props.className}>
+                {page>1&&(<a href="" onClick={this.handleChange.bind(this,1)}>首页</a>)}
+                {page>1&&(<a href="" onClick={this.handleChange.bind(this,'prev')}>上一页</a>)}
+                {this.state.page}/{pages}
+                {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,'next')}>下一页</a>}
+                {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,pages)}>尾页</a>}
+            </div>
         )
     }
 })

@@ -53,7 +53,14 @@ var Directive = function Directive(options) {
                 for (var n = com.instances.length, i = n - 1; i >= 0; i--) {
                     var item = com.instances[i].handle;
                     if (item.props.handle == handle) {
-                        return item;
+                        var target = (0, _jquery2.default)('body').find(ReactDOM.findDOMNode(item));
+                        if (target.length) {
+                            return item;
+                        } else {
+                            //组件已被移除
+                            com.instances.splice(i, 1);
+                            break;
+                        }
                     }
                 }
             };

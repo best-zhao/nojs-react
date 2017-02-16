@@ -6,6 +6,10 @@ export const init = ({id, url})=>{
     Form.start()
 }
 
+export const onLeave = e=>{
+    console.log(e)
+}
+
 const Nav = React.createClass({
     getDefaultProps () {
         return {items : [

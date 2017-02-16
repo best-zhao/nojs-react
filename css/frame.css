@@ -1,10 +1,35 @@
-html,body,.frame-container,.nj-frame{height:100%;width:100%;overflow:hidden;}
-.nj-frame-side{width:220px;background:#F5F2F0;height:100%;position:fixed;}
-.nj-frame-logo{padding:25px 20px 20px;}
-.nj-frame-logo h1{font:100 26px/1 'microsoft yahei';margin:0;}
-.nj-frame-content{margin-left:220px;font-size:1.16em;color:#222;height:100%;overflow:auto}
-.nj-frame-inner{padding:40px;margin:0 auto}
+.mb30{margin-bottom:30px}
+.mr15{margin-right:15px}
+.pd30{padding:30px}
+html, body, .app-container, #root{width:100%;height:100%;overflow:hidden;}
+.grid-menu{width:200px;background:#f2f2f2;z-index:50;box-shadow:1px 0 6px rgba(0,0,0,.2);left:0}
+.grid-main{left:200px;right:0}
+.grid-main, .grid-menu{overflow:auto;overflow-x:hidden;position:absolute;top:0;bottom:0;transition:left .2s;}
+.grid-main .grid-inner{padding:30px;}
 
+.grid-menu .nj-tree{padding:20px 0}
+.grid-menu .nj-tree .item ._text{position:static;}
+.grid-menu .nj-tree ._text a{position:absolute;top:0;left:0;width:100%;height:100%;z-index:50}
 
-[data-dpr] .nj-frame-side{width:4rem}
-[data-dpr] .nj-frame-content{margin-left:4rem}
+.grid-topbar{position:fixed;left:0;top:0;width:100%;z-index:49;white-space: nowrap;}
+.grid-topbar ._inner{height:38px;line-height:38px;padding-left:200px;background:#f8f8f8;box-shadow:0 1px 1px rgba(0,0,0,.18);transition:padding .2s;}
+.grid-topbar .item, .grid-topbar .item-link a{display:inline-block;padding:0 15px;vertical-align:top}
+.grid-topbar .l .item{border-right:1px solid #ddd}
+.grid-topbar .r .item{border-left:1px solid #ddd}
+.grid-topbar .r .item:first-child{border:none}
+.grid-topbar .item-button{cursor:pointer;}
+.grid-topbar .item-button:hover, .grid-topbar .item-link:hover{background:#eee}
+.grid-topbar .item-link{padding:0}
+.grid-topbar a{color:#666}
+.grid-topbar .nj-icon{color:#888}
+
+.hide-menu .grid-menu{left:-201px}
+.hide-menu .grid-topbar ._inner{padding:0}
+.hide-menu .grid-main{left:0}
+
+.show-topbar .grid-main{top:38px}
+
+/*上下结构 topbar横向拉通*/
+.app-style2 .grid-menu{top:38px}
+.app-style2 .grid-topbar{z-index:50}
+.app-style2 .grid-topbar ._inner{padding:0}

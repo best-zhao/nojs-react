@@ -15,21 +15,6 @@ exports.mixins = {
     childComponents : require('../mixins/childComponents')
 };
 
-/* 
- * [jQuery animate动画扩展]
- * http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js
- * easeIn：加速度缓动；
- * easeOut：减速度缓动；
- * easeInOut：先加速度至50%，再减速度完成动画
- */    
-$.extend($.easing, {
-    //指数曲线缓动
-    easeOutExpo: function (x, t, b, c, d) {
-        return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
-    }
-});
-
-
 /**
  * fetch: 针对IE低版本处理
  * https://github.com/camsong/blog/issues/2
@@ -50,19 +35,16 @@ require('es6-promise').polyfill()
  * html标签指令组件 兼容ie处理
  * 保证nojs-react在head处引入并执行
  */
-'form|input|input-group|select|scroll|scroll-items|scroll-page|switch|switch-menu|switch-item'.split('|').forEach(dir=>{
-    let tagName = 'nj-'+dir
-    document.createElement(tagName)
-})
+'form|input|input-group|select|scroll|scroll-items|scroll-page|switch|switch-menu|switch-item'
+.split('|').forEach(dir=>document.createElement('nj-'+dir))
 
 const isMobile = exports.isMobile = screen.width<=640
 exports.clickEvent = isMobile ? 'tap' : 'click'
 
 window.noJS = window.noJS || {}
-window.noJS.load = function(js){
-    document.write('<script src="'+js+'"></'+'script>')
+window.noJS.ready = function(fn){
+    fn(exports)
 }
-
 
 var muiTimer
 function addMui(e){

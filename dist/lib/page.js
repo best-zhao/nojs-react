@@ -33,10 +33,14 @@ var Page = React.createClass({
         this.setState({ pages: this.getPages(nextProps) });
     },
     componentDidMount: function componentDidMount() {
-        // var {onChange} = this.props
-        // setTimeout(()=>{
-        //     onChange && onChange(this.setData(this.state.page))
-        // }, 10)
+        var _this = this;
+
+        var onChange = this.props.onChange;
+        var page = this.state.page;
+
+        setTimeout(function () {
+            onChange && onChange(page, page, _this.setData(_this.state.page));
+        }, 10);
     },
     getPages: function getPages(props) {
         props = props || this.props;

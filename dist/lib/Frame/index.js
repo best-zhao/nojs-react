@@ -18,10 +18,7 @@ var _Content2 = _interopRequireDefault(_Content);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import * as Conf from './conf'
-
-// import injectTapEventPlugin from 'react-tap-event-plugin';
-// injectTapEventPlugin();
+require('../../../css/frame.css');
 
 var Root = function Root(props) {
   return _react2.default.createElement(

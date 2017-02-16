@@ -15,7 +15,7 @@
 .nj-icon-close{cursor:pointer;}
 .nj-icon-close:hover{color:red;}
 .nj-icon-close:before{content:'\e600';font-size:14px;}
-
+.nj-icon-back:before{content:'\e607';}
 .nj-icon-arrow-bottom:before{content:'\e601';}
 
 
@@ -143,6 +143,7 @@ nj-scroll-items{display:inline-block;overflow:hidden;}
 
 
 /*auto-complete*/
+.auto-complete-pop{z-index:999}
 .auto-complete-pop li{cursor:default;line-height:31px;}
 .auto-complete-pop .nj-mui-item{padding:0 15px;}
 .auto-complete-pop li:hover{background:#f2f2f2;}

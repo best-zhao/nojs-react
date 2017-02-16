@@ -46,32 +46,37 @@ var Menu = _react2.default.createClass({
         var _props = this.props;
         var defaultNode = _props.defaultNode;
         var menu = _props.menu;
+        var sidebar = _props.sidebar;
 
+        var tree = _react2.default.createElement(
+            'div',
+            { className: 'nj-tree' },
+            _react2.default.createElement(_tree2.default, { ref: 'tree',
+                data: menu,
+                onChange: this.changeHandle,
+                defaultNode: defaultNode
+                //使用Link组件更新路由 css控制Link覆盖文字之上
+                , defineName: function defineName(item) {
+                    return _react2.default.createElement(
+                        'span',
+                        null,
+                        item.link ? _react2.default.createElement(_reactRouter.Link, { to: '/' + item.id }) : null,
+                        ' ',
+                        item.name
+                    );
+                }
+            })
+        );
+        if (typeof sidebar == 'function') {
+            tree = sidebar(tree);
+        }
         return _react2.default.createElement(
             'div',
             { className: 'grid-menu' },
             _react2.default.createElement(
                 'div',
                 { className: 'grid-inner' },
-                _react2.default.createElement(
-                    'div',
-                    { className: 'nj-tree' },
-                    _react2.default.createElement(_tree2.default, { ref: 'tree',
-                        data: menu,
-                        onChange: this.changeHandle,
-                        defaultNode: defaultNode
-                        //使用Link组件更新路由 css控制Link覆盖文字之上
-                        , defineName: function defineName(item) {
-                            return _react2.default.createElement(
-                                'span',
-                                null,
-                                item.link ? _react2.default.createElement(_reactRouter.Link, { to: '/' + item.id }) : null,
-                                ' ',
-                                item.name
-                            );
-                        }
-                    })
-                )
+                tree
             )
         );
     }

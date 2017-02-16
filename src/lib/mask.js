@@ -29,6 +29,11 @@ var Mask = React.createClass({
       }
     }
   })(),
+  componentDidMount (){
+    utils.stopScroll(ReactDOM.findDOMNode(this), function(e){
+      e.preventDefault()
+    })
+  },
   render () {
     var {name, className} = this.state
     return (
