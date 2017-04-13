@@ -61,6 +61,7 @@ var Content = _react2.default.createClass({
         var node = menu.filter(function (n) {
             return n.id == id;
         })[0];
+
         this.load(url || node && node.link, id);
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
@@ -83,6 +84,7 @@ var Content = _react2.default.createClass({
         var template = rootProps.template;
         var htmlParse = rootProps.htmlParse;
         var onComplete = rootProps.onComplete;
+        var loadScript = rootProps.loadScript;
         var _rootProps$scripts = rootProps.scripts;
         var scripts = _rootProps$scripts === undefined ? {} : _rootProps$scripts;
 
@@ -91,29 +93,37 @@ var Content = _react2.default.createClass({
         if (url && typeof template == 'function') {
             realUrl = template({ id: id, url: url });
         }
+
         realUrl && _jquery2.default.get(realUrl).then(function (html) {
             if (typeof htmlParse == 'function') {
                 html = htmlParse(html, { id: id, url: url });
             }
             _this.setState({ html: html }, function (e) {
-                var _props = _this.props;
-                var menu = _props.menu;
-                var parent = _props.parent;
+                var parent = _this.props.parent;
 
-                onComplete && onComplete({ id: id, url: url });
+                var node = rootProps.menu.filter(function (n) {
+                    return n.id == id;
+                })[0];
+                onComplete && onComplete({ id: id, url: url }, node);
 
                 //更新html后 需要加载相应组件
-                var pageName = scripts[url] || scripts[id];
+
+                /**
+                 * 在页面中添加一个隐藏域来标识当前页面 <input id="$pageName" value="index">
+                 * 当id或url都不方便匹配时(url中存在动态参数) 可使用此方法
+                 */
+                var _pageName = (0, _jquery2.default)('#__pageName__').val();
+
+                var pageName = scripts[_pageName] || scripts[url] || scripts[id];
+
                 if (!scripts[url] && scripts[id]) {
                     //只有id匹配 需检查url是否跟id所在节点的link是否匹配
-                    var node = menu.filter(function (n) {
-                        return n.id == id;
-                    })[0];
                     if (url != node.link) {
+
                         return;
                     }
                 }
-                pageName && require("bundle!js/" + pageName)(function (p) {
+                pageName && typeof loadScript == 'function' && loadScript(pageName, function (p) {
                     _this.constructor.leaveEvent = p.onLeave;
                     p.init && p.init({ id: id, url: url });
                 });
@@ -122,9 +132,7 @@ var Content = _react2.default.createClass({
                     return parent.forceUpdate();
                 }, 1);
             });
-        }).fail(function (data) {
-            //console.log(this.props.params, data)
-        });
+        }).fail(function (data) {});
     },
     render: function render() {
         var _state$html = this.state.html;

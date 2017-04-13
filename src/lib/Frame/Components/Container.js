@@ -21,13 +21,26 @@ const Container = React.createClass({
     },
     componentDidMount () {
         let self = this
-        $('div.grid-main, div.grid-topbar').delegate('a', 'click', function(e){
+        let {routes:[{props:rootProps}]} = this.props
+        let {menu} = rootProps
+
+        $(document).delegate('div.grid-main a, div.grid-topbar a', 'click', function(e){
             let target = this.target
             if( !target && !e.isDefaultPrevented() ){//如果之前添加了preventDefault 这里不再跳转
                 e.preventDefault()
-                let href = encodeURIComponent(this.getAttribute('href'))
+                let href = this.getAttribute('href')
+                if( !href ){
+                    return
+                }
                 let {params:{id, url}} = self.props
-                href && self.context.router.push('/'+id+'/'+href)
+
+                //如果url与另一个节点的link匹配 则直接跳都那个node
+                let node_url = menu.filter(n=>n.link==href&&n.id!=id)[0]
+                if( node_url ){
+                    self.context.router.push('/'+node_url.id)
+                }else{
+                    self.context.router.push('/'+id+'/'+encodeURIComponent(href))
+                }
             }
         })
     },

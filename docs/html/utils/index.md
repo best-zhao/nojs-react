@@ -16,15 +16,19 @@ cookie('userid', 'value', options) //set
 
 #### localStorage
 <pre><code class="language-javascript">
-var value = localStorage.get(key) //get
-value = JSON.parse(value) //取出的value为字符串
-localStorage.set(key, JSON.stringify(value)) //set
-localStorage.remove(key) //删除key
+//get
+var value = localStorage.get(key) 
+value = JSON.parse(value) //取出的value为字符串，需转化为json对象
+//set options.expires:可设置过期时间(天)
+localStorage.set(key, JSON.stringify(value), options) 
+//删除key
+localStorage.remove(key) 
 </code></pre>
 
-#### joinClass(class1, class2, classN) <span>将传入的参数组合成最终的class。参数个数不限，值为假的被过滤</span>
+#### joinClass(class1, class2, ...classN) <span>将传入的参数组合成最终的class。参数个数不限，值为假的被过滤</span>
 <pre><code class="language-javascript">
-var className = joinClass('name1', some1 && 'name2 name3', ['name4', 'name5']) //带空格的字符串参数或数组参数都可接受
+//带空格的字符串参数或数组参数都可接受
+var className = joinClass('name1', some1 && 'name2 name3', ['name4', 'name5']) 
 </code></pre>
 
 #### dateParse(options) <span>格式化日期</span>

@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 Object.defineProperty(exports, "__esModule", {
@@ -47,17 +49,44 @@ var Container = _.React.createClass({
     },
     componentDidMount: function componentDidMount() {
         var self = this;
-        (0, _jquery2.default)('div.grid-main, div.grid-topbar').delegate('a', 'click', function (e) {
+
+        var _props$routes = _slicedToArray(this.props.routes, 1);
+
+        var rootProps = _props$routes[0].props;
+        var menu = rootProps.menu;
+
+
+        (0, _jquery2.default)(document).delegate('div.grid-main a, div.grid-topbar a', 'click', function (e) {
+            var _this2 = this;
+
             var target = this.target;
             if (!target && !e.isDefaultPrevented()) {
-                //如果之前添加了preventDefault 这里不再跳转
-                e.preventDefault();
-                var href = encodeURIComponent(this.getAttribute('href'));
-                var _self$props$params = self.props.params;
-                var id = _self$props$params.id;
-                var url = _self$props$params.url;
+                var _ret = function () {
+                    //如果之前添加了preventDefault 这里不再跳转
+                    e.preventDefault();
+                    var href = _this2.getAttribute('href');
+                    if (!href) {
+                        return {
+                            v: void 0
+                        };
+                    }
+                    var _self$props$params = self.props.params;
+                    var id = _self$props$params.id;
+                    var url = _self$props$params.url;
 
-                href && self.context.router.push('/' + id + '/' + href);
+                    //如果url与另一个节点的link匹配 则直接跳都那个node
+
+                    var node_url = menu.filter(function (n) {
+                        return n.link == href && n.id != id;
+                    })[0];
+                    if (node_url) {
+                        self.context.router.push('/' + node_url.id);
+                    } else {
+                        self.context.router.push('/' + id + '/' + encodeURIComponent(href));
+                    }
+                }();
+
+                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
             }
         });
     },
@@ -73,9 +102,9 @@ var Container = _.React.createClass({
         return visible;
     },
     render: function render() {
-        var _props$routes = _slicedToArray(this.props.routes, 1);
+        var _props$routes2 = _slicedToArray(this.props.routes, 1);
 
-        var rootProps = _props$routes[0].props; //this.props.routes[0].props
+        var rootProps = _props$routes2[0].props; //this.props.routes[0].props
 
         var menu = rootProps.menu;
         var sidebar = rootProps.sidebar;

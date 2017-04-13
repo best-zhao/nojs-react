@@ -131,6 +131,8 @@ var Scroll = React.createClass({
                 });
             }
         }, 1);
+
+        createdEvents.complete(this);
     },
     append: function append(start, appendLength) {
         /*
@@ -385,6 +387,8 @@ Scroll.PropTypes = {
     pageTemplate: React.PropTypes.func
 };
 
+var createdEvents = nj.utils.addEventQueue.call(Scroll, 'onCreated');
+
 var ScrollItems = React.createClass({
     displayName: 'ScrollItems',
 
@@ -564,4 +568,4 @@ var directive = new Directive({
 });
 
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start();
+// directive.start()

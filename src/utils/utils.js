@@ -550,6 +550,12 @@ module.exports = {
             value : selectedOption.value,
             text : selectedOption.innerText
         }
+    },
+
+    getOptions (target, key){
+        var options = $.trim($(target).data(key||'options'));
+        options = options ? eval('({'+options+'})') : {};
+        return options;
     }
 }
 module.exports.action = actions(module.exports)

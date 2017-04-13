@@ -4,16 +4,16 @@
 .nj-form .text,.nj-form .short-text{border:1px solid #ccc;height:15px;line-height:15px;padding:4px 5px;width:200px;
     background:#fff;margin-right:7px;display:inline-block;}
 .nj-form .short-text{width:90px;}
-.nj-form .text:focus,.nj-form .short-text:focus{box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}
-.nj-form textarea.text{vertical-align:top}
+.nj-form .text:focus:not([readonly]),.nj-form .short-text:focus:not([readonly]){box-shadow:0 0 7px #9DDEEF;border-color:#3ABDD7}
+.nj-form textarea.text, .nj-form select.text{vertical-align:top}
 .nj-form textarea.text[rows]{height:auto}
 .nj-form textarea.text[cols]{width:auto}
 .nj-form .lab{float:left;margin-right:7px;width:90px;text-align:right;line-height:25px;white-space:nowrap;}
 .nj-form .lab i{color:#f06;margin-right:7px}
 .nj-form .date{display:inline-block;vertical-align:top;}
-.nj-form .date .text{width:90px;background-color:transparent}
-.nj-form .disabled,button[disabled],input[disabled],.nj-button[disabled]{
-  box-shadow:none;background:#e5e5e5!important;color:#999!important;cursor:default;}
+.nj-form .date .text{width:110px;background-color:transparent}
+.nj-form .text[readonly]{background:#f2f2f2}
+
 .nj-form select.text{width:auto;height:auto;}
 .nj-form .text-block{width:100%;box-sizing:border-box;height:25px;}
 .nj-form .text-flat{border-color:transparent!important;box-shadow:none!important}

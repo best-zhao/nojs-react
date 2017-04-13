@@ -60,8 +60,15 @@ var getRules = function getRules() {
 var formMixin = {
     //在组件外部手动更新验证状态 如异步场景
     setValid: function setValid(valid, nextState) {
+        var _this = this;
+
         this.setState(Object.assign(nextState || {}, { valid: valid, status: valid ? 'ok' : 'error' }));
         this.verifyEvent.complete(valid);
+
+        //若这里修改了errortext 会影响其他rule 通过延时清空的方法可解决(不能用setState)
+        nextState && nextState.errortext && setTimeout(function (e) {
+            _this.state.errortext = '';
+        });
     }
 };
 
@@ -127,8 +134,13 @@ var verifyField = function verifyField(real, fromParent) {
         valid = true;
     }
 
+    var type = this.props.type;
+
+    // console.log(0, type, valid, value)
+
     //'input-group' 验证子项是否全部通过
-    if (valid && this.props.type == 'input-group') {
+
+    if (valid && type == 'input-group') {
         valid = this.state.valid_all;
     }
 
@@ -157,12 +169,12 @@ var Form = formDirectives['form'] = React.createClass({
         return { type: 'form', showicon: 'error', noValidate: true };
     },
     handleSubmit: function handleSubmit(e) {
-        var _this = this;
+        var _this2 = this;
 
         e = e || window.event;
         this.state.action = 'submit';
         window.setTimeout(function () {
-            _this.state.action = null;
+            _this2.state.action = null;
         }, 1);
         this.submitBeforeEvent.complete(e);
         if (e.isDefaultPrevented()) {
@@ -222,6 +234,8 @@ var Form = formDirectives['form'] = React.createClass({
                 parentComponent.setState({ valid: valid });
             });
         }
+        createdEvents.complete(this);
+        // Form._config.created && Form._config.created(this)
     },
     verify: function verify(real) {
         var valid = verifyChildComponents.call(this, real);
@@ -262,11 +276,14 @@ formDirectives['input-group'] = React.createClass({
         var checked = [];
         var hasnovalid;
         this.state.childComponents.forEach(function (item) {
-            // console.log(item.state.value,item.state.valid, item.refs.input)
-            if (!item.state.valid) {
-                hasnovalid = true;
-            } else if (item.state.value) {
+            var ischeck = /checkbox|radio/.test(item.props.type);
+            var _valid = ischeck ? item.refs.input.checked : item.state.valid && item.state.value;
+
+            // console.log(!item.state.value, ',' , item.state.valid, ',' , item.refs.input)
+            if (_valid) {
                 checked.push(item);
+            } else if (!item.state.valid) {
+                hasnovalid = true;
             }
         });
         //this.state.status = null
@@ -274,6 +291,7 @@ formDirectives['input-group'] = React.createClass({
         //当chekced满足了个数验证时 其中有非必填项输入了错误的值时 通过该属性检测group整体状态
         this.state.valid_all = !hasnovalid;
 
+        // console.log(checked, this.state.valid_all)
         this.state.value = checked.length ? checked : null; //没选中时 兼顾required
         var valid = verifyField.call(this, real, fromParent);
         return valid;
@@ -317,6 +335,7 @@ formDirectives['input'] = React.createClass({
         }
 
         var valid = verifyField.call(this, real, fromParent);
+
         this.verifyEvent.complete(valid);
         //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
         //this.refs.input.focus()
@@ -324,12 +343,19 @@ formDirectives['input'] = React.createClass({
         return valid;
     },
     componentDidMount: function componentDidMount() {
+        var input = this.refs.input;
+        // let {type} = this.props
+
+        // if( type=='checkbox' || type=='radio' ){
+        //     this.state.valid = input.checked
+        // }
+
         mixins.childComponents.getParentComponent.call(this);
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
         //对外引用组件
-        this.refs.input.$handle = this;
+        input.$handle = this;
     },
 
     //外部value改变状态后 同步到内部value
@@ -342,7 +368,7 @@ formDirectives['input'] = React.createClass({
         }
     },
     valueLink: function valueLink() {
-        var _this2 = this;
+        var _this3 = this;
 
         var _onChange = this.props.onChange;
         var _value = this.props.value;
@@ -359,23 +385,23 @@ formDirectives['input'] = React.createClass({
                 if (typeof e == 'boolean') {
                     newValue = e;
                 } else {
-                    newValue = e ? e.target.value : _this2.state.value;
+                    newValue = e ? e.target.value : _this3.state.value;
                 }
 
                 var textField = textReg.test(type);
                 e && _onChange && _onChange(e);
 
-                _this2.state.value = newValue;
-                _this2.state.status = null;
+                _this3.state.value = newValue;
+                _this3.state.status = null;
 
-                _this2.setState({
+                _this3.setState({
                     value: newValue,
                     dirty: true
                 });
 
                 // update = update===false ? false : (update||!textField)
 
-                var parentComponent = _this2.state.parentComponent;
+                var parentComponent = _this3.state.parentComponent;
                 if (parentComponent) {
                     parentComponent.state.status = null;
                     parentComponent.state.dirty = true;
@@ -383,7 +409,7 @@ formDirectives['input'] = React.createClass({
                 // update && this.verify.call(this,false); 
 
                 //使用blur类型验证的文本框 在onChange事件中就不用重复执行verify了
-                trigger != 'blur' && _this2.verify(false);
+                trigger != 'blur' && _this3.verify(false);
                 // this.changeEvent.complete()
             }
         };
@@ -391,7 +417,7 @@ formDirectives['input'] = React.createClass({
         return valueLink;
     },
     render: function render() {
-        var _this3 = this;
+        var _this4 = this;
 
         var attrs = this.props;
         var type = attrs.type;
@@ -413,8 +439,12 @@ formDirectives['input'] = React.createClass({
             ref: 'input'
         });
 
+        options.value = this.state.value;
+        options.onChange = this.valueLink().requestChange;
+
         if (type == 'checkbox' || type == 'radio') {
-            options.checkedLink = this.valueLink();
+            //options.checkedLink = this.valueLink()
+
         } else {
             var mark;
             if (rules.length && status) {
@@ -426,14 +456,13 @@ formDirectives['input'] = React.createClass({
                     mark = false;
                 }
             }
-            options.value = this.state.value;
-            options.onChange = this.valueLink().requestChange;
+
             options.className = nj.utils.joinClass(this.props.className, mark && 'input-' + status);
             var _event = options[trigger];
 
             options[trigger] = function (e) {
                 _event && _event(e); //外部添加的事件
-                _this3.verify(true);
+                _this4.verify(true);
             };
         }
         if (type == 'textarea') {
@@ -490,7 +519,7 @@ formDirectives['select'] = React.createClass({
         return valid;
     },
     valueLink: function valueLink() {
-        var _this4 = this;
+        var _this5 = this;
 
         var _valueLink = this.props.valueLink;
         var _value = _valueLink && _valueLink.value;
@@ -511,22 +540,22 @@ formDirectives['select'] = React.createClass({
                 // console.log(this.refs.wrap.selectedOptions[0].value)
                 _valueLink && _valueLink.requestChange(newValue); //合并外部双向绑定
 
-                _this4.state.value = newValue;
-                _this4.state.status = null;
+                _this5.state.value = newValue;
+                _this5.state.status = null;
 
-                _this4.setState({
+                _this5.setState({
                     value: newValue,
                     dirty: true
                 });
 
-                var parentComponent = _this4.state.parentComponent;
+                var parentComponent = _this5.state.parentComponent;
                 if (parentComponent) {
                     parentComponent.state.status = null;
                     parentComponent.state.dirty = true;
                 }
 
-                _this4.verify.call(_this4, false);
-                _this4.changeEvent.complete();
+                _this5.verify.call(_this5, false);
+                _this5.changeEvent.complete();
             }
         };
         return valueLink;
@@ -601,9 +630,7 @@ var VerifyStatus = React.createClass({
         // console.log(showmsg, valid, status, field.refs.input)
 
         if (showmsg) {
-            if (ispending) {
-                novalidText = 'loading……';
-            } else if (!valid) {
+            if (!valid || ispending) {
                 novalidText = errortext || field.props.errortext || statusText[novalidName] || '';
             }
 
@@ -613,16 +640,12 @@ var VerifyStatus = React.createClass({
                 return null;
             }
             //适合'input-group'子项为text类
-            if (field.props.type == 'input-group') {
-                if (!field.state.valid_all) {
-                    //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态
+            var child = childComponents[0];
+            if (field.props.type == 'input-group' && child && textReg.test(child.props.type)) {
+                //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态 
+                //valid=true：已输入的全部通过 状态体现在子项上 group无需显示状态   
+                if (!field.state.valid_all || valid) {
                     return null;
-                } else if (valid) {
-                    var child = childComponents[0];
-                    if (child && textReg.test(child.props.type)) {
-                        //已输入的全部通过 状态体现在子项上 group无需显示状态 
-                        return null;
-                    }
                 }
             }
         }
@@ -669,7 +692,7 @@ var formRules = {
         );
     },
     mobile: function mobile(value) {
-        return (/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])[0-9]{8}$/.test(value)
+        return (/^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])[0-9]{8}$/.test(value)
         );
     },
     qq: function qq(value) {
@@ -712,9 +735,43 @@ var formRules = {
         }
     }
 };
+
+// Form._config = {}
+// Form.config = conf=>{
+//     Object.assign(Form._config, conf)
+// }
+
+var createdEvents = nj.utils.addEventQueue.call(Form, 'onCreated');
+
 //自定义规则
 Form.addRule = function (name, fn, errortext) {
+    //添加的修饰符checkname.async 异步方法
+    // let modifiers = name.split('.').slice(1)
+    // fn && modifiers.forEach(m=>{
+    //     fn[m] = true
+    // })
+    // name = name.split('.')[0]
     formRules[name] = fn;
+    if (errortext) {
+        statusText[name] = errortext;
+    }
+};
+//添加异步验证规则
+Form.addAsyncRule = function (name, fn, errortext) {
+    //重写fn 添加函数节流
+    formRules[name] = function (value, target) {
+        var _this6 = this;
+
+        var async_delay = this.state.async_delay;
+
+        window.clearTimeout(async_delay);
+
+        this.state.async_delay = setTimeout(function (e) {
+            var options = target ? eval('({' + target + '})') : {};
+            fn.call(_this6, value, target, options);
+        }, 500);
+        return 'pending';
+    };
     if (errortext) {
         statusText[name] = errortext;
     }
@@ -770,7 +827,9 @@ var directive = new Directive({
     exports: exports
 });
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start();
+//异步是为了 载入此模块时有机会执行一次config方法
+// setTimeout(e=>directive.start(), 0)
+
 
 /*填充表单数据*/
 Form.fill = function (options) {
@@ -823,6 +882,19 @@ Form.fill = function (options) {
             handle && handle.setState({ value: value }, function (e) {
                 return handle.verify(false);
             });
+        } else if ($.type(value) == 'array') {
+            //填充数组
+            value.forEach(function (v, j) {
+                if (item[j]) {
+                    item[j].value = v;
+                } else {
+                    Form.append('<input name="' + i + '" type="hidden" value="' + v + '" />');
+                }
+            });
+            //dom个数大于数组个数时 移除
+            if (item.length > value.length) {
+                item.slice(value.length, item.length).remove();
+            }
         }
     }
 };

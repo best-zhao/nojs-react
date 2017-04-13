@@ -20,16 +20,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 require('../../../css/frame.css');
 
-var Root = function Root(props) {
-  return _react2.default.createElement(
-    _reactRouter.Router,
-    { history: _reactRouter.hashHistory },
-    _react2.default.createElement(
-      _reactRouter.Route,
-      { path: '/', component: _Container2.default, props: props },
-      props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/' + props.defaultNode }) : null,
-      _react2.default.createElement(_reactRouter.Route, { path: '/:id(/:url)', component: _Content2.default, onLeave: _Content2.default.onLeave })
-    )
-  );
-};
+var Root = _react2.default.createClass({
+    displayName: 'Root',
+
+    //对外提供go方法
+    go: function go(url) {
+        var routers = this.refs.routers;
+        var params = routers.state.params;
+        var router = routers.router;
+
+        router.push('/' + params.id + '/' + encodeURIComponent(url));
+    },
+    render: function render() {
+        var props = this.props;
+
+        return _react2.default.createElement(
+            _reactRouter.Router,
+            { history: _reactRouter.hashHistory, ref: 'routers' },
+            _react2.default.createElement(
+                _reactRouter.Route,
+                { path: '/', component: _Container2.default, props: props },
+                props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/' + props.defaultNode }) : null,
+                _react2.default.createElement(_reactRouter.Route, { path: '/:id(/:url)', component: _Content2.default, onLeave: _Content2.default.onLeave })
+            )
+        );
+    }
+});
 module.exports = Root;

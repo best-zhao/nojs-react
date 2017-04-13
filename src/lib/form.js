@@ -53,6 +53,11 @@ var formMixin = {
     setValid (valid, nextState) {
         this.setState(Object.assign(nextState||{}, {valid:valid, status:valid?'ok':'error'}))
         this.verifyEvent.complete(valid)
+        
+        //若这里修改了errortext 会影响其他rule 通过延时清空的方法可解决(不能用setState)
+        nextState && nextState.errortext && setTimeout(e=>{
+            this.state.errortext = ''
+        })
     }
 }
 
@@ -92,13 +97,13 @@ var verifyField = function(real, fromParent) {
     // this.state.status = null
     this.state.status = 'ok'
 
-    var valid = true
-    var rules = this.state.rules
-    var el = $(ReactDOM.findDOMNode(this))
-    var visible = el.is(':visible') //隐藏的元素不验证
+    let valid = true
+    let rules = this.state.rules
+    let el = $(ReactDOM.findDOMNode(this))
+    let visible = el.is(':visible') //隐藏的元素不验证
 
-    for( var i=0,n=rules.length; i<n; i++ ){
-        var rule = rules[i]
+    for( let i=0,n=rules.length; i<n; i++ ){
+        let rule = rules[i]
         valid = !visible ? true : rule.fn.call(this, value, rule.target)
         // console.log(3,valid,this.props.name, visible)
         if( !valid || valid=='pending' ){
@@ -113,8 +118,12 @@ var verifyField = function(real, fromParent) {
         valid = true
     }
 
+    let {type} = this.props
+
+    // console.log(0, type, valid, value)
+
     //'input-group' 验证子项是否全部通过
-    if( valid && this.props.type=='input-group' ){
+    if( valid && type=='input-group' ){
         valid = this.state.valid_all
     }
     
@@ -203,6 +212,8 @@ var Form = formDirectives['form'] = React.createClass({
                 parentComponent.setState({valid:valid})
             })
         }
+        createdEvents.complete(this)
+        // Form._config.created && Form._config.created(this)
     },
     verify (real) {
         var valid = verifyChildComponents.call(this, real)
@@ -243,11 +254,14 @@ formDirectives['input-group'] = React.createClass({
         var checked = []
         var hasnovalid
         this.state.childComponents.forEach((item)=>{
-            // console.log(item.state.value,item.state.valid, item.refs.input)
-            if( !item.state.valid ){
-                hasnovalid = true
-            }else if( item.state.value ){
+            let ischeck = /checkbox|radio/.test(item.props.type)
+            let _valid = ischeck ? item.refs.input.checked : (item.state.valid && item.state.value)
+
+            // console.log(!item.state.value, ',' , item.state.valid, ',' , item.refs.input)
+            if( _valid ){
                 checked.push(item)
+            }else if( !item.state.valid ){
+                hasnovalid = true
             }
         })
         //this.state.status = null
@@ -255,6 +269,7 @@ formDirectives['input-group'] = React.createClass({
         //当chekced满足了个数验证时 其中有非必填项输入了错误的值时 通过该属性检测group整体状态
         this.state.valid_all = !hasnovalid
 
+        // console.log(checked, this.state.valid_all)
         this.state.value = checked.length ? checked : null//没选中时 兼顾required
         var valid = verifyField.call(this, real, fromParent)
         return valid
@@ -293,25 +308,34 @@ formDirectives['input'] = React.createClass({
         }
         
         //更新input-group
-        var parentComponent = this.state.parentComponent
+        let parentComponent = this.state.parentComponent
         if( parentComponent ){
             parentComponent.setState({dirty:true})
         }
 
-        var valid = verifyField.call(this, real, fromParent)        
+        let valid = verifyField.call(this, real, fromParent) 
+            
         this.verifyEvent.complete(valid)
         //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
             //this.refs.input.focus()
         //}
         return valid
-    },   
+    }, 
+    
     componentDidMount () {
+        let {input} = this.refs
+        // let {type} = this.props
+
+        // if( type=='checkbox' || type=='radio' ){
+        //     this.state.valid = input.checked
+        // }
+
         mixins.childComponents.getParentComponent.call(this)
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify')
         //对外引用组件
-        this.refs.input.$handle = this
+        input.$handle = this
     },      
     //外部value改变状态后 同步到内部value
     componentWillReceiveProps (nextProps) {
@@ -382,8 +406,11 @@ formDirectives['input'] = React.createClass({
             ref : 'input'
         })
 
+        options.value = this.state.value
+        options.onChange = this.valueLink().requestChange
+
         if( type=='checkbox' || type=='radio' ){
-            options.checkedLink = this.valueLink()
+            //options.checkedLink = this.valueLink()
 
         }else{
             var mark
@@ -396,8 +423,7 @@ formDirectives['input'] = React.createClass({
                     mark = false
                 }
             }
-            options.value = this.state.value
-            options.onChange = this.valueLink().requestChange
+            
             options.className = nj.utils.joinClass(this.props.className, mark && 'input-'+status)
             var _event = options[trigger]
 
@@ -552,9 +578,7 @@ var VerifyStatus = React.createClass({
         // console.log(showmsg, valid, status, field.refs.input)
         
         if( showmsg ){
-            if( ispending ){
-                novalidText = 'loading……'
-            }else if( !valid ){
+            if( !valid || ispending ){
                 novalidText = errortext || field.props.errortext || statusText[novalidName] || ''
             }
 
@@ -563,17 +587,13 @@ var VerifyStatus = React.createClass({
                 return null
             }
             //适合'input-group'子项为text类
-            if( field.props.type=='input-group' ){  
-                if( !field.state.valid_all ){
-                    //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态
+            let child = childComponents[0]
+            if( field.props.type=='input-group' && child && textReg.test(child.props.type) ){ 
+                //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态 
+                //valid=true：已输入的全部通过 状态体现在子项上 group无需显示状态   
+                if( !field.state.valid_all || valid ){                    
                     return null
-                }else if( valid ){
-                    var child = childComponents[0]
-                    if( child && textReg.test(child.props.type) ){
-                        //已输入的全部通过 状态体现在子项上 group无需显示状态 
-                        return null
-                    }
-                }                
+                }
             }
         }
 
@@ -610,7 +630,7 @@ var formRules = {
         return /^([\w-]+\.)+[\w-]+(?:\/[\w\W]*)?$/.test(value);
     },
     mobile (value) {        
-        return /^(13[0-9]|14[0-9]|15[0-9]|18[0-9])[0-9]{8}$/.test(value)
+        return /^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])[0-9]{8}$/.test(value)
     },
     qq (value) {
         return /^\s*[.0-9]{5,10}\s*$/.test(value)
@@ -646,13 +666,45 @@ var formRules = {
         }
     }
 }
+
+// Form._config = {}
+// Form.config = conf=>{
+//     Object.assign(Form._config, conf)
+// }
+
+let createdEvents = nj.utils.addEventQueue.call(Form, 'onCreated')
+
 //自定义规则
 Form.addRule = function(name, fn, errortext){
+    //添加的修饰符checkname.async 异步方法
+    // let modifiers = name.split('.').slice(1)
+    // fn && modifiers.forEach(m=>{
+    //     fn[m] = true
+    // })
+    // name = name.split('.')[0]
     formRules[name] = fn
     if( errortext ){
         statusText[name] = errortext
     }
 }
+//添加异步验证规则
+Form.addAsyncRule = function(name, fn, errortext){
+    //重写fn 添加函数节流
+    formRules[name] = function(value, target){
+        let {async_delay} = this.state
+        window.clearTimeout(async_delay)
+
+        this.state.async_delay = setTimeout(e=>{
+            let options = target ? eval('({'+target+'})') : {}
+            fn.call(this, value, target, options)
+        }, 500)
+        return 'pending'
+    }    
+    if( errortext ){
+        statusText[name] = errortext
+    }    
+}
+
 
 //验证码
 Form.verifyCode = function(verify, refresh){
@@ -704,7 +756,8 @@ var directive = new Directive({
     exports : exports
 })
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start()
+//异步是为了 载入此模块时有机会执行一次config方法
+// setTimeout(e=>directive.start(), 0)
 
 
 
@@ -752,6 +805,18 @@ Form.fill = function(options){
         }else if( typeof value=='string' || typeof value=='number' ){
             item.val(value);         
             handle && handle.setState({value}, e=>handle.verify(false))
+        }else if( $.type(value)=='array' ){//填充数组
+            value.forEach((v,j)=>{
+                if( item[j] ){
+                    item[j].value = v
+                }else{
+                    Form.append('<input name="'+i+'" type="hidden" value="'+v+'" />');
+                }
+            })
+            //dom个数大于数组个数时 移除
+            if( item.length>value.length ){
+                item.slice(value.length, item.length).remove()
+            }
         }
     }
 }

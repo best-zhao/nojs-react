@@ -14,7 +14,7 @@ const options = {
         <h3 style={{padding:'1.5em 1em', fontWeight:'100', margin:0}}>nojs-react</h3>
         {tree}
     </div>,
-    showTopbar : true,
+    showTopbar : false,
     topbarItems : [
         // {content:'<div style="width:170px">logo</div>', align:'left', index:-1, type:'button'},
         {content:'<a href="form/normal.html">aaa21312</a>', type:'link'},
@@ -35,10 +35,15 @@ const options = {
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
         'form/input-group.html' : 'demo/form'
+    },
+    loadScript (pageName, callback) {
+        require('bundle!./'+pageName)(callback)
+        // System.import("@a/" + pageName).then(callback)
     }
 }
 
-render(
+let frame = render(
     <Frame {...options} />, 
     document.getElementById('root')
 )
+

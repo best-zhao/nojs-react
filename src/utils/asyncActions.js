@@ -136,15 +136,34 @@ var Actions = module.exports = function(context){
             }
             conf = $.extend(true, {}, reverse ? _config.reverse : _config);//创建全局配置的副本
             
-            if( typeof options.data=='function' ){//外部数据
-                options.data = options.data.call(target);
+            var data_outer = options.data
+            var data_conf = conf.data
+            if (typeof data_outer == 'function') {//外部数据
+                data_outer = data_outer.call(target, conf);
             }
-            if( options.newData ){//只使用外部数据，不使用配置数据
-                conf.data = null;
-            }else if( typeof conf.data=='function' ){//配置数据
-                conf.data = conf.data.call(target);
+
+            conf = $.extend(true, conf, options); //合并得到最终选项 
+
+            if (options.newData) {
+                //只使用外部数据，不使用配置数据
+                data_conf = null;
+            }else{
+                //配置数据
+                var data1, data2
+                if( _action && typeof data_conf == 'function' ){
+                    //已配置的action data和全局的data要分别取
+                    data1 = data_conf.call(target, conf);
+                }else{
+                    //未配置的action 只取全局data
+                }
+                if (typeof config.data == 'function' && data_conf!==config.data){
+                    //action配置时无data 就会继承全局配置的data函数 导致同一函数执行2次
+                    data2 = config.data.call(target, conf);
+                }
+                data_conf = $.extend(true, data2, data1)
             }
-            conf = $.extend(true, conf, options);//合并得到最终选项                
+            conf.data = $.extend(true, data_conf, data_outer)
+                        
             target = $(target);
 
             //如果需要post跨域的情况  需要在onFetchBefore事件中阻止ajax提交 在post对应的success中调用conf._callback
@@ -168,7 +187,7 @@ var Actions = module.exports = function(context){
             var promise2 = _action && _action.fetchEvent.complete(promise1, conf)
             var promise = promise2 || promise1
 
-            promise = promise.then(conf._callback)
+            promise = promise.then(conf._callback).fail(e=>conf._callback({error:e.statusText}));
             
             return promise;
         }

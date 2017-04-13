@@ -11,7 +11,7 @@ function countdown(el, diff, options) {
         return;
     }
     options = options || {};
-    var fomart = options.fomart || '{dd}天{hh}时{mm}分{ss}秒';
+    var format = options.format || '{dd}天{hh}时{mm}分{ss}秒';
     var fix = options.fix || '';
 
     var _key = {
@@ -51,7 +51,7 @@ function countdown(el, diff, options) {
         var html = '';
 
         if (seconds < 0) {
-            el.text('已结束');
+            options.end && el.text(options.end);
             //倒计时结束 回调
             if (typeof options.timeup == 'function') {
                 options.timeup();
@@ -60,7 +60,7 @@ function countdown(el, diff, options) {
         }
 
         var lastindex;
-        var str = fomart.replace(/\{([\w]{1,2})\}/g, function (a, b, c) {
+        var str = format.replace(/\{([\w]{1,2})\}/g, function (a, b, c) {
 
             var key = keys[b];
 

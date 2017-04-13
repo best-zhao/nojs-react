@@ -59,7 +59,7 @@ const Directive = function(options){
 }
 
 Directive.prototype = {
-    start (container) {        
+    start (container) {      
         this.directiveInit(this.rootDirective, container||document.body)
     },
     directiveInit (type, context, parentComponent) {
@@ -169,9 +169,10 @@ Directive.prototype = {
 }
 
 //<input required>将默认属性值为空的转化为required="required"
+let sameAttrs = ['required', 'readOnly', 'checked']
 function parseAttrs(attrs){
     for( var i in attrs ){
-        if( attrs[i]==='' && i!='defaultValue' ){
+        if( attrs[i]==='' && sameAttrs.indexOf(i)>=0 ){
             attrs[i] = i
         }
     }

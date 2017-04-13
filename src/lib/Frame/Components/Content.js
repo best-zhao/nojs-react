@@ -35,6 +35,7 @@ const Content = React.createClass({
         let {menu} = rootProps
         //获取当前节点
         let node = menu.filter(n=>n.id==id)[0]
+
         this.load(url||node&&node.link, id)
     },
     componentWillReceiveProps (nextProps) {
@@ -49,29 +50,39 @@ const Content = React.createClass({
     },
     load (url, id) {
         let {routes:[{props:rootProps}]} = this.props
-        let {template, htmlParse, onComplete, scripts={}} = rootProps
+        let {template, htmlParse, onComplete, loadScript, scripts={}} = rootProps
 
         let realUrl = url
         if( url && typeof template=='function' ){
             realUrl = template({id, url})
         }
+
         realUrl && $.get(realUrl).then(html=>{
             if( typeof htmlParse=='function' ){
                 html = htmlParse(html, {id, url})
             }
             this.setState({html}, e=>{
-                let {menu, parent} = this.props
-                onComplete && onComplete({id, url})
+                let {parent} = this.props
+                let node = rootProps.menu.filter(n=>n.id==id)[0]
+                onComplete && onComplete({id, url}, node)
                 
                 //更新html后 需要加载相应组件
-                let pageName = scripts[url] || scripts[id]
+                
+                /**
+                 * 在页面中添加一个隐藏域来标识当前页面 <input id="$pageName" value="index">
+                 * 当id或url都不方便匹配时(url中存在动态参数) 可使用此方法
+                 */
+                let _pageName = $('#__pageName__').val()
+
+                let pageName = scripts[_pageName] || scripts[url] || scripts[id]
+
                 if( !scripts[url] && scripts[id] ){//只有id匹配 需检查url是否跟id所在节点的link是否匹配
-                    let node = menu.filter(n=>n.id==id)[0]
                     if( url != node.link ){
+
                         return
                     }
                 }
-                pageName && require("bundle!js/" + pageName)(p=>{
+                pageName && typeof loadScript=='function' && loadScript(pageName, p=>{
                     this.constructor.leaveEvent = p.onLeave
                     p.init && p.init({id, url})
                 })
@@ -79,9 +90,7 @@ const Content = React.createClass({
                 setTimeout(e=>parent.forceUpdate(), 1)
             })
         })
-        .fail(data=>{
-            //console.log(this.props.params, data)
-        })
+        .fail(data=>{})
     },    
     render () {
         const {html=''} = this.state
