@@ -596,14 +596,18 @@ var VerifyStatus = React.createClass({
     displayName: 'VerifyStatus',
     render: function render() {
         var field = this.props.field;
-        var rules = field.state.rules;
+        var _field$state = field.state;
+        var parentComponent = _field$state.parentComponent;
+        var dirty = _field$state.dirty;
+        var rules = _field$state.rules;
+        var value = _field$state.value;
+
         var showmsg = rules.length;
-        var parentComponent = field.state.parentComponent;
 
         if (showmsg) {
-            if (field.state.dirty) {
+            if (dirty) {
                 //checkbox组合 子项不显示
-                var textField;
+                //var textField
 
                 //if( textReg.test(field.props.type) && parentComponent && parentComponent.props.type=='input-group' ){
                 //showmsg = false
@@ -612,17 +616,17 @@ var VerifyStatus = React.createClass({
                 showmsg = parentComponent.state.action == 'submit';
             }
 
-            if (!field.state.value && !rules.required) {
+            if (!value && !rules.required) {
                 //非必填项
                 showmsg = false;
             }
         }
-        var _field$state = field.state;
-        var novalidName = _field$state.novalidName;
-        var status = _field$state.status;
-        var errortext = _field$state.errortext;
-        var valid = _field$state.valid;
-        var childComponents = _field$state.childComponents;
+        var _field$state2 = field.state;
+        var novalidName = _field$state2.novalidName;
+        var status = _field$state2.status;
+        var errortext = _field$state2.errortext;
+        var valid = _field$state2.valid;
+        var childComponents = _field$state2.childComponents;
 
         var novalidText = '';
         var ispending = status == 'pending';
@@ -650,14 +654,14 @@ var VerifyStatus = React.createClass({
             }
         }
 
-        // console.log(showmsg,field.state.status,field.refs.input)
-        // console.log('verifyStatus:',showmsg,field.state.status)
-        return showmsg && field.state.status ? React.createElement(
+        // console.log(showmsg,status,field.refs.input)
+        // console.log('verifyStatus:',showmsg,status)
+        return showmsg && status ? React.createElement(
             'span',
             { className: 'nj-form-msg' },
             React.createElement(
                 'span',
-                { className: 'nj-form-msg-' + field.state.status },
+                { className: 'nj-form-msg-' + status },
                 novalidText
             )
         ) : null;

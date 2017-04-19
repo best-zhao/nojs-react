@@ -1,12 +1,28 @@
 import {React, render} from 'nj'
 import {Form} from 'nj/form'
 
+//添加全局异步验证方法async
+// Form.addAsyncRule('async', function(value, target, options){
+//     Object.assign({type:'get'}, options)
+//     $[options.type](options.url, options.data, json=>{
+//         if( json.status==1 ){
+//             this.setValid(true)
+//         }else{
+//             this.setValid(false, {errortext:json.info})
+//         } 
+//     }, 'json')
+// }, 'loading……')
 
 Form.addAsyncRule('checkname', function(value, target, options){
     setTimeout(e=>{
+        let status = false
         let {name} = this.props
         console.log(options)
-        this.setValid(false, {errortext:'账号已存在'})
+        if( status ){
+            this.setValid(true)
+        }else{
+            this.setValid(false, {errortext:'账号已存在'})
+        }        
     }, 500)
 }, '账号检测中……')
 

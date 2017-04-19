@@ -550,15 +550,14 @@ var textReg = /^(text|textarea|number|email|password)$/
 //验证状态显示
 var VerifyStatus = React.createClass({
     render () {
-        var field = this.props.field
-        var rules = field.state.rules
+        var {field} = this.props
+        var {parentComponent, dirty, rules, value} = field.state
         var showmsg = rules.length
-        var parentComponent = field.state.parentComponent
         
         if( showmsg ){
-            if( field.state.dirty ){
+            if( dirty ){
                 //checkbox组合 子项不显示
-                var textField
+                //var textField
                 
                 //if( textReg.test(field.props.type) && parentComponent && parentComponent.props.type=='input-group' ){
                     //showmsg = false
@@ -567,7 +566,7 @@ var VerifyStatus = React.createClass({
                 showmsg = parentComponent.state.action=='submit'
             }
             
-            if( !field.state.value && !rules.required ){//非必填项
+            if( !value && !rules.required ){//非必填项
                 showmsg = false
             }
         }
@@ -597,11 +596,11 @@ var VerifyStatus = React.createClass({
             }
         }
 
-        // console.log(showmsg,field.state.status,field.refs.input)
-        // console.log('verifyStatus:',showmsg,field.state.status)
-        return showmsg && field.state.status ? (
+        // console.log(showmsg,status,field.refs.input)
+        // console.log('verifyStatus:',showmsg,status)
+        return showmsg && status ? (
             <span className={'nj-form-msg'}>
-                <span className={'nj-form-msg-'+field.state.status}>{novalidText}</span>
+                <span className={'nj-form-msg-'+status}>{novalidText}</span>
             </span>
         ) : null
     }
@@ -706,6 +705,8 @@ Form.addAsyncRule = function(name, fn, errortext){
 }
 
 
+
+
 //验证码
 Form.verifyCode = function(verify, refresh){
     verify = verify || 'verify_img';
@@ -758,9 +759,6 @@ var directive = new Directive({
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
 //异步是为了 载入此模块时有机会执行一次config方法
 // setTimeout(e=>directive.start(), 0)
-
-
-
 
 
 /*填充表单数据*/
