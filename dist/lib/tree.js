@@ -538,6 +538,11 @@ Tree.SelectTree = LevelSelect;
 //select级联菜单
 Tree.LinkTree = React.createClass({
     displayName: 'LinkTree',
+    getDefaultProps: function getDefaultProps() {
+        return {
+            selected: []
+        };
+    },
     getInitialState: function getInitialState() {
         var _this5 = this;
 
@@ -572,7 +577,9 @@ Tree.LinkTree = React.createClass({
         }
         options.menuData = data;
         window.setTimeout(function () {
-            _this5.select(_this5.props.selected);
+            _this5.select(_this5.props.selected.filter(function (p) {
+                return p;
+            }));
         }, 1);
 
         return options;
@@ -698,6 +705,10 @@ Tree.LinkTree = React.createClass({
         var node = dataFormat.databyid[parentid];
 
         this.changeEvent.complete(node, e);
+
+        //ios 下多个select 无法聚焦bug
+        e && e.preventDefault();
+
         // this.props.onChange && this.props.onChange.call(this,parentid,level,e)
     },
     render: function render() {
@@ -724,13 +735,18 @@ Tree.LinkTree = React.createClass({
                     return;
                 }
                 var id = ids[i]; //默认选中节点
-                // console.log(i,id,ids)
 
                 var info = infos[i] || {};
                 var valid;
                 var el = level && level.length ? React.createElement(
                     'select',
-                    { key: i, className: info.className, ref: 'select-' + i, value: id, name: info.name, onChange: _this8.handleChange.bind(_this8, i) },
+                    { key: i,
+                        className: info.className,
+                        ref: 'select-' + i,
+                        value: id,
+                        name: info.name,
+                        onChange: _this8.handleChange.bind(_this8, i)
+                    },
                     React.createElement(
                         'option',
                         { value: '' },

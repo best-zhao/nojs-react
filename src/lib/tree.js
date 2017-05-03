@@ -501,6 +501,11 @@ Tree.SelectTree = LevelSelect
 
 //select级联菜单
 Tree.LinkTree = React.createClass({
+    getDefaultProps () {
+        return {
+            selected : []
+        }
+    },
     getInitialState () {
         var options = Object.assign({
             ids : []
@@ -533,7 +538,7 @@ Tree.LinkTree = React.createClass({
         }
         options.menuData = data
         window.setTimeout(()=>{
-            this.select(this.props.selected);
+            this.select(this.props.selected.filter(p=>p));
         }, 1)
 
         return options;
@@ -645,6 +650,10 @@ Tree.LinkTree = React.createClass({
         var node = dataFormat.databyid[parentid]
 
         this.changeEvent.complete(node,e)
+
+        //ios 下多个select 无法聚焦bug
+        e && e.preventDefault()
+        
         // this.props.onChange && this.props.onChange.call(this,parentid,level,e)
     },
     render () {
@@ -664,12 +673,17 @@ Tree.LinkTree = React.createClass({
                     return
                 }
                 var id = ids[i]//默认选中节点
-                // console.log(i,id,ids)
                 
                 var info = infos[i] || {}
                 var valid
                 var el = level && level.length ? (
-                    <select key={i} className={info.className} ref={'select-'+i} value={id} name={info.name} onChange={this.handleChange.bind(this,i)}>
+                    <select key={i} 
+                        className={info.className} 
+                        ref={'select-'+i} 
+                        value={id} 
+                        name={info.name} 
+                        onChange={this.handleChange.bind(this,i)}
+                    >
                         <option value="">请选择</option>
                         {level.map((item,i)=>{
                             if( id && item[KEY_ID]==id ){//检测被设置的默认选中id是否有效

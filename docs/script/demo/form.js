@@ -1,6 +1,6 @@
 import {React, render} from 'nj'
 import {Form} from 'nj/form'
-
+import {LinkTree} from 'nj/tree'
 //添加全局异步验证方法async
 // Form.addAsyncRule('async', function(value, target, options){
 //     Object.assign({type:'get'}, options)
@@ -38,6 +38,16 @@ export const init = ({id, url})=>{
         e.preventDefault()
         alert('通过')
     })
+
+    let options = {
+        data : [
+            {"id":2, "name":"Mask"},
+                {"id":21, "name":"Mask1", "parentid":2},
+            {"id":3, "name":"Popup"},
+            {"id":5, "name":"Tree"}
+        ]
+    }
+    render(<LinkTree {...options}/> ,document.getElementById('linkTree'))
 }
 
 export const onLeave = e=>{

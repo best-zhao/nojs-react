@@ -122,6 +122,9 @@ module.exports = {
         参考 http://www.cnblogs.com/MrBackKom/archive/2012/06/26/2564501.html
      */
     fireEvent: function fireEvent(type, element, eventType, data) {
+        if (!element) {
+            return;
+        }
         var result = false;
         eventType = eventType || 'HTMLEvents';
         var init = {
