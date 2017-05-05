@@ -677,7 +677,8 @@ Tree.LinkTree = React.createClass({
                 var info = infos[i] || {}
                 var valid
                 var el = level && level.length ? (
-                    <select key={i} 
+                    <span key={i} className="select-item">
+                    <select 
                         className={info.className} 
                         ref={'select-'+i} 
                         value={id} 
@@ -692,12 +693,16 @@ Tree.LinkTree = React.createClass({
                             return (<option key={item[KEY_ID]} value={item[KEY_ID]}>{item[KEY_NAME]}</option>)
                         })}
                     </select>
+                    </span>
                 ) : null 
 
-                if( id && el ){
+                var _el = el && el.props.children
+                // console.log(el)
+
+                if( id && _el ){
                     ids[i] = null//选中后清空 防止重复
                     valid && setTimeout(()=>{
-                        el.props.onChange()
+                        _el.props.onChange()
                     }, 1)
                 }               
                 return el

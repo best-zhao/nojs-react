@@ -16,7 +16,7 @@ module.exports = {
             className: this.effects()[2] || this.effects()[0]
         };
     },
-    setDisplay: function setDisplay(visible) {
+    setDisplay: function setDisplay(visible, e) {
         if (this.state.visible == visible) {
             return;
         }

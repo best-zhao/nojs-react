@@ -164,6 +164,7 @@ var Face = React.createClass({
         var _this2 = this;
 
         var faces = this.state.faces;
+        var popover = this.props.popover;
 
         return React.createElement(
             'div',
@@ -284,5 +285,7 @@ insertOnCursor.prototype = {
         });
     }
 };
+
+Face.insertOnCursor = insertOnCursor;
 
 module.exports = Face;

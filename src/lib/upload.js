@@ -149,7 +149,9 @@ upload.pasteUpload = function(el, up){
                 // get the blob
                 var imageFile = file.getAsFile();
                 
-                imageFile.name=(+new Date)+"-粘贴上传.png";
+                try{
+                	imageFile.name=(+new Date)+"-粘贴上传.png";
+                }catch(e){}
 
 
                 up.push([imageFile], {from:'paste'});

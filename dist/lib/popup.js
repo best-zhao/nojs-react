@@ -223,7 +223,7 @@ var Popup = React.createClass({
       //调用preventDefault阻止关闭弹窗事件
       return;
     }
-    this.setDisplay(false);
+    this.setDisplay(false, event);
   },
   cancel: function cancel() {
     this.res = false;

@@ -739,36 +739,43 @@ Tree.LinkTree = React.createClass({
                 var info = infos[i] || {};
                 var valid;
                 var el = level && level.length ? React.createElement(
-                    'select',
-                    { key: i,
-                        className: info.className,
-                        ref: 'select-' + i,
-                        value: id,
-                        name: info.name,
-                        onChange: _this8.handleChange.bind(_this8, i)
-                    },
+                    'span',
+                    { key: i, className: 'select-item' },
                     React.createElement(
-                        'option',
-                        { value: '' },
-                        '\u8BF7\u9009\u62E9'
-                    ),
-                    level.map(function (item, i) {
-                        if (id && item[KEY_ID] == id) {
-                            //检测被设置的默认选中id是否有效
-                            valid = true;
-                        }
-                        return React.createElement(
+                        'select',
+                        {
+                            className: info.className,
+                            ref: 'select-' + i,
+                            value: id,
+                            name: info.name,
+                            onChange: _this8.handleChange.bind(_this8, i)
+                        },
+                        React.createElement(
                             'option',
-                            { key: item[KEY_ID], value: item[KEY_ID] },
-                            item[KEY_NAME]
-                        );
-                    })
+                            { value: '' },
+                            '\u8BF7\u9009\u62E9'
+                        ),
+                        level.map(function (item, i) {
+                            if (id && item[KEY_ID] == id) {
+                                //检测被设置的默认选中id是否有效
+                                valid = true;
+                            }
+                            return React.createElement(
+                                'option',
+                                { key: item[KEY_ID], value: item[KEY_ID] },
+                                item[KEY_NAME]
+                            );
+                        })
+                    )
                 ) : null;
 
-                if (id && el) {
+                var _el = el && el.props.children;
+                // console.log(el)
+
+                if (id && _el) {
                     ids[i] = null; //选中后清空 防止重复
                     valid && setTimeout(function () {
-                        el.props.onChange();
+                        _el.props.onChange();
                     }, 1);
                 }
                 return el;

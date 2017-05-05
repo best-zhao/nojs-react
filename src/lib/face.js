@@ -129,6 +129,7 @@ var Face = React.createClass({
     },
     render () {
         var {faces} = this.state
+        var {popover} = this.props
         return (
         <div>
             {faces.length && (<Switch ref="tab">
@@ -223,5 +224,7 @@ insertOnCursor.prototype = {
         });   
     }      
 }
+
+Face.insertOnCursor = insertOnCursor
 
 module.exports = Face;    

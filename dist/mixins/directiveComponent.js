@@ -145,6 +145,8 @@ Directive.prototype = {
             if (parentComponent) {
                 options.parentComponent = parentComponent;
             }
+
+            options.handle = options.handle || 'h-' + Math.round(Math.random() * 10000) + '-' + +new Date();
             // if( options.value!=undefined ){
             //     options.defaultValue = options.value
             //     delete options.value
@@ -153,7 +155,9 @@ Directive.prototype = {
             // if( type=='input-group' && parentComponent ){//继承form组件showicon属性
             //     options.showicon = parentComponent.props.showicon
             // }
-            return ReactDOM.render(React.createElement(Component, options), el);
+            var instance = ReactDOM.render(React.createElement(Component, options), el);
+            node.$handle = instance;
+            return instance;
         }
     },
 

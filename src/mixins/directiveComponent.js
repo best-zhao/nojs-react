@@ -115,6 +115,8 @@ Directive.prototype = {
             if( parentComponent ){
                 options.parentComponent = parentComponent
             }
+
+            options.handle = options.handle || 'h-'+Math.round(Math.random()*10000)+'-'+(+new Date)
             // if( options.value!=undefined ){
             //     options.defaultValue = options.value
             //     delete options.value
@@ -123,7 +125,9 @@ Directive.prototype = {
             // if( type=='input-group' && parentComponent ){//继承form组件showicon属性
             //     options.showicon = parentComponent.props.showicon
             // }
-            return ReactDOM.render(<Component {...options} />, el)
+            let instance = ReactDOM.render(<Component {...options} />, el)
+            node.$handle = instance
+            return instance
         }
     },
     //当前组件渲染完毕后 将dom移入组件 并且检测是否有子组件
