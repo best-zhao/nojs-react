@@ -79,11 +79,7 @@ var Directive = function Directive(options) {
     };
 
     //当脚本在头部运行时 则需要页面加载完成后运行一次 获取实例同样需要注意脚本所在位置
-    (0, _jquery2.default)(function () {
-        return window.setTimeout(function (e) {
-            return _this.start();
-        }, 0);
-    });
+    // $(()=>window.setTimeout(e=>this.start(), 0))   
 };
 
 Directive.prototype = {

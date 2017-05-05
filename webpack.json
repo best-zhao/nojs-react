@@ -1,7 +1,8 @@
 {
     "entry" : {
         "seed" : "/seed.js",
-        "index" : "/index.js"  
+        "index" : "/index.js",
+        "examples/index" : "/examples/index.js"  
     },
     "resolve" : {
         "alias": {}

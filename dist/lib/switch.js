@@ -117,3 +117,4 @@ var directive = new Directive({
     },
     exports: exports
 });
+directive.start();

@@ -831,9 +831,7 @@ var directive = new Directive({
     exports: exports
 });
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-//异步是为了 载入此模块时有机会执行一次config方法
-// setTimeout(e=>directive.start(), 0)
-
+directive.start();
 
 /*填充表单数据*/
 Form.fill = function (options) {
