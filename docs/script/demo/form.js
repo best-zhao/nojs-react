@@ -2,7 +2,7 @@ import {React, render} from 'nj'
 import {Form} from 'nj/form'
 import {LinkTree} from 'nj/tree'
 //添加全局异步验证方法async
-// Form.addAsyncRule('async', function(value, target, options){
+// Form.addAsyncRule('async', function(value, options){
 //     Object.assign({type:'get'}, options)
 //     $[options.type](options.url, options.data, json=>{
 //         if( json.status==1 ){
@@ -13,7 +13,7 @@ import {LinkTree} from 'nj/tree'
 //     }, 'json')
 // }, 'loading……')
 
-Form.addAsyncRule('checkname', function(value, target, options){
+Form.addAsyncRule('checkname', function(value, options){
     setTimeout(e=>{
         let status = false
         let {name} = this.props

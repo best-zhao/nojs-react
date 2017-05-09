@@ -99,8 +99,15 @@ var verifyField = function verifyField(real, fromParent) {
     var _value = _state._value;
     var dirty = _state.dirty;
 
-    //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
+    var el = $(ReactDOM.findDOMNode(this));
+    var visible = el.is(':visible'); //隐藏的元素不验证
 
+    if (!visible) {
+        this.setState({ status: null, valid: true });
+        return true;
+    }
+
+    //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
     if (validing || status && value === _value && dirty) {
         // console.log(2,this.props.name, this.state.validing , this.state.status, this.state.valid)
         return this.state.valid;
@@ -115,8 +122,6 @@ var verifyField = function verifyField(real, fromParent) {
 
     var valid = true;
     var rules = this.state.rules;
-    var el = $(ReactDOM.findDOMNode(this));
-    var visible = el.is(':visible'); //隐藏的元素不验证
 
     for (var i = 0, n = rules.length; i < n; i++) {
         var rule = rules[i];
@@ -760,6 +765,7 @@ Form.addRule = function (name, fn, errortext) {
         statusText[name] = errortext;
     }
 };
+
 //添加异步验证规则
 Form.addAsyncRule = function (name, fn, errortext) {
     //重写fn 添加函数节流
@@ -772,7 +778,7 @@ Form.addAsyncRule = function (name, fn, errortext) {
 
         this.state.async_delay = setTimeout(function (e) {
             var options = target ? eval('({' + target + '})') : {};
-            fn.call(_this6, value, target, options);
+            fn.call(_this6, value, options);
         }, 500);
         return 'pending';
     };

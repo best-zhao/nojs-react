@@ -83,6 +83,13 @@ var verifyField = function(real, fromParent) {
     var textField
 
     let {validing, status, value, _value, dirty} = this.state
+    let el = $(ReactDOM.findDOMNode(this))
+    let visible = el.is(':visible') //隐藏的元素不验证
+
+    if( !visible ){
+        this.setState({status:null, valid:true})
+        return true
+    }
     
     //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
     if( validing || (status && value===_value && dirty) ){
@@ -99,8 +106,7 @@ var verifyField = function(real, fromParent) {
 
     let valid = true
     let rules = this.state.rules
-    let el = $(ReactDOM.findDOMNode(this))
-    let visible = el.is(':visible') //隐藏的元素不验证
+    
 
     for( let i=0,n=rules.length; i<n; i++ ){
         let rule = rules[i]
@@ -686,6 +692,7 @@ Form.addRule = function(name, fn, errortext){
         statusText[name] = errortext
     }
 }
+
 //添加异步验证规则
 Form.addAsyncRule = function(name, fn, errortext){
     //重写fn 添加函数节流
@@ -695,7 +702,7 @@ Form.addAsyncRule = function(name, fn, errortext){
 
         this.state.async_delay = setTimeout(e=>{
             let options = target ? eval('({'+target+'})') : {}
-            fn.call(this, value, target, options)
+            fn.call(this, value, options)
         }, 500)
         return 'pending'
     }    
