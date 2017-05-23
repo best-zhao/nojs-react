@@ -3,8 +3,7 @@ import {render} from 'react-dom'
 import {Router, Route, browserHistory, hashHistory, IndexRedirect} from 'react-router'
 import Container from './Components/Container'
 import Content from './Components/Content'
-
-require('../../../css/frame.css')
+import '../../../css/frame.css'
 
 const Root = React.createClass({
     //对外提供go方法
@@ -22,7 +21,7 @@ const Root = React.createClass({
                 <Route path="/:id(/:url)" component={Content} onLeave={Content.onLeave} />
               </Route>
             </Router>
-          )
+        )
     }
 })
 module.exports = Root

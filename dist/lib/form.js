@@ -79,7 +79,7 @@ var verifyChildComponents = function verifyChildComponents(real) {
         if (item.verify) {
             var _valid = item.verify(real, true);
             if (!_valid) {
-                // console.log(1,item.props.name, item.state.status)
+                // console.log(1, item.props.name, item.state.status)
                 valid = _valid;
             }
         }

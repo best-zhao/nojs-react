@@ -32,6 +32,7 @@ const options = {
     scripts : {
         'mask' : 'demo/mask',
         'popup' : 'demo/popup',
+        'datepicker' : 'demo/datepicker',
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
         'form/input-group.html' : 'demo/form'

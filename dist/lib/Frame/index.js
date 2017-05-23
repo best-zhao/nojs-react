@@ -16,9 +16,9 @@ var _Content = require('./Components/Content');
 
 var _Content2 = _interopRequireDefault(_Content);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 require('../../../css/frame.css');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Root = _react2.default.createClass({
     displayName: 'Root',

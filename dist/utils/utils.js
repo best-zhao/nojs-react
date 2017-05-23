@@ -489,7 +489,7 @@ module.exports = {
     dateParse: function dateParse(options) {
         options = options || {};
         // console.log(options.date,new Date(Number(options.date)))
-        var date = options.date ? new Date(Number(options.date)) : new Date();
+        var date = options.date ? new Date(options.date) : new Date();
         var format = options.format || 'yy/mm/dd hh:mm:ss';
         var arr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
         var strMaps = {

@@ -1,0 +1,22 @@
+.nj-datepicker-pop{z-index:999;min-width: 244px;min-height:220px}
+.nj-datepicker{color:#666}
+.nj-datepicker ._group{width:240px;float:left;padding:2px}
+.nj-datepicker ._head{height:24px;line-height:24px;background: #eee;padding:4px 6px;text-align: center;}
+.nj-datepicker ._head .nj-icon{display: inline-block;width:24px;}
+.nj-datepicker ._head .nj-icon:before{font-size:12px}
+.nj-datepicker ._head .nj-icon:hover{background:#ddd;color:#0078E7}
+.nj-datepicker ._weeks li, .nj-datepicker ._dates li{
+    float:left;width:14.2%;border:1px solid #fff;cursor: default;text-align: center;
+    line-height:26px;box-sizing: border-box;
+}
+.nj-datepicker ._dates{padding:3px;font-family:arial}
+.nj-datepicker ._dates li{background:#f4f4f4}
+.nj-datepicker ._dates span{display:block;border:1px solid #f4f4f4}
+.nj-datepicker ._dates li:hover span{border-color:#ccc}
+.nj-datepicker ._dates .gray span{color:#ccc}
+.nj-datepicker ._dates .today span{border-color:#ccc}
+.nj-datepicker ._dates .active span{background:#0078E7;border-color:#0078E7!important;color:#fff}
+.nj-datepicker ._dates .disabled{color:#ccc;cursor:not-allowed}
+.nj-datepicker ._times{padding:9px 12px;border-top:1px dotted #e2e2e2}
+.nj-datepicker ._times select:not(:last-child){margin-left:1em}
+.nj-datepicker ._times select[disabled]{color:#bbb}

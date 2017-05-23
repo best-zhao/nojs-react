@@ -25,7 +25,7 @@ Mask.show()
     entry : {...},
     resolve : {
         alias : {
-            nj : 'nojs-react/dist'
+            nj : 'nojs-react/dist/lib'
         }
     }
 }
@@ -33,5 +33,5 @@ Mask.show()
 
 简化路径后：
 <pre>
-<code class="language-javascript">import Mask from 'nj/lib/mask'
+<code class="language-javascript">import Mask from 'nj/mask'
 </code></pre>

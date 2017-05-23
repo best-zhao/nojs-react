@@ -1,11 +1,11 @@
 @import url(animation.css);
 @font-face {
   font-family:'njicon';
-  src: url('//at.alicdn.com/t/font_3x64g0m0y72satt9.eot');
-  src: url('//at.alicdn.com/t/font_3x64g0m0y72satt9.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_3x64g0m0y72satt9.woff') format('woff'),
-  url('//at.alicdn.com/t/font_3x64g0m0y72satt9.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_3x64g0m0y72satt9.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_mbgcw7ejj7nwmi.eot');
+  src: url('//at.alicdn.com/t/font_mbgcw7ejj7nwmi.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_mbgcw7ejj7nwmi.woff') format('woff'),
+  url('//at.alicdn.com/t/font_mbgcw7ejj7nwmi.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_mbgcw7ejj7nwmi.svg#iconfont') format('svg');
 }
 
 .nj-icon:before,.nj-icon-sharp:before,.nj-icon-sharp:after{font:1.3333em 'njicon';display:inline-block;}
@@ -13,6 +13,8 @@
 .nj-icon-menu:before{content:'\e605';}
 .nj-icon-left:before{content:'\e607';}
 .nj-icon-right:before{content:'\e608';}
+.nj-icon-left2:before{content:'\e68b';}
+.nj-icon-right2:before{content:'\e60f';}
 .nj-icon-close{cursor:pointer;}
 .nj-icon-close:hover{color:red;}
 .nj-icon-close:before{content:'\e600';font-size:14px;}
