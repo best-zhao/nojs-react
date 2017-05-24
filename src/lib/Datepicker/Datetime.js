@@ -1,5 +1,5 @@
 import {React, render, utils} from '../nojs-react'
-import {getMonthData, getNearMonth, parseNumber, getTimestamp} from './utils'
+import {getMonthData, getNearMonth, parseNumber, getTimestamp, today} from './utils'
 import '../../../css/datepicker.css'
 
 const {dateParse, joinClass} = utils
@@ -7,14 +7,21 @@ const {dateParse, joinClass} = utils
 class Datetime extends React.Component {
     constructor(props) {
         super(props)
-        let {value, min, max, months} = this.props
+        let {value, min, max, months, mode, format} = this.props
         min = min && getMonthData(min)
         max = max && getMonthData(max)
 
-        let startMonth = min && !value ? 
-            {year:min.year, month:min.month} :
-            value
-        let currentMonth = this.getMonthGroups(startMonth)
+        let hasDate = /^date/.test(mode)//允许选择日期
+        let hasTime = /time$/.test(mode)//允许选择时间
+        
+        let currentMonth
+        if( mode=='time' ){
+            let _times = value.match(/\b\d+\b/g) || [0, 0]
+            currentMonth = [Object.assign({hours:parseInt(_times[0]), minutes:parseInt(_times[1])}, today)]
+        }else{
+            let startMonth = min && !value ? {year:min.year, month:min.month} : value
+            currentMonth = this.getMonthGroups(startMonth)
+        }
 
         if( min ){
             min = {
@@ -31,13 +38,30 @@ class Datetime extends React.Component {
             }
         }
 
+        //设置默认format
+        let _format = format
+        if( !format ){
+            switch(mode){
+            case 'date':
+                _format = 'yy-mm-dd'
+                break
+            case 'time':
+                _format = 'hh:mm:ss'
+                break
+            default:
+                _format = 'yy-mm-dd hh:mm:ss'
+            }
+        }
+        
         let {year, month, date, hours, minutes} = currentMonth[0]
         this.state = {
             currentMonth,
             value, min, max,
             hours, minutes,
+            format : _format,            
+            hasDate,  hasTime,
             //当前所选 默认今天 {year, month, date}
-            currentDate : value && {year, month, date},            
+            currentDate : mode=='time' ? today : (value && {year, month, date}),            
             hoursItems : Array.prototype.concat.apply([], new Array(24)),
             minutesItems : Array.prototype.concat.apply([], new Array(60))
         }
@@ -64,11 +88,11 @@ class Datetime extends React.Component {
         this.setState({currentMonth:this.getMonthGroups(startMonth)})
     }
     changeDate ({year, month, date, day, current, prevMonth}) {
-        if( !date ){//没有选择天
+        let {hours, minutes, hasDate, format} = this.state
+        if( hasDate && !date ){//没有选择天
             return
         }
-        let {onChange, format} = this.props
-        let {hours, minutes} = this.state
+        let {onChange, mode} = this.props
         if( !current ){//选择的日期是相邻的月份
             this.jumpTo(prevMonth?-1:1)
         }
@@ -80,8 +104,7 @@ class Datetime extends React.Component {
             let data = Object.assign({hours, minutes}, this.state.currentDate)
             let timestamp = getTimestamp(data, 6)
             onChange && onChange.call(this, value, data, timestamp)
-        })
-        
+        })        
     }
     changeTime(key, e){
         this.setState(
@@ -94,6 +117,7 @@ class Datetime extends React.Component {
         let {
             min, max,
             hours, minutes, 
+            hasDate, hasTime,
             hoursItems, minutesItems, 
             currentMonth, currentDate={}           
         } = this.state
@@ -129,6 +153,7 @@ class Datetime extends React.Component {
         }</ul>
 
         return <div className="nj-datepicker">
+            {hasDate ? 
             <div className="_groups clearfix">{currentMonth.map((item,i)=>{
                 let {year, month, dates} = item
                 return <div className="_group" key={year+'-'+month}>
@@ -168,11 +193,13 @@ class Datetime extends React.Component {
                     }</ul>
                 </div>
             })}</div>
+            : null}
 
+            {hasTime ? 
             <div className="_times">时间：
                 <select 
                     value={hours} 
-                    disabled={!currentDate.date}
+                    disabled={hasDate&&!currentDate.date}
                     onChange={this.changeTime.bind(this, 'hours')}
                 >{
                     hoursItems.map((h,i)=>{
@@ -188,7 +215,7 @@ class Datetime extends React.Component {
 
                 <select 
                     value={minutes} 
-                    disabled={!currentDate.date}
+                    disabled={hasDate&&!currentDate.date}
                     onChange={this.changeTime.bind(this, 'minutes')}
                 >{
                     minutesItems.map((h,i)=>{
@@ -202,14 +229,16 @@ class Datetime extends React.Component {
                     })
                 }</select>
             </div>
+            : null}
         </div>
     }
 }
 
 Datetime.defaultProps = {
+    mode : 'datetime',
     //显示的月份数
     months : 1,
-    format : 'yy-mm-dd hh:mm:ss',
+    // format : 'yy-mm-dd hh:mm:ss',
     weeks : ['日', '一', '二', '三', '四', '五', '六']
 }
 

@@ -25,10 +25,12 @@ class Datepicker extends React.Component {
             //重写onChange
             let {onChange} = this.props
             options.onChange = (value, data, timestamp)=>{
-                this.setState({value})
                 if( options.input ){
+                    //兼容Input组件
                     let {$handle} = input
                     $handle ? $handle.setState({value}) : (input.value = value);
+                }else{
+                    this.setState({value})
                 }
                 onChange && onChange.call(this, value, data, timestamp)
             }
