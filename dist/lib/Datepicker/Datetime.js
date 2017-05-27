@@ -302,6 +302,7 @@ var Datetime = function (_React$Component) {
             var _props2 = this.props;
             var weeks = _props2.weeks;
             var months = _props2.months;
+            var disableAnimation = _props2.disableAnimation;
             var _state4 = this.state;
             var direction = _state4.direction;
             var animate = _state4.animate;
@@ -417,7 +418,7 @@ var Datetime = function (_React$Component) {
                 );
             };
 
-            var groupClass = joinClass(animate && 'animate-groups', direction && 'animate-' + direction, animate && 'animate-' + direction + '-active');
+            var groupClass = joinClass(!disableAnimation && 'animate-groups', direction && 'animate-' + direction, animate && 'animate-' + direction + '-active');
 
             return _nojsReact.React.createElement(
                 'div',

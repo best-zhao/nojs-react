@@ -206,7 +206,7 @@ class Datetime extends React.Component {
         return disabled
     }
     render () {
-        let {weeks, months} = this.props
+        let {weeks, months, disableAnimation} = this.props
         let {
             direction, animate,
             min, max,
@@ -284,7 +284,7 @@ class Datetime extends React.Component {
         }
 
         const groupClass = joinClass(
-            animate && 'animate-groups', 
+            !disableAnimation && 'animate-groups', 
             direction && 'animate-'+direction, 
             animate && 'animate-'+direction+'-active'
         )
