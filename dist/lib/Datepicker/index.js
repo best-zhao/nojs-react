@@ -44,30 +44,40 @@ var Datepicker = function (_React$Component) {
             var options = this.state.options = Object.assign({}, this.props);
             var input = this.refs.input;
 
+
             input = options.input || input;
+
             var pop = _popover2.default.create({
                 name: 'nj-datepicker-pop',
                 nearby: input,
+                // effect : 'normal',
                 // template : <Datetime {...options}/>,
                 trigger: 'click'
 
             }).onShow(function () {
+
                 //获取初始value
                 options.value = input.value;
+
                 //重写onChange
                 var onChange = _this2.props.onChange;
 
+
                 options.onChange = function (value, data, timestamp) {
-                    _this2.setState({ value: value });
                     if (options.input) {
+                        //兼容Input组件
                         var _input = input;
                         var $handle = _input.$handle;
 
                         $handle ? $handle.setState({ value: value }) : input.value = value;
+                    } else {
+                        _this2.setState({ value: value });
                     }
                     onChange && onChange.call(_this2, value, data, timestamp);
                 };
-                pop.setState({ template: _nojsReact.React.createElement(_Datetime2.default, options) });
+                pop.setState({ template: _nojsReact.React.createElement(_Datetime2.default, options) }, function () {
+                    pop.align.set();
+                });
             }).onHide(function () {
                 pop.setState({ template: null });
             });

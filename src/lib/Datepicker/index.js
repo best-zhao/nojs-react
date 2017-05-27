@@ -6,14 +6,17 @@ class Datepicker extends React.Component {
     constructor(props) {
         super(props)
         this.state = {value:this.props.value}
-    }    
+    }
     componentDidMount () {
         let options = this.state.options = Object.assign({}, this.props)
         let {input} = this.refs
+
         input = options.input || input
+
         let pop = Popover.create({
             name : 'nj-datepicker-pop',
             nearby : input,
+            // effect : 'normal',
             // template : <Datetime {...options}/>,
             trigger : 'click'
 
@@ -24,6 +27,7 @@ class Datepicker extends React.Component {
             
             //重写onChange
             let {onChange} = this.props
+
             options.onChange = (value, data, timestamp)=>{
                 if( options.input ){
                     //兼容Input组件
@@ -34,7 +38,9 @@ class Datepicker extends React.Component {
                 }
                 onChange && onChange.call(this, value, data, timestamp)
             }
-            pop.setState({template:<Datetime {...options}/>})
+            pop.setState({template:<Datetime {...options}/>}, ()=>{
+                pop.align.set()
+            })
             
         }).onHide(()=>{
             pop.setState({template:null})

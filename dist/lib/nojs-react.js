@@ -52,12 +52,12 @@ function addMui(e) {
     var mui = $('<div class="nj-mui"><span></span></div>');
     var self = $(this);
     self.addClass('nj-mui-active').append(mui);
-    mui.children().css(exports.Mui.style(e, this));
+    mui.children().css(exports.Mui.style(e, this, self.attr('data-mode')));
 
     muiTimer && window.clearTimeout(muiTimer);
     muiTimer = window.setTimeout(function (e) {
         self.removeClass('nj-mui-active').children('.nj-mui').remove();
-    }, 2000);
+    }, 2500);
 }
 
 var nj_selector = 'button';
@@ -74,7 +74,10 @@ exports.Mui = React.createClass({
     displayName: 'Mui',
 
     statics: {
-        style: function style(e, node) {
+        style: function style(e, node, mode) {
+            if (mode == 'circle') {
+                return { width: '100%', height: '100%', left: '0', top: '0' };
+            }
             var self = $(node);
             var offset = self.offset();
             var size = self.outerWidth();
@@ -92,7 +95,7 @@ exports.Mui = React.createClass({
         }
     },
     getDefaultProps: function getDefaultProps() {
-        return { tag: 'div' };
+        return { tag: 'div', mode: 'rect' };
     },
     getInitialState: function getInitialState() {
         return { animate: [] };
@@ -102,12 +105,11 @@ exports.Mui = React.createClass({
 
         var animate = this.state.animate;
 
-        var style = exports.Mui.style(e, ReactDOM.findDOMNode(this));
-        var index = animate.length;
+        var style = exports.Mui.style(e, ReactDOM.findDOMNode(this), this.props.mode);
 
-        var timer = window.setTimeout(function (e) {
+        var timer = this.state.timer = window.setTimeout(function (e) {
             animate.shift();
-            _this.setState({ animate: animate });
+            _this.isMounted() && _this.setState({ animate: animate });
         }, 3000);
         animate.push(timer);
 
@@ -116,13 +118,18 @@ exports.Mui = React.createClass({
 
         onClick && onClick(e);
     },
+    componentWillUnmount: function componentWillUnmount() {
+        window.clearTimeout(this.state.timer);
+    },
     render: function render() {
-        var tag = this.props.tag;
+        var _props = this.props;
+        var tag = _props.tag;
+        var mode = _props.mode;
         var _state = this.state;
         var animate = _state.animate;
         var style = _state.style;
 
-        var className = exports.utils.joinClass(this.props.className, animate && 'nj-mui-active', 'nj-mui-item');
+        var className = exports.utils.joinClass(this.props.className, animate && 'nj-mui-active', 'nj-mui-item', 'nj-mui-' + mode);
         return React.createElement(tag, Object.assign({}, this.props, { onClick: this.handleClick, className: className }), this.props.children, animate.map(function (item, i) {
             return React.createElement(
                 'div',

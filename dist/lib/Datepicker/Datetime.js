@@ -12,8 +12,6 @@ var _utils = require('./utils');
 
 require('../../../css/datepicker.css');
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -36,12 +34,23 @@ var Datetime = function (_React$Component) {
         var min = _this$props.min;
         var max = _this$props.max;
         var months = _this$props.months;
+        var mode = _this$props.mode;
+        var format = _this$props.format;
 
         min = min && (0, _utils.getMonthData)(min);
         max = max && (0, _utils.getMonthData)(max);
 
-        var startMonth = min && !value ? { year: min.year, month: min.month } : value;
-        var currentMonth = _this.getMonthGroups(startMonth);
+        var hasDate = /^date/.test(mode); //允许选择日期
+        var hasTime = /time$/.test(mode); //允许选择时间
+
+        var currentMonth = void 0;
+        if (mode == 'time') {
+            var _times = value.match(/\b\d+\b/g) || [0, 0];
+            currentMonth = [Object.assign({ hours: parseInt(_times[0]), minutes: parseInt(_times[1]) }, _utils.today)];
+        } else {
+            var startMonth = min && !value ? { year: min.year, month: min.month } : value;
+            currentMonth = _this.getMonthGroups(startMonth);
+        }
 
         if (min) {
             min = {
@@ -58,6 +67,21 @@ var Datetime = function (_React$Component) {
             };
         }
 
+        //设置默认format
+        var _format = format;
+        if (!format) {
+            switch (mode) {
+                case 'date':
+                    _format = 'yy-mm-dd';
+                    break;
+                case 'time':
+                    _format = 'hh:mm:ss';
+                    break;
+                default:
+                    _format = 'yy-mm-dd hh:mm:ss';
+            }
+        }
+
         var _currentMonth$ = currentMonth[0];
         var year = _currentMonth$.year;
         var month = _currentMonth$.month;
@@ -69,8 +93,10 @@ var Datetime = function (_React$Component) {
             currentMonth: currentMonth,
             value: value, min: min, max: max,
             hours: hours, minutes: minutes,
+            format: _format,
+            hasDate: hasDate, hasTime: hasTime,
             //当前所选 默认今天 {year, month, date}
-            currentDate: value && { year: year, month: month, date: date },
+            currentDate: mode == 'time' ? _utils.today : value && { year: year, month: month, date: date },
             hoursItems: Array.prototype.concat.apply([], new Array(24)),
             minutesItems: Array.prototype.concat.apply([], new Array(60))
         };
@@ -78,6 +104,22 @@ var Datetime = function (_React$Component) {
     }
 
     _createClass(Datetime, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var months = this.props.months;
+            var _refs = this.refs;
+            var group = _refs.group;
+            var groups = _refs.groups;
+
+            if (!groups) {
+                return;
+            }
+            var groupsWidth = months * group.offsetWidth;
+            var groupHeight = group.offsetHeight;
+            groups.style.width = groupsWidth + 'px';
+            groups.style.height = groupHeight + 'px';
+        }
+    }, {
         key: 'getMonthGroups',
         value: function getMonthGroups(startMonth) {
             var currentMonth = [(0, _utils.getMonthData)(startMonth)];
@@ -97,19 +139,61 @@ var Datetime = function (_React$Component) {
     }, {
         key: 'jumpTo',
         value: function jumpTo(step) {
-            var months = this.props.months;
-            var currentMonth = this.state.currentMonth;
-            var _currentMonth$2 = currentMonth[0];
+            var _this2 = this;
+
+            var _state = this.state;
+            var _currentMonth = _state.currentMonth;
+            var animated = _state.animated;
+            var nextMonths = _state.nextMonths;
+
+
+            if (animated) {
+                this.state.animated = clearTimeout(animated);
+                _currentMonth = nextMonths || _currentMonth;
+            }
+
+            var _currentMonth$2 = _currentMonth[0];
             var year = _currentMonth$2.year;
             var month = _currentMonth$2.month;
 
             var startMonth = (0, _utils.getNearMonth)({ year: year, month: month, step: step });
-            this.setState({ currentMonth: this.getMonthGroups(startMonth) });
+            nextMonths = this.getMonthGroups(startMonth);
+
+            if (this.props.disableAnimation) {
+                this.setState({ currentMonth: nextMonths });
+                return;
+            }
+
+            var currentMonth = step > 0 ? _currentMonth.concat(nextMonths) : nextMonths.concat(_currentMonth);
+
+            this.setState({
+                //保留了之前的数据
+                currentMonth: currentMonth,
+                //真实的月份
+                nextMonths: nextMonths,
+                // animate:true,
+                //step>0月份增加 动画方向向左
+                direction: step > 0 ? 'left' : 'right'
+            });
+
+            setTimeout(function (e) {
+                _this2.setState({ animate: true });
+            }, 10);
+
+            this.state.animated = setTimeout(function (e) {
+                _this2.setState({
+                    currentMonth: _this2.state.nextMonths,
+                    nextMonths: null,
+                    direction: null,
+                    animate: null,
+                    animated: null
+                });
+            }, 400);
         }
     }, {
         key: 'changeDate',
         value: function changeDate(_ref) {
-            var _this2 = this;
+            var _this3 = this;
 
             var year = _ref.year;
             var month = _ref.month;
@@ -117,58 +201,121 @@ var Datetime = function (_React$Component) {
             var day = _ref.day;
             var current = _ref.current;
             var prevMonth = _ref.prevMonth;
+            var _state2 = this.state;
+            var hours = _state2.hours;
+            var minutes = _state2.minutes;
+            var hasDate = _state2.hasDate;
+            var hasTime = _state2.hasTime;
+            var format = _state2.format;
+            var hoursItems = _state2.hoursItems;
+            var minutesItems = _state2.minutesItems;
+            var min = _state2.min;
 
-            if (!date) {
+            if (hasDate && !date) {
                 //没有选择天
                 return;
             }
             var _props = this.props;
             var onChange = _props.onChange;
-            var format = _props.format;
-            var _state = this.state;
-            var hours = _state.hours;
-            var minutes = _state.minutes;
+            var mode = _props.mode;
 
             if (!current) {
                 //选择的日期是相邻的月份
                 this.jumpTo(prevMonth ? -1 : 1);
             }
+
+            var currentDate = { year: year, month: month, date: date, day: day };
+
+            if (min && hasTime) {
+                hoursItems.map(function (h, i) {
+                    var d = Object.assign({}, currentDate, { hours: i });
+                    var timestamp = (0, _utils.getTimestamp)(d, 4);
+                    var disabled = _this3.checkDisabled(timestamp, 'hours');
+
+                    if (disabled && hours == i) {
+                        //当前选中的被禁用
+                        hours = undefined;
+                    }
+                    if (hours == undefined && !disabled) {
+                        hours = i;
+                        _this3.setState({ hours: hours });
+                    }
+                });
+                minutesItems.map(function (h, i) {
+                    var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
+                    var timestamp = (0, _utils.getTimestamp)(d, 5);
+                    var disabled = _this3.checkDisabled(timestamp, 'minutes');
+
+                    if (disabled && minutes == i) {
+                        //当前选中的被禁用
+                        minutes = undefined;
+                    }
+                    if (minutes == undefined && !disabled) {
+                        minutes = i;
+                        _this3.setState({ minutes: minutes });
+                    }
+                });
+            }
+
             var value = dateParse({
                 date: [year, month, date].join('-') + ' ' + [hours, minutes].join(':'),
                 format: format
             });
-            this.setState({ currentDate: { year: year, month: month, date: date, day: day }, value: value }, function () {
-                var data = Object.assign({ hours: hours, minutes: minutes }, _this2.state.currentDate);
+
+            this.setState({ currentDate: currentDate, value: value }, function () {
+                var data = Object.assign({ hours: hours, minutes: minutes }, currentDate);
                 var timestamp = (0, _utils.getTimestamp)(data, 6);
-                console.log(day);
-                onChange && onChange.call(_this2, value, data, timestamp);
+                onChange && onChange.call(_this3, value, data, timestamp);
             });
         }
     }, {
         key: 'changeTime',
         value: function changeTime(key, e) {
-            var _this3 = this;
+            this.state[key] = parseInt(e.target.value);
+            this.changeDate(Object.assign({ current: true }, this.state.currentDate));
+            // this.setState(
+            //     {[key] : parseInt(e.target.value)}, 
+            //     ()=>this.changeDate(Object.assign({current:true}, this.state.currentDate))
+            // )
+        }
+    }, {
+        key: 'checkDisabled',
+        value: function checkDisabled(data, key) {
+            var _state3 = this.state;
+            var min = _state3.min;
+            var max = _state3.max;
 
-            this.setState(_defineProperty({}, key, parseInt(e.target.value)), function () {
-                return _this3.changeDate(Object.assign({ current: true }, _this3.state.currentDate));
-            });
+            var disabled = void 0;
+            if (min) {
+                disabled = data < min[key];
+            }
+            if (max) {
+                disabled = data > max[key];
+            }
+            return disabled;
         }
     }, {
         key: 'render',
         value: function render() {
             var _this4 = this;
 
-            var weeks = this.props.weeks;
-            var _state2 = this.state;
-            var min = _state2.min;
-            var max = _state2.max;
-            var hours = _state2.hours;
-            var minutes = _state2.minutes;
-            var hoursItems = _state2.hoursItems;
-            var minutesItems = _state2.minutesItems;
-            var currentMonth = _state2.currentMonth;
-            var _state2$currentDate = _state2.currentDate;
-            var currentDate = _state2$currentDate === undefined ? {} : _state2$currentDate;
+            var _props2 = this.props;
+            var weeks = _props2.weeks;
+            var months = _props2.months;
+            var _state4 = this.state;
+            var direction = _state4.direction;
+            var animate = _state4.animate;
+            var min = _state4.min;
+            var max = _state4.max;
+            var hours = _state4.hours;
+            var minutes = _state4.minutes;
+            var hasDate = _state4.hasDate;
+            var hasTime = _state4.hasTime;
+            var hoursItems = _state4.hoursItems;
+            var minutesItems = _state4.minutesItems;
+            var currentMonth = _state4.currentMonth;
+            var _state4$currentDate = _state4.currentDate;
+            var currentDate = _state4$currentDate === undefined ? {} : _state4$currentDate;
 
 
             var _years = currentMonth.map(function (item) {
@@ -183,18 +330,6 @@ var Datetime = function (_React$Component) {
                 return currentDate.date == item.date && currentDate.month == item.month && _months[i] == item.month && currentDate.year == item.year && _years[i] == item.year;
             };
 
-            var checkDisabled = function checkDisabled(data, key) {
-                var disabled = void 0;
-                // let allowSame = key=='hours' || key=='minutes'
-                if (min) {
-                    disabled = data < min[key];
-                }
-                if (max) {
-                    disabled = data > max[key];
-                }
-                return disabled;
-            };
-
             var weekEl = _nojsReact.React.createElement(
                 'ul',
                 { className: 'clearfix _weeks' },
@@ -207,66 +342,112 @@ var Datetime = function (_React$Component) {
                 })
             );
 
+            if (hasTime) {
+                hoursItems = hoursItems.map(function (h, i) {
+                    var disabled = void 0;
+                    if (currentDate.date) {
+                        var d = Object.assign({}, currentDate, { hours: i });
+                        var timestamp = (0, _utils.getTimestamp)(d, 4);
+                        disabled = _this4.checkDisabled(timestamp, 'hours');
+                    }
+                    return _nojsReact.React.createElement(
+                        'option',
+                        { disabled: disabled, key: i, value: i },
+                        (0, _utils.parseNumber)(i)
+                    );
+                });
+
+                minutesItems = minutesItems.map(function (h, i) {
+                    var disabled = void 0;
+                    if (currentDate.date) {
+                        var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
+                        var timestamp = (0, _utils.getTimestamp)(d, 5);
+                        disabled = _this4.checkDisabled(timestamp, 'minutes');
+                    }
+                    return _nojsReact.React.createElement(
+                        'option',
+                        { disabled: disabled, key: i, value: i },
+                        (0, _utils.parseNumber)(i)
+                    );
+                });
+            }
+
+            var dateItem = function dateItem(item, i) {
+                var disabled = _this4.checkDisabled(item.timestamp, 'date');
+                var className = joinClass('date-item', !disabled && checkCurrentDate(item, i) && 'active', !item.current && 'gray', disabled && 'disabled', item.isToday && 'today');
+                return _nojsReact.React.createElement(
+                    'button',
+                    { 'data-mode': 'circle', type: 'button', disabled: disabled,
+                        key: [item.year, item.month, item.date].join(''),
+                        onClick: _this4.changeDate.bind(_this4, item),
+                        className: className
+                    },
+                    _nojsReact.React.createElement(
+                        'span',
+                        { className: 'date' },
+                        item.date
+                    )
+                );
+            };
+
+            var groupItem = function groupItem(item, i) {
+                var year = item.year;
+                var month = item.month;
+                var dates = item.dates;
+
+                return _nojsReact.React.createElement(
+                    'div',
+                    { className: '_group', key: [year, month, i].join('-'), ref: 'group' },
+                    _nojsReact.React.createElement(
+                        'div',
+                        { className: '_head clearfix', key: '_head' },
+                        year,
+                        '\u5E74 ',
+                        (0, _utils.parseNumber)(month),
+                        '\u6708'
+                    ),
+                    weekEl,
+                    _nojsReact.React.createElement(
+                        'div',
+                        { className: '_dates clearfix' },
+                        dates.map(function (item) {
+                            return dateItem(item, i);
+                        })
+                    )
+                );
+            };
+
+            var groupClass = joinClass(animate && 'animate-groups', direction && 'animate-' + direction, animate && 'animate-' + direction + '-active');
+
             return _nojsReact.React.createElement(
                 'div',
                 { className: 'nj-datepicker' },
-                _nojsReact.React.createElement(
+                hasDate ? _nojsReact.React.createElement(
                     'div',
-                    { className: '_groups clearfix' },
-                    currentMonth.map(function (item, i) {
-                        var year = item.year;
-                        var month = item.month;
-                        var dates = item.dates;
-
-                        return _nojsReact.React.createElement(
-                            'div',
-                            { className: '_group', key: year + '-' + month },
-                            _nojsReact.React.createElement(
-                                'div',
-                                { className: '_head clearfix' },
-                                i == 0 ? _nojsReact.React.createElement(
-                                    'span',
-                                    { className: 'fl' },
-                                    _nojsReact.React.createElement('i', { onClick: _this4.jumpTo.bind(_this4, -12), className: 'nj-icon nj-icon-left2' }),
-                                    _nojsReact.React.createElement('i', { onClick: _this4.jumpTo.bind(_this4, -1), className: 'nj-icon nj-icon-left' })
-                                ) : null,
-                                i == currentMonth.length - 1 ? _nojsReact.React.createElement(
-                                    'span',
-                                    { className: 'fr' },
-                                    _nojsReact.React.createElement('i', { onClick: _this4.jumpTo.bind(_this4, 1), className: 'nj-icon nj-icon-right' }),
-                                    _nojsReact.React.createElement('i', { onClick: _this4.jumpTo.bind(_this4, 12), className: 'nj-icon nj-icon-right2' })
-                                ) : null,
-                                year,
-                                '\u5E74 ',
-                                (0, _utils.parseNumber)(month),
-                                '\u6708'
-                            ),
-                            weekEl,
-                            _nojsReact.React.createElement(
-                                'ul',
-                                { className: '_dates clearfix' },
-                                dates.map(function (item) {
-                                    var disabled = checkDisabled(item.timestamp, 'date');
-                                    var className = joinClass(!disabled && checkCurrentDate(item, i) && 'active', !item.current && 'gray', disabled && 'disabled', item.isToday && 'today');
-                                    return _nojsReact.React.createElement(
-                                        'li',
-                                        {
-                                            key: [item.year, item.month, item.date].join(''),
-                                            onClick: !disabled && _this4.changeDate.bind(_this4, item),
-                                            className: className
-                                        },
-                                        _nojsReact.React.createElement(
-                                            'span',
-                                            null,
-                                            item.date
-                                        )
-                                    );
-                                })
-                            )
-                        );
-                    })
-                ),
-                _nojsReact.React.createElement(
+                    { className: '_page' },
+                    _nojsReact.React.createElement(
+                        'span',
+                        { className: '_item' },
+                        _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -12), className: 'nj-icon nj-icon-left2' }),
+                        _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -months), className: 'nj-icon nj-icon-left' })
+                    ),
+                    _nojsReact.React.createElement(
+                        'span',
+                        { className: '_item' },
+                        _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, months), className: 'nj-icon nj-icon-right' }),
+                        _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, 12), className: 'nj-icon nj-icon-right2' })
+                    )
+                ) : null,
+                hasDate ? _nojsReact.React.createElement(
+                    'div',
+                    { className: '_groups clearfix', ref: 'groups' },
+                    _nojsReact.React.createElement(
+                        'div',
+                        { className: groupClass },
+                        currentMonth.map(groupItem)
+                    )
+                ) : null,
+                hasTime ? _nojsReact.React.createElement(
                     'div',
                     { className: '_times' },
                     '\u65F6\u95F4\uFF1A',
@@ -274,46 +455,22 @@ var Datetime = function (_React$Component) {
                         'select',
                         {
                             value: hours,
-                            disabled: !currentDate.date,
+                            disabled: hasDate && !currentDate.date,
                             onChange: this.changeTime.bind(this, 'hours')
                         },
-                        hoursItems.map(function (h, i) {
-                            var disabled = void 0;
-                            if (currentDate.date) {
-                                var d = Object.assign({}, currentDate, { hours: i });
-                                var timestamp = (0, _utils.getTimestamp)(d, 4);
-                                disabled = checkDisabled(timestamp, 'hours');
-                            }
-                            return _nojsReact.React.createElement(
-                                'option',
-                                { disabled: disabled, key: i, value: i },
-                                (0, _utils.parseNumber)(i)
-                            );
-                        })
+                        hoursItems
                     ),
                     ' :',
                     _nojsReact.React.createElement(
                         'select',
                         {
                             value: minutes,
-                            disabled: !currentDate.date,
+                            disabled: hasDate && !currentDate.date,
                             onChange: this.changeTime.bind(this, 'minutes')
                         },
-                        minutesItems.map(function (h, i) {
-                            var disabled = void 0;
-                            if (currentDate.date) {
-                                var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
-                                var timestamp = (0, _utils.getTimestamp)(d, 5);
-                                disabled = checkDisabled(timestamp, 'minutes');
-                            }
-                            return _nojsReact.React.createElement(
-                                'option',
-                                { disabled: disabled, key: i, value: i },
-                                (0, _utils.parseNumber)(i)
-                            );
-                        })
+                        minutesItems
                     )
-                )
+                ) : null
             );
         }
     }]);
@@ -322,9 +479,10 @@ var Datetime = function (_React$Component) {
 }(_nojsReact.React.Component);
 
 Datetime.defaultProps = {
+    mode: 'datetime',
     //显示的月份数
     months: 1,
-    format: 'yy-mm-dd hh:mm:ss',
+    // format : 'yy-mm-dd hh:mm:ss',
     weeks: ['日', '一', '二', '三', '四', '五', '六']
 };
 

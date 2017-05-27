@@ -51,12 +51,12 @@ function addMui(e){
     var mui = $('<div class="nj-mui"><span></span></div>')
     var self = $(this)    
     self.addClass('nj-mui-active').append(mui)
-    mui.children().css(exports.Mui.style(e, this))
+    mui.children().css(exports.Mui.style(e, this, self.attr('data-mode')))
 
     muiTimer && window.clearTimeout(muiTimer)
     muiTimer = window.setTimeout(e=>{
         self.removeClass('nj-mui-active').children('.nj-mui').remove()
-    }, 2000)    
+    }, 2500)    
 }
 
 var nj_selector = 'button'
@@ -72,7 +72,10 @@ $(function(){
 
 exports.Mui = React.createClass({
     statics : {
-        style (e, node) {
+        style (e, node, mode) {
+            if( mode=='circle' ){
+                return {width:'100%', height:'100%', left:'0', top:'0'}
+            }
             var self = $(node)
             var offset = self.offset()
             var size = self.outerWidth()
@@ -90,19 +93,18 @@ exports.Mui = React.createClass({
         }
     },
     getDefaultProps () {
-        return {tag:'div'}
+        return {tag:'div', mode:'rect'}
     },
     getInitialState () {
         return {animate:[]}
     },
     handleClick (e) {
         var {animate} = this.state
-        var style = exports.Mui.style(e, ReactDOM.findDOMNode(this))
-        var index = animate.length
+        var style = exports.Mui.style(e, ReactDOM.findDOMNode(this), this.props.mode)
         
-        var timer = window.setTimeout(e=>{
+        var timer = this.state.timer = window.setTimeout(e=>{
             animate.shift()
-            this.setState({animate})
+            this.isMounted() && this.setState({animate})
         }, 3000)
         animate.push(timer)
         
@@ -110,13 +112,17 @@ exports.Mui = React.createClass({
         var {onClick} = this.props
         onClick && onClick(e)
     },
+    componentWillUnmount () {
+        window.clearTimeout(this.state.timer)
+    },
     render () {
-        var {tag} = this.props
+        var {tag, mode} = this.props
         var {animate, style} = this.state
         var className = exports.utils.joinClass(
             this.props.className, 
-            animate&&'nj-mui-active', 
-            'nj-mui-item'
+            animate && 'nj-mui-active', 
+            'nj-mui-item',
+            'nj-mui-'+mode
         )
         return React.createElement(
             tag,

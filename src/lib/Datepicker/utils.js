@@ -31,6 +31,7 @@ export const getMonthData = options=>{
         //字符串或时间戳
         _date = new Date(options)
     }
+    
     if( _date ){
         // key = _date.getTime()
         year = _date.getFullYear() 
@@ -41,14 +42,21 @@ export const getMonthData = options=>{
             minutes = _date.getMinutes()
         }
     }   
-    key = year + month
+    key = year + '-' + month
     // console.log(options, year, month)
 
-    if( dateCache[key] ){
+    let cache = dateCache[key]
+    if( cache ){
         if( options && _date ){//传入的具体日期时 更新date/hours等值
-            return Object.assign({}, dateCache[key], {date, hours, minutes})
+            return Object.assign({}, cache, {date, hours, minutes})
         }
-        return dateCache[key]
+        // return cache
+        //当options传入的是对象时 也只返回年月日数据(除去date, hours, minutes)
+        return {
+            year : cache.year,
+            month : cache.month,
+            dates : cache.dates
+        }
     }
     let days = getDays({year, month})
     let allDays = []
@@ -88,9 +96,10 @@ export const getMonthData = options=>{
     }
 
     //月末不是周6
-    if( endDay<6 ){    
+    if( allDays.length<42 ){    
         let nextMonth = getNearMonth({year, month, step:1})    
         let i = 0
+        endDay = endDay==6 ? -1 : endDay//月末是周6
         while( ++endDay<=6 ){
             i++
             allDays.push({
@@ -101,6 +110,10 @@ export const getMonthData = options=>{
                 timestamp : new Date(nextMonth.year, nextMonth.month-1, i).getTime(),
                 day : endDay
             })
+            //补齐到满5行时 再补一行凑齐6行
+            if( allDays.length==35 && endDay==6 ){
+                endDay = -1
+            }
         }
     }
 
@@ -169,4 +182,7 @@ export const getTimestamp = (n, length)=>{
         length>5 && parseInt(n.seconds)||0
     ).getTime()
 }
+
+
+// console.log(getMonthData({year:2018,month:4}))
 // console.log(getNearMonth({year:2017,month:5, step:-4}))

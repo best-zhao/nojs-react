@@ -15,7 +15,6 @@
 .nj-tree .more{position:relative;overflow:visible}
 .nj-tree .more a{color:#bbb}
 
-option[disabled]{color:#bbb;}
 
 .nj-tree .nj-mui-item ._icon, .nj-tree .nj-mui-item ._text{position:relative;z-index:20;}
 .nj-tree .nj-mui span{background:#aaa;}

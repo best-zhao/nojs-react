@@ -1,22 +1,44 @@
-.nj-datepicker-pop{z-index:999;min-width: 244px;min-height:220px}
-.nj-datepicker{color:#666}
-.nj-datepicker ._group{width:240px;float:left;padding:2px}
-.nj-datepicker ._head{height:24px;line-height:24px;background: #eee;padding:4px 6px;text-align: center;}
-.nj-datepicker ._head .nj-icon{display: inline-block;width:24px;}
-.nj-datepicker ._head .nj-icon:before{font-size:12px}
-.nj-datepicker ._head .nj-icon:hover{background:#ddd;color:#0078E7}
-.nj-datepicker ._weeks li, .nj-datepicker ._dates li{
-    float:left;width:14.2%;border:1px solid #fff;cursor: default;text-align: center;
-    line-height:26px;box-sizing: border-box;
+.nj-datepicker-pop{z-index:999;}
+.nj-datepicker{color:#444}
+.nj-datepicker ._groups{overflow:hidden;position:relative;}
+.nj-datepicker ._group{width:282px;float:left;border:2px solid #fff;opacity:1}
+.nj-datepicker ._head{height:31px;line-height:31px;font-size:1.1667em;padding:0 6px;text-align: center;margin:0 0 6px}
+.nj-datepicker ._page .nj-mui span{background:#0078E7}
+.nj-datepicker ._page{text-align:center;background:#dfeffd;position:absolute;width:100%;height:33px;}
+.nj-datepicker ._page ._item{position: absolute;top:2px;line-height:31px;z-index: 50}
+.nj-datepicker ._page ._item:first-child{left:2%;}
+.nj-datepicker ._page ._item:last-child{right:2%;}
+.nj-datepicker ._page .nj-icon{width:31px;display:inline-block;border-radius:100%;transition: all .2s;}
+.nj-datepicker ._page .nj-icon:before{font-size:12px;font-weight: 800}
+.nj-datepicker ._page .nj-icon:hover{color:#0078E7}
+
+.nj-datepicker ._weeks li, .nj-datepicker ._dates .date-item{
+    float:left;width:14.2%;padding:4px;cursor: default;text-align: center;box-sizing: border-box;
 }
-.nj-datepicker ._dates{padding:3px;font-family:arial}
-.nj-datepicker ._dates li{background:#f4f4f4}
-.nj-datepicker ._dates span{display:block;border:1px solid #f4f4f4}
-.nj-datepicker ._dates li:hover span{border-color:#ccc}
-.nj-datepicker ._dates .gray span{color:#ccc}
-.nj-datepicker ._dates .today span{border-color:#ccc}
-.nj-datepicker ._dates .active span{background:#0078E7;border-color:#0078E7!important;color:#fff}
-.nj-datepicker ._dates .disabled{color:#ccc;cursor:not-allowed}
+.nj-datepicker ._weeks{color:#999}
+.nj-datepicker ._dates .date-item{border:none;background:none;line-height:31px;position: relative;font-family: Roboto, sans-serif;}
+.nj-datepicker ._dates .date{display:block;border-radius:100%;transition: all .4s;}
+.nj-datepicker ._dates .date-item:hover:not([disabled]) .date{background:#ABD7FE}
+.nj-datepicker ._dates .gray .date{color:#ccc}
+.nj-datepicker ._dates .gray:hover .date{color:#999}
+.nj-datepicker ._dates .today .date{background:#e4e4e4}
+.nj-datepicker ._dates .active .date{background:#0078E7!important;color:#fff}
+.nj-datepicker ._dates [disabled]{color:#ccc;cursor:not-allowed}
+.nj-datepicker ._dates .nj-mui span{background:#000}
+
 .nj-datepicker ._times{padding:9px 12px;border-top:1px dotted #e2e2e2}
-.nj-datepicker ._times select:not(:last-child){margin-left:1em}
+.nj-datepicker ._times select{border:1px solid #ccc;padding:3px 6px;border-radius:4px;margin:0 4px}
 .nj-datepicker ._times select[disabled]{color:#bbb}
+
+
+/*月份切换动画*/
+.animate-groups{position: absolute;left:0;right:0;width:200%}
+.animate-left, .animate-right{transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);}
+.animate-left{right:auto;}
+.animate-left-active{left:-100%;}
+.animate-right{left:auto;}
+.animate-right-active{right:-100%;}
+
+
+
+

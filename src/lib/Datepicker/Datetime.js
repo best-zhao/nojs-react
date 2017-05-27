@@ -1,4 +1,4 @@
-import {React, render, utils} from '../nojs-react'
+import {React, render, utils, Mui} from '../nojs-react'
 import {getMonthData, getNearMonth, parseNumber, getTimestamp, today} from './utils'
 import '../../../css/datepicker.css'
 
@@ -65,7 +65,18 @@ class Datetime extends React.Component {
             hoursItems : Array.prototype.concat.apply([], new Array(24)),
             minutesItems : Array.prototype.concat.apply([], new Array(60))
         }
-    }     
+    }   
+    componentDidMount () {
+        let {months} = this.props
+        let {group, groups} = this.refs
+        if( !groups ){
+            return
+        }
+        let groupsWidth = months*group.offsetWidth
+        let groupHeight = group.offsetHeight
+        groups.style.width = groupsWidth+'px'
+        groups.style.height = groupHeight+'px'
+    }    
     getMonthGroups (startMonth) {
         let currentMonth = [getMonthData(startMonth)]
         for( let i=1;i<this.props.months;i++ ){
@@ -81,14 +92,50 @@ class Datetime extends React.Component {
     }
     //跳转月份
     jumpTo (step) {
-        let {months} = this.props
-        let {currentMonth} = this.state
-        let {year, month} = currentMonth[0]
+        let {currentMonth:_currentMonth, animated, nextMonths} = this.state
+
+        if( animated ){
+            this.state.animated = clearTimeout(animated)
+            _currentMonth = nextMonths || _currentMonth
+        }
+        
+        let {year, month} = _currentMonth[0]
         let startMonth = getNearMonth({year, month, step})
-        this.setState({currentMonth:this.getMonthGroups(startMonth)})
+        nextMonths = this.getMonthGroups(startMonth)
+
+        if( this.props.disableAnimation ){
+            this.setState({currentMonth: nextMonths})
+            return
+        }
+
+        let currentMonth = step>0 ? _currentMonth.concat(nextMonths) : nextMonths.concat(_currentMonth)
+        
+        this.setState({
+            //保留了之前的数据
+            currentMonth,
+            //真实的月份
+            nextMonths,
+            // animate:true,
+            //step>0月份增加 动画方向向左
+            direction : step>0 ? 'left' : 'right'
+        })
+
+        setTimeout(e=>{
+            this.setState({animate:true})
+        }, 10)
+
+        this.state.animated = setTimeout(e=>{
+            this.setState({
+                currentMonth : this.state.nextMonths,
+                nextMonths : null,
+                direction : null,
+                animate : null,
+                animated : null
+            })
+        }, 400)
     }
     changeDate ({year, month, date, day, current, prevMonth}) {
-        let {hours, minutes, hasDate, format} = this.state
+        let {hours, minutes, hasDate, hasTime, format, hoursItems, minutesItems, min} = this.state
         if( hasDate && !date ){//没有选择天
             return
         }
@@ -96,25 +143,72 @@ class Datetime extends React.Component {
         if( !current ){//选择的日期是相邻的月份
             this.jumpTo(prevMonth?-1:1)
         }
+        
+        let currentDate = {year, month, date, day}
+
+        if( min && hasTime ){
+            hoursItems.map((h,i)=>{
+                let d = Object.assign({}, currentDate, {hours:i})
+                let timestamp = getTimestamp(d, 4)
+                let disabled = this.checkDisabled(timestamp, 'hours')
+
+                if( disabled && hours==i ){//当前选中的被禁用
+                    hours=undefined
+                }
+                if( hours==undefined && !disabled ){
+                    hours = i
+                    this.setState({hours})
+                }
+            })
+            minutesItems.map((h,i)=>{
+                let d = Object.assign({}, currentDate, {hours, minutes:i})
+                let timestamp = getTimestamp(d, 5)
+                let disabled = this.checkDisabled(timestamp, 'minutes')
+
+                if( disabled && minutes==i ){//当前选中的被禁用
+                    minutes=undefined
+                }
+                if( minutes==undefined && !disabled ){
+                    minutes = i
+                    this.setState({minutes})
+                }
+            })
+        }  
+
         let value = dateParse({
             date : [year, month, date].join('-')+' '+[hours, minutes].join(':'),
             format
         })
-        this.setState({currentDate:{year, month, date, day}, value}, ()=>{
-            let data = Object.assign({hours, minutes}, this.state.currentDate)
+
+        this.setState({currentDate, value}, ()=>{
+            let data = Object.assign({hours, minutes}, currentDate)
             let timestamp = getTimestamp(data, 6)
             onChange && onChange.call(this, value, data, timestamp)
-        })        
+        })     
     }
     changeTime(key, e){
-        this.setState(
-            {[key] : parseInt(e.target.value)}, 
-            ()=>this.changeDate(Object.assign({current:true}, this.state.currentDate))
-        )
+        this.state[key] = parseInt(e.target.value)
+        this.changeDate(Object.assign({current:true}, this.state.currentDate))
+        // this.setState(
+        //     {[key] : parseInt(e.target.value)}, 
+        //     ()=>this.changeDate(Object.assign({current:true}, this.state.currentDate))
+        // )
     }    
+    checkDisabled (data, key) {
+        let {min, max} = this.state
+        let disabled
+        if( min ){
+            disabled = data<min[key]
+        }
+        if( max ){
+            disabled = data>max[key]
+        }
+        return disabled
+    }
     render () {
-        let {weeks} = this.props
+        let {weeks, months} = this.props
         let {
+            direction, animate,
             min, max,
             hours, minutes, 
             hasDate, hasTime,
@@ -133,66 +227,88 @@ class Datetime extends React.Component {
                 && currentDate.year==item.year
                 && _years[i]==item.year
         }
+        
+        let weekEl = <ul className="clearfix _weeks">{
+            weeks.map((item,i)=><li key={i}>{item}</li>)
+        }</ul>
 
-        const checkDisabled = (data, key)=>{
-            let disabled
-            // let allowSame = key=='hours' || key=='minutes'
-            if( min ){
-                disabled = data<min[key]
-            }
-            if( max ){
-                disabled = data>max[key]
-            }
-            return disabled
+        if( hasTime ){
+            hoursItems = hoursItems.map((h,i)=>{
+                let disabled 
+                if( currentDate.date ){
+                    let d = Object.assign({}, currentDate, {hours:i})
+                    let timestamp = getTimestamp(d, 4)
+                    disabled = this.checkDisabled(timestamp, 'hours')                    
+                }
+                return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
+            })
+
+            minutesItems = minutesItems.map((h,i)=>{
+                let disabled 
+                if( currentDate.date ){
+                    let d = Object.assign({}, currentDate, {hours, minutes:i})
+                    let timestamp = getTimestamp(d, 5)
+                    disabled = this.checkDisabled(timestamp, 'minutes')                    
+                } 
+                return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
+            })
         }
 
-        let weekEl = <ul className="clearfix _weeks">{
-            weeks.map((item,i)=>
-                <li key={i}>{item}</li>
+        const dateItem = (item,i)=>{
+            let disabled = this.checkDisabled(item.timestamp, 'date')
+            let className = joinClass(
+                'date-item',
+                !disabled && checkCurrentDate(item, i) && 'active',
+                !item.current && 'gray',
+                disabled && 'disabled',
+                item.isToday && 'today'
             )
-        }</ul>
+            return <button data-mode="circle" type="button" disabled={disabled}
+                key={[item.year, item.month, item.date].join('')}
+                onClick={this.changeDate.bind(this, item)}
+                className={className}
+            >
+                <span className="date">{item.date}</span>
+            </button>
+        }
+
+        const groupItem = (item,i)=>{
+            let {year, month, dates} = item
+            return <div className="_group" key={[year,month,i].join('-')} ref="group">
+                <div className="_head clearfix" key="_head">
+                    {year}年 {parseNumber(month)}月
+                </div>
+                {weekEl}
+                <div className="_dates clearfix">{dates.map(item=>dateItem(item, i))}</div>
+            </div>
+        }
+
+        const groupClass = joinClass(
+            animate && 'animate-groups', 
+            direction && 'animate-'+direction, 
+            animate && 'animate-'+direction+'-active'
+        )
 
         return <div className="nj-datepicker">
             {hasDate ? 
-            <div className="_groups clearfix">{currentMonth.map((item,i)=>{
-                let {year, month, dates} = item
-                return <div className="_group" key={year+'-'+month}>
-                    <div className="_head clearfix">
-                        {i==0 ?
-                        <span className="fl">
-                            <i onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></i>
-                            <i onClick={this.jumpTo.bind(this, -1)} className="nj-icon nj-icon-left"></i>
-                        </span> : null
-                        }
-                        {i==currentMonth.length-1 ?
-                        <span className="fr">
-                            <i onClick={this.jumpTo.bind(this, 1)} className="nj-icon nj-icon-right"></i>
-                            <i onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></i>
-                        </span> : null
-                        }
-                        {year}年 {parseNumber(month)}月
-                    </div>
-                    {weekEl}                  
-                    <ul className="_dates clearfix">{
-                        dates.map(item=>{
-                            let disabled = checkDisabled(item.timestamp, 'date')
-                            let className = joinClass(
-                                !disabled && checkCurrentDate(item,i) && 'active',
-                                !item.current && 'gray',
-                                disabled && 'disabled',
-                                item.isToday && 'today'
-                            )
-                            return <li 
-                                key={[item.year, item.month, item.date].join('')}
-                                onClick={!disabled && this.changeDate.bind(this, item)}
-                                className={className}
-                            >
-                                <span>{item.date}</span>
-                            </li>
-                        })
-                    }</ul>
+            <div className="_page">
+                <span className="_item">
+                    <Mui mode="circle" onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></Mui>
+                    <Mui mode="circle" onClick={this.jumpTo.bind(this, -months)} className="nj-icon nj-icon-left"></Mui>
+                </span>
+                <span className="_item">
+                    <Mui mode="circle" onClick={this.jumpTo.bind(this, months)} className="nj-icon nj-icon-right"></Mui>
+                    <Mui mode="circle" onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></Mui>
+                </span>
+            </div> 
+            : null}
+
+            {hasDate ? 
+            <div className="_groups clearfix" ref="groups">
+                <div className={groupClass}>
+                    {currentMonth.map(groupItem)}
                 </div>
-            })}</div>
+            </div>
             : null}
 
             {hasTime ? 
@@ -201,33 +317,17 @@ class Datetime extends React.Component {
                     value={hours} 
                     disabled={hasDate&&!currentDate.date}
                     onChange={this.changeTime.bind(this, 'hours')}
-                >{
-                    hoursItems.map((h,i)=>{
-                        let disabled 
-                        if( currentDate.date ){
-                            let d = Object.assign({}, currentDate, {hours:i})
-                            let timestamp = getTimestamp(d, 4)
-                            disabled = checkDisabled(timestamp, 'hours')
-                        }
-                        return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
-                    })
-                }</select> : 
+                >
+                    {hoursItems}
+                </select> : 
 
                 <select 
                     value={minutes} 
                     disabled={hasDate&&!currentDate.date}
                     onChange={this.changeTime.bind(this, 'minutes')}
-                >{
-                    minutesItems.map((h,i)=>{
-                        let disabled 
-                        if( currentDate.date ){
-                            let d = Object.assign({}, currentDate, {hours, minutes:i})
-                            let timestamp = getTimestamp(d, 5)
-                            disabled = checkDisabled(timestamp, 'minutes')
-                        } 
-                        return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
-                    })
-                }</select>
+                >
+                    {minutesItems}
+                </select>
             </div>
             : null}
         </div>
