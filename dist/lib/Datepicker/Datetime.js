@@ -146,6 +146,7 @@ var Datetime = function (_React$Component) {
             var animated = _state.animated;
             var nextMonths = _state.nextMonths;
 
+            //未完成的动画
 
             if (animated) {
                 this.state.animated = clearTimeout(animated);
@@ -180,6 +181,7 @@ var Datetime = function (_React$Component) {
                 _this2.setState({ animate: true });
             }, 10);
 
+            //动画完毕后还原数据
             this.state.animated = setTimeout(function (e) {
                 _this2.setState({
                     currentMonth: _this2.state.nextMonths,
@@ -210,6 +212,7 @@ var Datetime = function (_React$Component) {
             var hoursItems = _state2.hoursItems;
             var minutesItems = _state2.minutesItems;
             var min = _state2.min;
+            var max = _state2.max;
 
             if (hasDate && !date) {
                 //没有选择天
@@ -226,7 +229,12 @@ var Datetime = function (_React$Component) {
 
             var currentDate = { year: year, month: month, date: date, day: day };
 
-            if (min && hasTime) {
+            /**
+             * 重置时间选择 当设置了min选项时
+             * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
+             * 因为这一天9点之前不能被选中
+             */
+            if ((min || max) && hasTime) {
                 hoursItems.map(function (h, i) {
                     var d = Object.assign({}, currentDate, { hours: i });
                     var timestamp = (0, _utils.getTimestamp)(d, 4);
@@ -236,11 +244,17 @@ var Datetime = function (_React$Component) {
                         //当前选中的被禁用
                         hours = undefined;
                     }
-                    if (hours == undefined && !disabled) {
-                        hours = i;
-                        _this3.setState({ hours: hours });
-                    }
+                    hoursItems[i] = disabled ? -1 : i;
                 });
+                var resetHour = void 0;
+                if (hours == undefined) {
+                    resetHour = true;
+                    hours = hoursItems.filter(function (h) {
+                        return h >= 0;
+                    })[0];
+                    this.setState({ hours: hours });
+                }
+
                 minutesItems.map(function (h, i) {
                     var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
                     var timestamp = (0, _utils.getTimestamp)(d, 5);
@@ -250,11 +264,18 @@ var Datetime = function (_React$Component) {
                         //当前选中的被禁用
                         minutes = undefined;
                     }
-                    if (minutes == undefined && !disabled) {
-                        minutes = i;
-                        _this3.setState({ minutes: minutes });
-                    }
+                    minutesItems[i] = disabled ? -1 : i;
                 });
+                if (minutes == undefined) {
+                    minutes = minutesItems.filter(function (h) {
+                        return h >= 0;
+                    })[0];
+                    this.setState({ minutes: minutes });
+                } else if (resetHour) {
+                    //当hours重置后 minutes置为0
+                    minutes = 0;
+                    this.setState({ minutes: minutes });
+                }
             }
 
             var value = dateParse({
@@ -286,10 +307,12 @@ var Datetime = function (_React$Component) {
             var max = _state3.max;
 
             var disabled = void 0;
+
             if (min) {
                 disabled = data < min[key];
             }
-            if (max) {
+            if (!disabled && max) {
+                //若min没禁用 再判断max
                 disabled = data > max[key];
             }
             return disabled;

@@ -16,12 +16,11 @@ export const init = ()=>{
     start()
     end()
     
-
     Form.start()
 
     let input = $('input[name="starttime"]')[0]
     render(
-        <Datepicker min={new Date()} mode="datetime" input={input}/>, 
+        <Datepicker mode="datetime" input={input}/>, 
         input
     )
 

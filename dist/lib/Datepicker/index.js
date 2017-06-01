@@ -50,7 +50,7 @@ var Datepicker = function (_React$Component) {
             var pop = _popover2.default.create({
                 name: 'nj-datepicker-pop',
                 nearby: input,
-                // effect : 'normal',
+                effect: options.disableAnimation && 'normal',
                 // template : <Datetime {...options}/>,
                 trigger: 'click'
 

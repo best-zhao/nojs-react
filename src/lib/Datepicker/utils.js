@@ -1,5 +1,7 @@
 import {utils} from '../nojs-react'
 import $ from 'jquery'
+import Lunar from './lunar'
+
 const {dateParse} = utils
 
 let dateCache = {}
@@ -183,6 +185,7 @@ export const getTimestamp = (n, length)=>{
     ).getTime()
 }
 
-
-// console.log(getMonthData({year:2018,month:4}))
 // console.log(getNearMonth({year:2017,month:5, step:-4}))
+
+// let data = Lunar.solar2lunar(2017,6,21)
+// console.log(data)

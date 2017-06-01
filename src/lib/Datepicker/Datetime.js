@@ -23,6 +23,7 @@ class Datetime extends React.Component {
             currentMonth = this.getMonthGroups(startMonth)
         }
 
+
         if( min ){
             min = {
                 date : getTimestamp(min),
@@ -94,6 +95,7 @@ class Datetime extends React.Component {
     jumpTo (step) {
         let {currentMonth:_currentMonth, animated, nextMonths} = this.state
 
+        //未完成的动画
         if( animated ){
             this.state.animated = clearTimeout(animated)
             _currentMonth = nextMonths || _currentMonth
@@ -124,6 +126,8 @@ class Datetime extends React.Component {
             this.setState({animate:true})
         }, 10)
 
+
+        //动画完毕后还原数据
         this.state.animated = setTimeout(e=>{
             this.setState({
                 currentMonth : this.state.nextMonths,
@@ -135,7 +139,7 @@ class Datetime extends React.Component {
         }, 400)
     }
     changeDate ({year, month, date, day, current, prevMonth}) {
-        let {hours, minutes, hasDate, hasTime, format, hoursItems, minutesItems, min} = this.state
+        let {hours, minutes, hasDate, hasTime, format, hoursItems, minutesItems, min, max} = this.state
         if( hasDate && !date ){//没有选择天
             return
         }
@@ -146,7 +150,12 @@ class Datetime extends React.Component {
         
         let currentDate = {year, month, date, day}
 
-        if( min && hasTime ){
+        /**
+         * 重置时间选择 当设置了min选项时
+         * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
+         * 因为这一天9点之前不能被选中
+         */
+        if( (min||max) && hasTime ){
             hoursItems.map((h,i)=>{
                 let d = Object.assign({}, currentDate, {hours:i})
                 let timestamp = getTimestamp(d, 4)
@@ -155,11 +164,15 @@ class Datetime extends React.Component {
                 if( disabled && hours==i ){//当前选中的被禁用
                     hours=undefined
                 }
-                if( hours==undefined && !disabled ){
-                    hours = i
-                    this.setState({hours})
-                }
+                hoursItems[i] = disabled ? -1 : i
             })
+            let resetHour
+            if( hours==undefined ){
+                resetHour = true
+                hours = hoursItems.filter(h=>h>=0)[0]
+                this.setState({hours})
+            }
+
             minutesItems.map((h,i)=>{
                 let d = Object.assign({}, currentDate, {hours, minutes:i})
                 let timestamp = getTimestamp(d, 5)
@@ -168,11 +181,15 @@ class Datetime extends React.Component {
                 if( disabled && minutes==i ){//当前选中的被禁用
                     minutes=undefined
                 }
-                if( minutes==undefined && !disabled ){
-                    minutes = i
-                    this.setState({minutes})
-                }
+                minutesItems[i] = disabled ? -1 : i
             })
+            if( minutes==undefined ){
+                minutes = minutesItems.filter(h=>h>=0)[0]
+                this.setState({minutes})
+            }else if( resetHour ){//当hours重置后 minutes置为0
+                minutes = 0
+                this.setState({minutes})
+            }
         }  
 
         let value = dateParse({
@@ -189,18 +206,15 @@ class Datetime extends React.Component {
     changeTime(key, e){
         this.state[key] = parseInt(e.target.value)
         this.changeDate(Object.assign({current:true}, this.state.currentDate))
-        // this.setState(
-        //     {[key] : parseInt(e.target.value)}, 
-        //     ()=>this.changeDate(Object.assign({current:true}, this.state.currentDate))
-        // )
     }    
     checkDisabled (data, key) {
         let {min, max} = this.state
         let disabled
+
         if( min ){
             disabled = data<min[key]
         }
-        if( max ){
+        if( !disabled && max ){//若min没禁用 再判断max
             disabled = data>max[key]
         }
         return disabled

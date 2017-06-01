@@ -45,8 +45,7 @@ end()
 
 <span id="rootDatepicker"></span> -
  <span id="rootDatepicker1"></span>
-<input type="text" id="rootDatepicker2">
-<!-- ### Usage -->
+<!-- <input type="text" id="rootDatepicker2"> -->
 
 <nj-form>
     <nj-input readonly name="starttime"></nj-input>

@@ -16,7 +16,7 @@ class Datepicker extends React.Component {
         let pop = Popover.create({
             name : 'nj-datepicker-pop',
             nearby : input,
-            // effect : 'normal',
+            effect : options.disableAnimation && 'normal',
             // template : <Datetime {...options}/>,
             trigger : 'click'
 
