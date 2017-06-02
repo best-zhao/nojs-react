@@ -35,7 +35,7 @@ let start = (max)=>render(
 )
 //选择的结束时间作为开始时间的max
 let end = (min)=>render(
-    <Datepicker min={min} onChange={value=>start(value)} placeholder="结束时间" />, 
+    <Datepicker min={min||new Date()} onChange={value=>start(value)} placeholder="结束时间" />, 
     document.getElementById('endtime')
 )
 start()

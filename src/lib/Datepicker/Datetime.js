@@ -7,9 +7,9 @@ const {dateParse, joinClass} = utils
 class Datetime extends React.Component {
     constructor(props) {
         super(props)
-        let {value, min, max, months, mode, format} = this.props
-        min = min && getMonthData(min)
-        max = max && getMonthData(max)
+        let {value, min, max, months, mode, format, weeks, startWeekIndex} = this.props
+        min = min && getMonthData(min, {startWeekIndex})
+        max = max && getMonthData(max, {startWeekIndex})
 
         let hasDate = /^date/.test(mode)//允许选择日期
         let hasTime = /time$/.test(mode)//允许选择时间
@@ -53,23 +53,38 @@ class Datetime extends React.Component {
                 _format = 'yy-mm-dd hh:mm:ss'
             }
         }
+
+        //根据startWeekIndex来重新排序星期显示
+        let _weeks = [].concat(weeks)
+        if( startWeekIndex>0 ){
+            for( let i=0; i<startWeekIndex; i++ ){
+                _weeks.push(_weeks.shift())
+            }
+        }
+
         
         let {year, month, date, hours, minutes} = currentMonth[0]
+        let day = date && new Date(year, month-1, date).getDay()
+
         this.state = {
             currentMonth,
             value, min, max,
             hours, minutes,
-            format : _format,            
+            format : _format, 
+            weeks : _weeks,           
             hasDate,  hasTime,
             //当前所选 默认今天 {year, month, date}
-            currentDate : mode=='time' ? today : (value && {year, month, date}),            
+            currentDate : mode=='time' ? today : (value && {year, month, date, day}),            
             hoursItems : Array.prototype.concat.apply([], new Array(24)),
             minutesItems : Array.prototype.concat.apply([], new Array(60))
         }
     }   
     componentDidMount () {
-        let {months} = this.props
+        let {months, onReady} = this.props
         let {group, groups} = this.refs
+
+        onReady && onReady.call(this)
+
         if( !groups ){
             return
         }
@@ -79,7 +94,8 @@ class Datetime extends React.Component {
         groups.style.height = groupHeight+'px'
     }    
     getMonthGroups (startMonth) {
-        let currentMonth = [getMonthData(startMonth)]
+        let {startWeekIndex} = this.props
+        let currentMonth = [getMonthData(startMonth, {startWeekIndex})]
         for( let i=1;i<this.props.months;i++ ){
             let nowMonth = currentMonth[i-1];
             let nextMonth = getNearMonth({
@@ -87,7 +103,7 @@ class Datetime extends React.Component {
                 month : nowMonth.month, 
                 step : 1
             })
-            currentMonth.push(getMonthData(nextMonth))
+            currentMonth.push(getMonthData(nextMonth, {startWeekIndex}))
         }
         return currentMonth
     }
@@ -138,12 +154,15 @@ class Datetime extends React.Component {
             })
         }, 400)
     }
+    componentWillUnmount () {
+        // console.log(21, this)
+        this.state.animated = clearTimeout(this.state.animated)
+    }
     changeDate ({year, month, date, day, current, prevMonth}) {
         let {hours, minutes, hasDate, hasTime, format, hoursItems, minutesItems, min, max} = this.state
         if( hasDate && !date ){//没有选择天
             return
         }
-        let {onChange, mode} = this.props
         if( !current ){//选择的日期是相邻的月份
             this.jumpTo(prevMonth?-1:1)
         }
@@ -183,11 +202,9 @@ class Datetime extends React.Component {
                 }
                 minutesItems[i] = disabled ? -1 : i
             })
-            if( minutes==undefined ){
+            // console.log(hours, minutes, resetHour)
+            if( minutes==undefined || resetHour ){//当hours重置后 minutes也需重置
                 minutes = minutesItems.filter(h=>h>=0)[0]
-                this.setState({minutes})
-            }else if( resetHour ){//当hours重置后 minutes置为0
-                minutes = 0
                 this.setState({minutes})
             }
         }  
@@ -197,11 +214,29 @@ class Datetime extends React.Component {
             format
         })
 
-        this.setState({currentDate, value}, ()=>{
-            let data = Object.assign({hours, minutes}, currentDate)
-            let timestamp = getTimestamp(data, 6)
-            onChange && onChange.call(this, value, data, timestamp)
-        })     
+        this.setState({currentDate, value}, ()=>this.submit())
+    }
+    submit () {
+        let {onChange} = this.props
+        let {hours, minutes, currentDate, value, hasTime, min, max} = this.state
+        
+        //没有选中日期时 点击确定默认为今天
+        if( !currentDate || !value ){
+            let todayDisabled//检测今天是否可选
+            if( min ){
+                todayDisabled = (+new Date)<min.minutes
+            }
+            if( !todayDisabled && max ){
+                todayDisabled = (+new Date)>min.minutes
+            }
+            !todayDisabled && this.changeDate(Object.assign({}, today, {
+                current : true
+            }))
+            return
+        }
+        let data = Object.assign({hours, minutes}, currentDate)
+        let timestamp = getTimestamp(data, 6)        
+        onChange && onChange.call(this, value, data, timestamp)
     }
     changeTime(key, e){
         this.state[key] = parseInt(e.target.value)
@@ -219,27 +254,24 @@ class Datetime extends React.Component {
         }
         return disabled
     }
+    getWeekStr (day) {
+        let {weeks} = this.props
+        return weeks[day] ? '星期'+weeks[day] : ''
+    }
     render () {
-        let {weeks, months, disableAnimation} = this.props
+        let {months, mode, disableAnimation} = this.props
         let {
-            direction, animate,
-            min, max,
+            weeks, direction, animate,
             hours, minutes, 
             hasDate, hasTime,
             hoursItems, minutesItems, 
             currentMonth, currentDate={}           
         } = this.state
-        
-        let _years = currentMonth.map(item=>item.year)
-        let _months = currentMonth.map(item=>item.month)
 
+        
         //检查是否为当前选中日期
         const checkCurrentDate = (item,i)=>{
-            return currentDate.date==item.date 
-                && currentDate.month==item.month
-                && _months[i]==item.month
-                && currentDate.year==item.year
-                && _years[i]==item.year
+            return item.current && item.timestamp==getTimestamp(currentDate, 3)
         }
         
         let weekEl = <ul className="clearfix _weeks">{
@@ -272,7 +304,7 @@ class Datetime extends React.Component {
             let disabled = this.checkDisabled(item.timestamp, 'date')
             let className = joinClass(
                 'date-item',
-                !disabled && checkCurrentDate(item, i) && 'active',
+                checkCurrentDate(item, i) && 'active',
                 !item.current && 'gray',
                 disabled && 'disabled',
                 item.isToday && 'today'
@@ -303,47 +335,63 @@ class Datetime extends React.Component {
             animate && 'animate-'+direction+'-active'
         )
 
-        return <div className="nj-datepicker">
-            {hasDate ? 
-            <div className="_page">
-                <span className="_item">
-                    <Mui mode="circle" onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></Mui>
-                    <Mui mode="circle" onClick={this.jumpTo.bind(this, -months)} className="nj-icon nj-icon-left"></Mui>
-                </span>
-                <span className="_item">
-                    <Mui mode="circle" onClick={this.jumpTo.bind(this, months)} className="nj-icon nj-icon-right"></Mui>
-                    <Mui mode="circle" onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></Mui>
-                </span>
-            </div> 
-            : null}
+        let {year, month, date, day} = currentDate || today;
 
+        return <div className={'nj-datepicker nj-datepicker-'+mode}>
             {hasDate ? 
-            <div className="_groups clearfix" ref="groups">
-                <div className={groupClass}>
-                    {currentMonth.map(groupItem)}
+            <div className="pop-side">
+                <div className="year gray">{year}-{parseNumber(month)}</div>
+                <span className="date">{parseNumber(date)}</span>
+                <div className="mb30">{this.getWeekStr(day)}</div>
+                {hasTime?
+                <div className="gray">{parseNumber(hours)}:{parseNumber(minutes)}:00</div>
+                :null}
+            </div>
+            :null}
+
+            <div className="pop-main">
+            
+                {hasDate ? 
+                <div className="_page">
+                    <span className="_item">
+                        <Mui mode="circle" onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></Mui>
+                        <Mui mode="circle" onClick={this.jumpTo.bind(this, -months)} className="nj-icon nj-icon-left"></Mui>
+                    </span>
+                    <span className="_item">
+                        <Mui mode="circle" onClick={this.jumpTo.bind(this, months)} className="nj-icon nj-icon-right"></Mui>
+                        <Mui mode="circle" onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></Mui>
+                    </span>
+                </div> 
+                : null}
+
+                {hasDate ? 
+                <div className="_groups clearfix" ref="groups">
+                    <div className={groupClass}>
+                        {currentMonth.map(groupItem)}
+                    </div>
                 </div>
-            </div>
-            : null}
+                : null}
+                
+                {hasTime ? 
+                <div className="_times">时间：
+                    <select 
+                        value={hours} 
+                        // disabled={hasDate&&!currentDate.date}
+                        onChange={this.changeTime.bind(this, 'hours')}
+                    >
+                        {hoursItems}
+                    </select> : 
 
-            {hasTime ? 
-            <div className="_times">时间：
-                <select 
-                    value={hours} 
-                    disabled={hasDate&&!currentDate.date}
-                    onChange={this.changeTime.bind(this, 'hours')}
-                >
-                    {hoursItems}
-                </select> : 
-
-                <select 
-                    value={minutes} 
-                    disabled={hasDate&&!currentDate.date}
-                    onChange={this.changeTime.bind(this, 'minutes')}
-                >
-                    {minutesItems}
-                </select>
+                    <select 
+                        value={minutes} 
+                        // disabled={hasDate&&!currentDate.date}
+                        onChange={this.changeTime.bind(this, 'minutes')}
+                    >
+                        {minutesItems}
+                    </select>
+                </div>
+                : null}
             </div>
-            : null}
         </div>
     }
 }
@@ -353,7 +401,9 @@ Datetime.defaultProps = {
     //显示的月份数
     months : 1,
     // format : 'yy-mm-dd hh:mm:ss',
-    weeks : ['日', '一', '二', '三', '四', '五', '六']
+    weeks : ['日', '一', '二', '三', '四', '五', '六'],
+    //周一排在第一列 索引以weeks的排序为准
+    startWeekIndex : 1    
 }
 
 export default Datetime

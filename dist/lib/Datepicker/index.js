@@ -16,6 +16,8 @@ var _Datetime = require('./Datetime');
 
 var _Datetime2 = _interopRequireDefault(_Datetime);
 
+var _utils = require('./utils');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47,23 +49,29 @@ var Datepicker = function (_React$Component) {
 
             input = options.input || input;
 
-            var pop = _popover2.default.create({
-                name: 'nj-datepicker-pop',
+            var pop = this.state.pop = _popover2.default.create({
                 nearby: input,
-                effect: options.disableAnimation && 'normal',
-                // template : <Datetime {...options}/>,
-                trigger: 'click'
+                trigger: 'click',
+                name: 'nj-datepicker-pop',
+                effect: options.disableAnimation && 'normal'
 
             }).onShow(function () {
+
+                var self = _this2;
 
                 //获取初始value
                 options.value = input.value;
 
                 //重写onChange
                 var onChange = _this2.props.onChange;
-
+                var _options$auto = options.auto;
+                var auto = _options$auto === undefined ? true : _options$auto; //options.mode=='date'
 
                 options.onChange = function (value, data, timestamp) {
+                    if (!auto && !self.state._action) {
+                        //不立即生效
+                        return;
+                    }
                     if (options.input) {
                         //兼容Input组件
                         var _input = input;
@@ -71,12 +79,50 @@ var Datepicker = function (_React$Component) {
 
                         $handle ? $handle.setState({ value: value }) : input.value = value;
                     } else {
-                        _this2.setState({ value: value });
+                        self.setState({ value: value });
                     }
-                    onChange && onChange.call(_this2, value, data, timestamp);
+
+                    var hasTime = this.state.hasTime;
+
+                    !hasTime && pop.setDisplay(false);
+
+                    onChange && onChange.call(self, value, data, timestamp);
                 };
-                pop.setState({ template: _nojsReact.React.createElement(_Datetime2.default, options) }, function () {
-                    pop.align.set();
+
+                var datetime = void 0;
+
+                options.onReady = function () {
+                    datetime = this;
+                };
+
+                var onSubmit = function onSubmit(e) {
+                    pop.setDisplay(false);
+                    _this2.state._action = "submit";
+
+                    datetime.submit.call(datetime);
+
+                    setTimeout(function (e) {
+                        self.state._action = null;
+                    }, 1);
+                };
+
+                var template = _nojsReact.React.createElement(
+                    'div',
+                    { className: 'pop-wrap clearfix' },
+                    _nojsReact.React.createElement(_Datetime2.default, options),
+                    options.mode == 'date' && auto ? null : _nojsReact.React.createElement(
+                        'div',
+                        { className: 'pop-foot' },
+                        _nojsReact.React.createElement(
+                            'button',
+                            { onClick: onSubmit, className: 'nj-button nj-button-small' },
+                            '\u786E\u5B9A'
+                        )
+                    )
+                );
+
+                pop.setState({ template: template }, function () {
+                    return pop.align.set();
                 });
             }).onHide(function () {
                 pop.setState({ template: null });

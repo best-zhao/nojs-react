@@ -5,22 +5,30 @@ import {Form} from 'nj/form'
 
 
 export const init = ()=>{
+    let startVal = "2017-06-04 05:01:00"
     let start = (max)=>render(
-        <Datepicker min={new Date()} placeholder="开始时间" max={max} onChange={value=>end(value)} />, 
+        <Datepicker months="1" 
+            auto={false}
+            min={new Date()} 
+            value={startVal} 
+            placeholder="开始时间" 
+            max={max} 
+            onChange={value=>end(value)} 
+        />, 
         document.getElementById('rootDatepicker')
     )
     let end = (min)=>render(
-        <Datepicker min={min} onChange={value=>start(value)} />, 
+        <Datepicker min={min||new Date()} onChange={value=>start(value)} />, 
         document.getElementById('rootDatepicker1')
     )
     start()
-    end()
+    end(startVal)
     
     Form.start()
 
     let input = $('input[name="starttime"]')[0]
     render(
-        <Datepicker mode="datetime" input={input}/>, 
+        <Datepicker mode="date" input={input}/>, 
         input
     )
 
