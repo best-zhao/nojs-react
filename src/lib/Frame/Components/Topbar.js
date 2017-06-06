@@ -4,7 +4,7 @@
 import nj, {React, utils} from '../../'
 const {joinClass} = utils
 
-const Topbar = React.createClass({
+class Topbar extends React.Component{
     render () {
         let {items} = this.props
         items.forEach(item=>{
@@ -31,6 +31,6 @@ const Topbar = React.createClass({
             </div>
         </div> 
     }
-})
+}
 
 export default Topbar

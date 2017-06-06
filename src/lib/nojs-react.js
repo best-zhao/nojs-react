@@ -1,5 +1,4 @@
-
-require('../../css/react.css')
+require('../../css/react.css');
 
 //引入React和ReactDOM
 var React = exports.React = require('react/lib/ReactWithAddons');
@@ -70,51 +69,47 @@ $(function(){
 })
 
 
-exports.Mui = React.createClass({
-    statics : {
-        style (e, node, mode) {
-            if( mode=='circle' ){
-                return {width:'100%', height:'100%', left:'0', top:'0'}
-            }
-            var self = $(node)
-            var offset = self.offset()
-            var size = self.outerWidth()
-            
-            var top = e.clientY - offset.top + $(window).scrollTop()
-            var left = e.clientX - offset.left + $(window).scrollLeft()
-            var radius = (left>size/2 ? left : size-left)+5
-
-            return {
-                'width' : radius*2,
-                'height' : radius*2,
-                'top' : top-radius,
-                'left' : left-radius
-            }
+class Mui extends React.Component{
+    static style (e, node, mode) {
+        if( mode=='circle' ){
+            return {width:'100%', height:'100%', left:'0', top:'0'}
         }
-    },
-    getDefaultProps () {
-        return {tag:'div', mode:'rect'}
-    },
-    getInitialState () {
-        return {animate:[]}
-    },
+        var self = $(node)
+        var offset = self.offset()
+        var size = self.outerWidth()
+        
+        var top = e.clientY - offset.top + $(window).scrollTop()
+        var left = e.clientX - offset.left + $(window).scrollLeft()
+        var radius = (left>size/2 ? left : size-left)+5
+
+        return {
+            'width' : radius*2,
+            'height' : radius*2,
+            'top' : top-radius,
+            'left' : left-radius
+        }
+    }
+    constructor(props) {
+        super(props)
+        this.state = {animate:[]}
+    }    
     handleClick (e) {
         var {animate} = this.state
         var style = exports.Mui.style(e, ReactDOM.findDOMNode(this), this.props.mode)
         
         var timer = this.state.timer = window.setTimeout(e=>{
             animate.shift()
-            this.isMounted() && this.setState({animate})
+            this.setState({animate})
         }, 3000)
         animate.push(timer)
         
         this.setState({animate, style})
         var {onClick} = this.props
         onClick && onClick(e)
-    },
+    }
     componentWillUnmount () {
         window.clearTimeout(this.state.timer)
-    },
+    }
     render () {
         var {tag, mode} = this.props
         var {animate, style} = this.state
@@ -126,9 +121,18 @@ exports.Mui = React.createClass({
         )
         return React.createElement(
             tag,
-            Object.assign({}, this.props, { onClick: this.handleClick, className: className }),
+            Object.assign({}, this.props, { 
+                onClick: this.handleClick.bind(this), 
+                className: className 
+            }),
             this.props.children,
-            animate.map((item, i)=><div className="nj-mui" key={item}><span style={style}></span></div>)
+            animate.map((item, i)=>
+                <div className="nj-mui" key={item}><span style={style}></span></div>
+            )
         )
     }
-})
+}
+
+Mui.defaultProps = {tag:'div', mode:'rect'}
+
+exports.Mui = Mui

@@ -3,7 +3,7 @@ import nj, {React, render} from 'nj'
 import Frame from 'nj/Frame/index'
 import {Form} from 'nj/form'
 import Marked from 'marked'
-import Menu from 'json!../menu.json'
+import Menu from 'json-loader!../menu.json'
 import Prism from './prism'
 
 const options = {
@@ -38,8 +38,8 @@ const options = {
         'form/input-group.html' : 'demo/form'
     },
     loadScript (pageName, callback) {
-        require('bundle!./'+pageName)(callback)
-        // System.import("@a/" + pageName).then(callback)
+        // require('bundle!./'+pageName)(callback)
+        System.import("./" + pageName).then(callback)
     }
 }
 

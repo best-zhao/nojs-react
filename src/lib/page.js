@@ -1,42 +1,34 @@
 /**
  * 分页组件
  */
-var nj = require('./nojs-react') 
-var {React, ReactDOM, mixins} = nj
-var $ = require('jquery')
+import $ from 'jquery'
+import nj, {React, ReactDOM, mixins} from './nojs-react'
+import PropTypes from 'prop-types'
 
-var Page = React.createClass({
-    getInitialState () {
-        return {
+class Page extends React.Component{
+    constructor(props) {
+        super(props)
+        this.state = {
             start : 0,
             end : this.props.perpage,
             page : this.props.page || 1,
             pages : this.getPages()
         }
-    },
-    getDefaultProps () {
-        return {
-            data : [],
-            perpage : 10//每页个数
-            //page : 1//当前页码
-            //pages : 
-            //count : //数据数量
-        }
-    },
+    }   
     componentWillReceiveProps (nextProps) {
         this.setState({pages:this.getPages(nextProps)})
-    },
+    }
     componentDidMount () {
         var {onChange} = this.props
         var {page} = this.state
         setTimeout(()=>{
             onChange && onChange(page, page, this.setData(this.state.page))
         }, 10)
-    },
+    }
     getPages (props) {
         props = props || this.props
         return Math.ceil(props.count/props.perpage)
-    },
+    }
     handleChange (action, e) {
         var {onChange, perpage, data} = this.props
         var {page} = this.state
@@ -55,7 +47,7 @@ var Page = React.createClass({
         }        
         onChange && onChange(_page, page, this.setData(page))
         e.preventDefault()        
-    },
+    }
     setData (page) {
         page = page || this.state.page
         var {perpage, data} = this.props
@@ -65,7 +57,7 @@ var Page = React.createClass({
         this.setState({page:page, start:start, end:end})
         var _data = data.slice(start, start+perpage)
         return _data
-    },
+    }
     render () {
         var {page} = this.state
         var pages = this.getPages()//总页数
@@ -81,9 +73,17 @@ var Page = React.createClass({
         )
     }
 })
+
+Page.defaultProps = {
+    data : [],
+    perpage : 10//每页个数
+    //page : 1//当前页码
+    //pages : 
+    //count : //数据数量
+}
 Page.propTypes = {
-    data : React.PropTypes.array,
-    onChange : React.PropTypes.func
+    data : PropTypes.array,
+    onChange : PropTypes.func
 }
 
 module.exports = Page

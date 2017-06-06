@@ -5,13 +5,13 @@ import Container from './Components/Container'
 import Content from './Components/Content'
 import '../../../css/frame.css'
 
-const Root = React.createClass({
+class Root extends React.Component{
     //对外提供go方法
     go (url) {
         let {routers} = this.refs
         let {state:{params}, router} = routers
         router.push('/'+params.id+'/'+encodeURIComponent(url))
-    },
+    }
     render () {
         let {props} = this
         return (
@@ -23,5 +23,5 @@ const Root = React.createClass({
             </Router>
         )
     }
-})
+}
 module.exports = Root

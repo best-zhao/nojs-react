@@ -2,26 +2,23 @@ import React from 'react'
 import {render, findDOMNode} from 'react-dom'
 import $ from 'jquery'
 import {Form} from 'nj/form'
+import PropTypes from 'prop-types'
 
-const Content = React.createClass({
-    statics : {        
-        onLeave (e) {
-            Content.leaveEvent && Content.leaveEvent(e)
-        }
-    },
-    contextTypes: {
-        router : React.PropTypes.object
-    },
-    getInitialState () {
-        return {}
-    },
+class Content extends React.Component{
+    static onLeave (e) {
+        Content.leaveEvent && Content.leaveEvent(e)
+    }
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
     componentDidMount () {
         this.jump()
         this.context.router.setRouteLeaveHook(
             this.props.route, 
             this.routerWillLeave
         )
-    },
+    }
     routerWillLeave(nextLocation) {
         //return false
         // console.log(nextLocation)
@@ -29,25 +26,19 @@ const Content = React.createClass({
       // 否则，返回一个字符串，会显示给用户，让其自己决定
       // if (!this.state.isSaved)
         //return '确认要离开？';
-    },
+    }
     jump (props) {
         let {routes:[{props:rootProps}], params:{id, url}} = props || this.props
         let {menu} = rootProps
         //获取当前节点
         let node = menu.filter(n=>n.id==id)[0]
-
         this.load(url||node&&node.link, id)
-    },
+    }
     componentWillReceiveProps (nextProps) {
         let {params} = this.props
         let {params:nParams} = nextProps;
         (nParams.id!=params.id || nParams.url!=params.url) && this.jump(nextProps)
-    //     //组件初始化渲染完毕时 menuData不存在 
-    //     //父Container会再次传递menuData过来触发componentWillReceiveProps事件
-    //     const {menuData, params:{id, url}} = nextProps
-    //     let node = menuData && menuData[id]
-    //     this.load(url||node&&node.link, id)
-    },
+    }
     load (url, id) {
         let {routes:[{props:rootProps}]} = this.props
         let {template, htmlParse, onComplete, loadScript, scripts={}} = rootProps
@@ -91,13 +82,17 @@ const Content = React.createClass({
             })
         })
         .fail(data=>{})
-    },    
+    }  
     render () {
         const {html=''} = this.state
         return <div className="grid-main">
             <div className="grid-inner" dangerouslySetInnerHTML={{__html:html}}></div>
         </div>
     }
-})
+}
+
+Content.contextTypes = {
+    router : PropTypes.object
+}
 
 export default Content

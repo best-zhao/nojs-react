@@ -1,11 +1,12 @@
 /*
  * 无间断滚动
  */
-var nj = require('./nojs-react')
-var {React, ReactDOM, mixins} = nj
-var $ = require('jquery')
-var Directive = require('../mixins/directiveComponent').default
-require('./touch')
+import $ from 'jquery'
+import nj, {React, ReactDOM, mixins} from './nojs-react'
+import Directive from '../mixins/directiveComponent'
+import PropTypes from 'prop-types'
+import './touch'
+
 
 /* 
  * [jQuery animate动画扩展]
@@ -320,9 +321,9 @@ var Scroll = React.createClass({
     }
 })
 Scroll.PropTypes = {
-    step : React.PropTypes.number,
-    time : React.PropTypes.number,
-    pageTemplate : React.PropTypes.func
+    step : PropTypes.number,
+    time : PropTypes.number,
+    pageTemplate : PropTypes.func
 }
 
 let createdEvents = nj.utils.addEventQueue.call(Scroll, 'onCreated')
@@ -437,7 +438,7 @@ var ScrollPage = React.createClass({
     }
 })
 ScrollPage.PropTypes = {
-    pages : React.PropTypes.number
+    pages : PropTypes.number
 }
 
 function getIndex(index, total){

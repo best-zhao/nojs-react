@@ -1,12 +1,10 @@
 /*
  * form 表单验证
  */
-require('../../css/form.css')
-var nj = require('./nojs-react')
-var {React, ReactDOM, mixins} = nj
-var $ = require('jquery')
-
-var Directive = require('../mixins/directiveComponent').default
+import '../../css/form.css'
+import $ from 'jquery'
+import nj, {React, ReactDOM, mixins} from './nojs-react'
+import Directive from '../mixins/directiveComponent'
 
 var formDirectives = {}
 
