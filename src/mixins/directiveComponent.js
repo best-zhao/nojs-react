@@ -173,7 +173,7 @@ Directive.prototype = {
 }
 
 //<input required>将默认属性值为空的转化为required="required"
-let sameAttrs = ['required', 'readOnly', 'checked']
+let sameAttrs = ['required', 'readOnly', 'checked', 'disabled']
 function parseAttrs(attrs){
     for( var i in attrs ){
         if( attrs[i]==='' && sameAttrs.indexOf(i)>=0 ){

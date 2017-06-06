@@ -8,7 +8,6 @@ export const init = ()=>{
     let startVal = "2017-06-04 05:01:00"
     let start = (max)=>render(
         <Datepicker months="1" 
-            auto={false}
             min={new Date()} 
             value={startVal} 
             placeholder="开始时间" 

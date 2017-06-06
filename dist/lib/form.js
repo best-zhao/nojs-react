@@ -477,8 +477,10 @@ formDirectives['input'] = React.createClass({
         }
         return React.createElement(
             'label',
-            null,
+            { className: 'nj-input-' + type },
             type == 'textarea' ? React.createElement('textarea', options) : React.createElement('input', options),
+            type == 'checkbox' && React.createElement('span', { className: 'nj-checkbox-holder' }),
+            type == 'radio' && React.createElement('span', { className: 'nj-radio-holder' }),
             type != 'textarea' && React.createElement(
                 'span',
                 null,

@@ -401,7 +401,7 @@ formDirectives['input'] = React.createClass({
         var attrs = this.props            
         var type = attrs.type  
         var {rules, dirty, status, value, parentComponent} = this.state    
-
+        
         //触发验证的事件类型
         var trigger = {
             keyup : 'onKeyUp',
@@ -444,9 +444,11 @@ formDirectives['input'] = React.createClass({
             delete options.children
         }
         return (
-            <label>
-                {type=='textarea'?<textarea {...options} />:<input {...options} />}
-                {type!='textarea'&&<span>{this.props.text}</span>}
+            <label className={`nj-input-${type}`}>
+                {type=='textarea' ? <textarea {...options} /> : <input {...options} />}
+                {type=='checkbox' && <span className="nj-checkbox-holder"></span>}
+                {type=='radio' && <span className="nj-radio-holder"></span>}
+                {type!='textarea' && <span>{this.props.text}</span>}
                 <VerifyStatus field={this} />
             </label>
         )
@@ -529,13 +531,27 @@ formDirectives['select'] = React.createClass({
     },
     render () {
         var valueLink = this.valueLink()
+        var {rules, dirty, status, value, parentComponent} = this.state 
 
         var options = Object.assign({}, this.props, {
             ref : 'wrap',
             value : valueLink.value,
-            onChange : valueLink.requestChange
+            onChange : valueLink.requestChange,
+
         })
         delete options.defaultValue
+
+        var mark
+        if( rules.length && status ){
+            mark = true
+            if( !rules.required && !value ){
+                mark = false
+            }
+            if( !dirty && (!parentComponent || parentComponent.state.action!='submit') ){
+                mark = false
+            }
+        }
+        options.className = nj.utils.joinClass(this.props.className, mark && 'input-'+status)
 
         //nj-select 获取的children 数组项为空的占位符
         var {children} = this.props

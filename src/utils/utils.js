@@ -439,6 +439,7 @@ module.exports = {
             'rowspan' : 'rowSpan',
             'colspan' : 'colSpan',
             'defaultvalue' : 'defaultValue',
+            'defaultchecked' : 'defaultChecked',
             'enctype' : 'encType',
             'readonly' : 'readOnly'
         }
