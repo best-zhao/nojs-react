@@ -446,8 +446,7 @@ formDirectives['input'] = React.createClass({
         return (
             <label className={`nj-input-${type}`}>
                 {type=='textarea' ? <textarea {...options} /> : <input {...options} />}
-                {type=='checkbox' && <span className="nj-checkbox-holder"></span>}
-                {type=='radio' && <span className="nj-radio-holder"></span>}
+                {(type=='checkbox' || type=='radio') && <span className={`nj-${type}-holder`}></span>}
                 {type!='textarea' && <span>{this.props.text}</span>}
                 <VerifyStatus field={this} />
             </label>
