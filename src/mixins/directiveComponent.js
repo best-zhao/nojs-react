@@ -133,6 +133,7 @@ Directive.prototype = {
     //当前组件渲染完毕后 将dom移入组件 并且检测是否有子组件
     getChildComponents (component) {
         var {_childNodes, _componentType, _children} = component.props
+        // console.log(_childNodes, _componentType, this.options)
         if( !_componentType ){//只适用于nj-html方式创建的组件
             return
         }

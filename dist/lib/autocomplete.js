@@ -6,11 +6,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
  * auto-complete
  */
 var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
-var utils = nj.utils;
-var Mui = nj.Mui;
+var React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    mixins = nj.mixins,
+    utils = nj.utils,
+    Mui = nj.Mui;
 
 var $ = require('jquery');
 var Popover = require('./popover');
@@ -78,9 +78,9 @@ var Autocomplete = module.exports = React.createClass({
 
     //移动鼠标选中结果项
     move: function move(direction) {
-        var _state = this.state;
-        var index = _state.index;
-        var results = _state.results;
+        var _state = this.state,
+            index = _state.index,
+            results = _state.results;
 
         var length = results.length;
         index = typeof index == 'number' ? index : -1;
@@ -135,9 +135,9 @@ var Autocomplete = module.exports = React.createClass({
     componentDidUpdate: function componentDidUpdate() {
         var _this3 = this;
 
-        var _refs = this.refs;
-        var input = _refs.input;
-        var container = _refs.container;
+        var _refs = this.refs,
+            input = _refs.input,
+            container = _refs.container;
 
 
         if (container && !container._init_) {
@@ -175,11 +175,11 @@ var Autocomplete = module.exports = React.createClass({
             done(results);
             return;
         }
-        var _props = this.props;
-        var data = _props.data;
-        var source = _props.source;
-        var getItem = _props.getItem;
-        var max = _props.max;
+        var _props = this.props,
+            data = _props.data,
+            source = _props.source,
+            getItem = _props.getItem,
+            max = _props.max;
 
 
         if (data) {
@@ -221,14 +221,14 @@ var Autocomplete = module.exports = React.createClass({
     render: function render() {
         var _this5 = this;
 
-        var _props2 = this.props;
-        var container = _props2.container;
-        var getItem = _props2.getItem;
-        var name = _props2.name;
-        var _state2 = this.state;
-        var index = _state2.index;
-        var value = _state2.value;
-        var results = _state2.results;
+        var _props2 = this.props,
+            container = _props2.container,
+            getItem = _props2.getItem,
+            name = _props2.name;
+        var _state2 = this.state,
+            index = _state2.index,
+            value = _state2.value,
+            results = _state2.results;
         var input = this.refs.input;
 
 

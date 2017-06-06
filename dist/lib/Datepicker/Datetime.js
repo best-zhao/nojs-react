@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _nojsReact = require('../nojs-react');
 
@@ -18,8 +18,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var dateParse = _nojsReact.utils.dateParse;
-var joinClass = _nojsReact.utils.joinClass;
+var dateParse = _nojsReact.utils.dateParse,
+    joinClass = _nojsReact.utils.joinClass;
 
 var Datetime = function (_React$Component) {
     _inherits(Datetime, _React$Component);
@@ -27,17 +27,17 @@ var Datetime = function (_React$Component) {
     function Datetime(props) {
         _classCallCheck(this, Datetime);
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Datetime).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Datetime.__proto__ || Object.getPrototypeOf(Datetime)).call(this, props));
 
-        var _this$props = _this.props;
-        var value = _this$props.value;
-        var min = _this$props.min;
-        var max = _this$props.max;
-        var months = _this$props.months;
-        var mode = _this$props.mode;
-        var format = _this$props.format;
-        var weeks = _this$props.weeks;
-        var startWeekIndex = _this$props.startWeekIndex;
+        var _this$props = _this.props,
+            value = _this$props.value,
+            min = _this$props.min,
+            max = _this$props.max,
+            months = _this$props.months,
+            mode = _this$props.mode,
+            format = _this$props.format,
+            weeks = _this$props.weeks,
+            startWeekIndex = _this$props.startWeekIndex;
 
         min = min && (0, _utils.getMonthData)(min, { startWeekIndex: startWeekIndex });
         max = max && (0, _utils.getMonthData)(max, { startWeekIndex: startWeekIndex });
@@ -92,12 +92,12 @@ var Datetime = function (_React$Component) {
             }
         }
 
-        var _currentMonth$ = currentMonth[0];
-        var year = _currentMonth$.year;
-        var month = _currentMonth$.month;
-        var date = _currentMonth$.date;
-        var hours = _currentMonth$.hours;
-        var minutes = _currentMonth$.minutes;
+        var _currentMonth$ = currentMonth[0],
+            year = _currentMonth$.year,
+            month = _currentMonth$.month,
+            date = _currentMonth$.date,
+            hours = _currentMonth$.hours,
+            minutes = _currentMonth$.minutes;
 
         var day = date && new Date(year, month - 1, date).getDay();
 
@@ -119,12 +119,12 @@ var Datetime = function (_React$Component) {
     _createClass(Datetime, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _props = this.props;
-            var months = _props.months;
-            var onReady = _props.onReady;
-            var _refs = this.refs;
-            var group = _refs.group;
-            var groups = _refs.groups;
+            var _props = this.props,
+                months = _props.months,
+                onReady = _props.onReady;
+            var _refs = this.refs,
+                group = _refs.group,
+                groups = _refs.groups;
 
 
             onReady && onReady.call(this);
@@ -161,10 +161,10 @@ var Datetime = function (_React$Component) {
         value: function jumpTo(step) {
             var _this2 = this;
 
-            var _state = this.state;
-            var _currentMonth = _state.currentMonth;
-            var animated = _state.animated;
-            var nextMonths = _state.nextMonths;
+            var _state = this.state,
+                _currentMonth = _state.currentMonth,
+                animated = _state.animated,
+                nextMonths = _state.nextMonths;
 
             //未完成的动画
 
@@ -173,9 +173,9 @@ var Datetime = function (_React$Component) {
                 _currentMonth = nextMonths || _currentMonth;
             }
 
-            var _currentMonth$2 = _currentMonth[0];
-            var year = _currentMonth$2.year;
-            var month = _currentMonth$2.month;
+            var _currentMonth$2 = _currentMonth[0],
+                year = _currentMonth$2.year,
+                month = _currentMonth$2.month;
 
             var startMonth = (0, _utils.getNearMonth)({ year: year, month: month, step: step });
             nextMonths = this.getMonthGroups(startMonth);
@@ -223,22 +223,22 @@ var Datetime = function (_React$Component) {
         value: function changeDate(_ref) {
             var _this3 = this;
 
-            var year = _ref.year;
-            var month = _ref.month;
-            var date = _ref.date;
-            var day = _ref.day;
-            var current = _ref.current;
-            var prevMonth = _ref.prevMonth;
-            var _state2 = this.state;
-            var hours = _state2.hours;
-            var minutes = _state2.minutes;
-            var hasDate = _state2.hasDate;
-            var hasTime = _state2.hasTime;
-            var format = _state2.format;
-            var hoursItems = _state2.hoursItems;
-            var minutesItems = _state2.minutesItems;
-            var min = _state2.min;
-            var max = _state2.max;
+            var year = _ref.year,
+                month = _ref.month,
+                date = _ref.date,
+                day = _ref.day,
+                current = _ref.current,
+                prevMonth = _ref.prevMonth;
+            var _state2 = this.state,
+                hours = _state2.hours,
+                minutes = _state2.minutes,
+                hasDate = _state2.hasDate,
+                hasTime = _state2.hasTime,
+                format = _state2.format,
+                hoursItems = _state2.hoursItems,
+                minutesItems = _state2.minutesItems,
+                min = _state2.min,
+                max = _state2.max;
 
             if (hasDate && !date) {
                 //没有选择天
@@ -311,14 +311,14 @@ var Datetime = function (_React$Component) {
         key: 'submit',
         value: function submit() {
             var onChange = this.props.onChange;
-            var _state3 = this.state;
-            var hours = _state3.hours;
-            var minutes = _state3.minutes;
-            var currentDate = _state3.currentDate;
-            var value = _state3.value;
-            var hasTime = _state3.hasTime;
-            var min = _state3.min;
-            var max = _state3.max;
+            var _state3 = this.state,
+                hours = _state3.hours,
+                minutes = _state3.minutes,
+                currentDate = _state3.currentDate,
+                value = _state3.value,
+                hasTime = _state3.hasTime,
+                min = _state3.min,
+                max = _state3.max;
 
             //没有选中日期时 点击确定默认为今天
 
@@ -348,9 +348,9 @@ var Datetime = function (_React$Component) {
     }, {
         key: 'checkDisabled',
         value: function checkDisabled(data, key) {
-            var _state4 = this.state;
-            var min = _state4.min;
-            var max = _state4.max;
+            var _state4 = this.state,
+                min = _state4.min,
+                max = _state4.max;
 
             var disabled = void 0;
 
@@ -375,23 +375,23 @@ var Datetime = function (_React$Component) {
         value: function render() {
             var _this4 = this;
 
-            var _props2 = this.props;
-            var months = _props2.months;
-            var mode = _props2.mode;
-            var disableAnimation = _props2.disableAnimation;
-            var _state5 = this.state;
-            var weeks = _state5.weeks;
-            var direction = _state5.direction;
-            var animate = _state5.animate;
-            var hours = _state5.hours;
-            var minutes = _state5.minutes;
-            var hasDate = _state5.hasDate;
-            var hasTime = _state5.hasTime;
-            var hoursItems = _state5.hoursItems;
-            var minutesItems = _state5.minutesItems;
-            var currentMonth = _state5.currentMonth;
-            var _state5$currentDate = _state5.currentDate;
-            var currentDate = _state5$currentDate === undefined ? {} : _state5$currentDate;
+            var _props2 = this.props,
+                months = _props2.months,
+                mode = _props2.mode,
+                disableAnimation = _props2.disableAnimation;
+            var _state5 = this.state,
+                weeks = _state5.weeks,
+                direction = _state5.direction,
+                animate = _state5.animate,
+                hours = _state5.hours,
+                minutes = _state5.minutes,
+                hasDate = _state5.hasDate,
+                hasTime = _state5.hasTime,
+                hoursItems = _state5.hoursItems,
+                minutesItems = _state5.minutesItems,
+                currentMonth = _state5.currentMonth,
+                _state5$currentDate = _state5.currentDate,
+                currentDate = _state5$currentDate === undefined ? {} : _state5$currentDate;
 
             //检查是否为当前选中日期
 
@@ -460,9 +460,9 @@ var Datetime = function (_React$Component) {
             };
 
             var groupItem = function groupItem(item, i) {
-                var year = item.year;
-                var month = item.month;
-                var dates = item.dates;
+                var year = item.year,
+                    month = item.month,
+                    dates = item.dates;
 
                 return _nojsReact.React.createElement(
                     'div',
@@ -471,9 +471,9 @@ var Datetime = function (_React$Component) {
                         'div',
                         { className: '_head clearfix', key: '_head' },
                         year,
-                        '\u5E74 ',
+                        '年 ',
                         (0, _utils.parseNumber)(month),
-                        '\u6708'
+                        '月'
                     ),
                     weekEl,
                     _nojsReact.React.createElement(
@@ -488,13 +488,11 @@ var Datetime = function (_React$Component) {
 
             var groupClass = joinClass(!disableAnimation && 'animate-groups', direction && 'animate-' + direction, animate && 'animate-' + direction + '-active');
 
-            var _ref2 = currentDate || _utils.today;
-
-            var year = _ref2.year;
-            var month = _ref2.month;
-            var date = _ref2.date;
-            var day = _ref2.day;
-
+            var _ref2 = currentDate || _utils.today,
+                year = _ref2.year,
+                month = _ref2.month,
+                date = _ref2.date,
+                day = _ref2.day;
 
             return _nojsReact.React.createElement(
                 'div',
@@ -559,7 +557,7 @@ var Datetime = function (_React$Component) {
                     hasTime ? _nojsReact.React.createElement(
                         'div',
                         { className: '_times' },
-                        '\u65F6\u95F4\uFF1A',
+                        '时间：',
                         _nojsReact.React.createElement(
                             'select',
                             {

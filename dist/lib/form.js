@@ -1,19 +1,25 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /*
+                                                                                                                                                                                                                                                                   * form 表单验证
+                                                                                                                                                                                                                                                                   */
 
-/*
- * form 表单验证
- */
+
 require('../../css/form.css');
-var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
 
-var $ = require('jquery');
+var _jquery = require('jquery');
 
-var Directive = require('../mixins/directiveComponent').default;
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _nojsReact = require('./nojs-react');
+
+var _nojsReact2 = _interopRequireDefault(_nojsReact);
+
+var _directiveComponent = require('../mixins/directiveComponent');
+
+var _directiveComponent2 = _interopRequireDefault(_directiveComponent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var formDirectives = {};
 
@@ -92,14 +98,14 @@ var verifyChildComponents = function verifyChildComponents(real) {
 var verifyField = function verifyField(real, fromParent) {
     var textField;
 
-    var _state = this.state;
-    var validing = _state.validing;
-    var status = _state.status;
-    var value = _state.value;
-    var _value = _state._value;
-    var dirty = _state.dirty;
+    var _state = this.state,
+        validing = _state.validing,
+        status = _state.status,
+        value = _state.value,
+        _value = _state._value,
+        dirty = _state.dirty;
 
-    var el = $(ReactDOM.findDOMNode(this));
+    var el = (0, _jquery2.default)(_nojsReact.ReactDOM.findDOMNode(this));
     var visible = el.is(':visible'); //隐藏的元素不验证
 
     if (!visible) {
@@ -168,8 +174,8 @@ var verifyField = function verifyField(real, fromParent) {
     return valid;
 };
 
-var Form = formDirectives['form'] = React.createClass({
-    mixins: [mixins.childComponents.config],
+var Form = formDirectives['form'] = _nojsReact.React.createClass({
+    mixins: [_nojsReact.mixins.childComponents.config],
     getDefaultProps: function getDefaultProps() {
         return { type: 'form', showicon: 'error', noValidate: true };
     },
@@ -212,7 +218,7 @@ var Form = formDirectives['form'] = React.createClass({
     submit: function submit(options) {
         //从外部触发submit动作
         var el = this.refs.wrap;
-        nj.utils.fireEvent('submit', el);
+        _nojsReact2.default.utils.fireEvent('submit', el);
         //表单提交是异步的 所以下面return不是正确的valid
         return this.state.valid;
     },
@@ -225,9 +231,9 @@ var Form = formDirectives['form'] = React.createClass({
         directive.getChildComponents(this);
         // console.log(this.state.childComponents) 
 
-        this.submitBeforeEvent = nj.utils.addEventQueue.call(this, 'onSubmitBefore');
-        this.submitEvent = nj.utils.addEventQueue.call(this, 'onSubmit');
-        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
+        this.submitBeforeEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onSubmitBefore');
+        this.submitEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onSubmit');
+        this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
 
         this.state.verfiyCode = Form.verifyCode();
 
@@ -248,7 +254,7 @@ var Form = formDirectives['form'] = React.createClass({
         return valid;
     },
     render: function render() {
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'form',
             _extends({}, this.props, { ref: 'wrap',
                 onSubmit: this.handleSubmit }),
@@ -256,8 +262,8 @@ var Form = formDirectives['form'] = React.createClass({
         );
     }
 });
-formDirectives['input-group'] = React.createClass({
-    mixins: [mixins.childComponents.setParents([formDirectives['form']])],
+formDirectives['input-group'] = _nojsReact.React.createClass({
+    mixins: [_nojsReact.mixins.childComponents.setParents([formDirectives['form']])],
     getInitialState: function getInitialState() {
         return {
             valid: true,
@@ -269,7 +275,7 @@ formDirectives['input-group'] = React.createClass({
         return { type: 'input-group', showicon: 'error' };
     },
     componentDidMount: function componentDidMount() {
-        mixins.childComponents.getParentComponent.call(this);
+        _nojsReact.mixins.childComponents.getParentComponent.call(this);
         directive.getChildComponents(this);
     },
     verify: function verify(real, fromParent) {
@@ -302,21 +308,21 @@ formDirectives['input-group'] = React.createClass({
         return valid;
     },
     render: function render() {
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'span',
             null,
-            React.createElement(
+            _nojsReact.React.createElement(
                 'span',
                 { className: 'nj-input-group', ref: 'wrap' },
                 this.props.children
             ),
-            React.createElement(VerifyStatus, { field: this })
+            _nojsReact.React.createElement(VerifyStatus, { field: this })
         );
     }
 });
-formDirectives['input'] = React.createClass({
+formDirectives['input'] = _nojsReact.React.createClass({
     //React.addons.LinkedStateMixin
-    mixins: [formMixin, mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
+    mixins: [formMixin, _nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
         return {
             dirty: false,
@@ -355,10 +361,10 @@ formDirectives['input'] = React.createClass({
         //     this.state.valid = input.checked
         // }
 
-        mixins.childComponents.getParentComponent.call(this);
+        _nojsReact.mixins.childComponents.getParentComponent.call(this);
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
-        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
+        this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
         //对外引用组件
         input.$handle = this;
     },
@@ -378,9 +384,9 @@ formDirectives['input'] = React.createClass({
         var _onChange = this.props.onChange;
         var _value = this.props.value;
 
-        var _props = this.props;
-        var type = _props.type;
-        var trigger = _props.trigger;
+        var _props = this.props,
+            type = _props.type,
+            trigger = _props.trigger;
 
 
         var valueLink = this.state.valueLink = {
@@ -426,12 +432,12 @@ formDirectives['input'] = React.createClass({
 
         var attrs = this.props;
         var type = attrs.type;
-        var _state2 = this.state;
-        var rules = _state2.rules;
-        var dirty = _state2.dirty;
-        var status = _state2.status;
-        var value = _state2.value;
-        var parentComponent = _state2.parentComponent;
+        var _state2 = this.state,
+            rules = _state2.rules,
+            dirty = _state2.dirty,
+            status = _state2.status,
+            value = _state2.value,
+            parentComponent = _state2.parentComponent;
 
         //触发验证的事件类型
 
@@ -462,7 +468,7 @@ formDirectives['input'] = React.createClass({
                 }
             }
 
-            options.className = nj.utils.joinClass(this.props.className, mark && 'input-' + status);
+            options.className = _nojsReact2.default.utils.joinClass(this.props.className, mark && 'input-' + status);
             var _event = options[trigger];
 
             options[trigger] = function (e) {
@@ -475,23 +481,22 @@ formDirectives['input'] = React.createClass({
             delete options.defaultValue;
             delete options.children;
         }
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'label',
             { className: 'nj-input-' + type },
-            type == 'textarea' ? React.createElement('textarea', options) : React.createElement('input', options),
-            type == 'checkbox' && React.createElement('span', { className: 'nj-checkbox-holder' }),
-            type == 'radio' && React.createElement('span', { className: 'nj-radio-holder' }),
-            type != 'textarea' && React.createElement(
+            type == 'textarea' ? _nojsReact.React.createElement('textarea', options) : _nojsReact.React.createElement('input', options),
+            (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: 'nj-' + type + '-holder' }),
+            type != 'textarea' && _nojsReact.React.createElement(
                 'span',
                 null,
                 this.props.text
             ),
-            React.createElement(VerifyStatus, { field: this })
+            _nojsReact.React.createElement(VerifyStatus, { field: this })
         );
     }
 });
-formDirectives['select'] = React.createClass({
-    mixins: [mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
+formDirectives['select'] = _nojsReact.React.createClass({
+    mixins: [_nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
         return {
             dirty: false,
@@ -504,11 +509,11 @@ formDirectives['select'] = React.createClass({
         return { type: 'select' };
     },
     componentDidMount: function componentDidMount() {
-        mixins.childComponents.getParentComponent.call(this);
+        _nojsReact.mixins.childComponents.getParentComponent.call(this);
         directive.getChildComponents(this);
 
-        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange');
-        this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify');
+        this.changeEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onChange');
+        this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
         this.refs.wrap.$handle = this;
         //同步初始select初始值到state
         this.state.value = this.refs.wrap.value;
@@ -569,6 +574,13 @@ formDirectives['select'] = React.createClass({
     },
     render: function render() {
         var valueLink = this.valueLink();
+        var _state3 = this.state,
+            rules = _state3.rules,
+            dirty = _state3.dirty,
+            status = _state3.status,
+            value = _state3.value,
+            parentComponent = _state3.parentComponent;
+
 
         var options = Object.assign({}, this.props, {
             ref: 'wrap',
@@ -577,21 +589,32 @@ formDirectives['select'] = React.createClass({
         });
         delete options.defaultValue;
 
+        var mark;
+        if (rules.length && status) {
+            mark = true;
+            if (!rules.required && !value) {
+                mark = false;
+            }
+            if (!dirty && (!parentComponent || parentComponent.state.action != 'submit')) {
+                mark = false;
+            }
+        }
+        options.className = _nojsReact2.default.utils.joinClass(this.props.className, mark && 'input-' + status);
+
         //nj-select 获取的children 数组项为空的占位符
-        var children = this.props.children;
+        var _props2 = this.props,
+            children = _props2.children,
+            _childNodes = _props2._childNodes;
 
         children = children && children.filter(function (item) {
             return item;
         });
-        return React.createElement(
+
+        return _nojsReact.React.createElement(
             'label',
             null,
-            React.createElement(
-                'select',
-                options,
-                children
-            ),
-            React.createElement(VerifyStatus, { field: this })
+            _nojsReact.React.createElement('select', options),
+            _nojsReact.React.createElement(VerifyStatus, { field: this })
         );
     }
 });
@@ -599,15 +622,15 @@ formDirectives['select'] = React.createClass({
 var textReg = /^(text|textarea|number|email|password)$/;
 
 //验证状态显示
-var VerifyStatus = React.createClass({
+var VerifyStatus = _nojsReact.React.createClass({
     displayName: 'VerifyStatus',
     render: function render() {
         var field = this.props.field;
-        var _field$state = field.state;
-        var parentComponent = _field$state.parentComponent;
-        var dirty = _field$state.dirty;
-        var rules = _field$state.rules;
-        var value = _field$state.value;
+        var _field$state = field.state,
+            parentComponent = _field$state.parentComponent,
+            dirty = _field$state.dirty,
+            rules = _field$state.rules,
+            value = _field$state.value;
 
         var showmsg = rules.length;
 
@@ -628,12 +651,12 @@ var VerifyStatus = React.createClass({
                 showmsg = false;
             }
         }
-        var _field$state2 = field.state;
-        var novalidName = _field$state2.novalidName;
-        var status = _field$state2.status;
-        var errortext = _field$state2.errortext;
-        var valid = _field$state2.valid;
-        var childComponents = _field$state2.childComponents;
+        var _field$state2 = field.state,
+            novalidName = _field$state2.novalidName,
+            status = _field$state2.status,
+            errortext = _field$state2.errortext,
+            valid = _field$state2.valid,
+            childComponents = _field$state2.childComponents;
 
         var novalidText = '';
         var ispending = status == 'pending';
@@ -663,10 +686,10 @@ var VerifyStatus = React.createClass({
 
         // console.log(showmsg,status,field.refs.input)
         // console.log('verifyStatus:',showmsg,status)
-        return showmsg && status ? React.createElement(
+        return showmsg && status ? _nojsReact.React.createElement(
             'span',
             { className: 'nj-form-msg' },
-            React.createElement(
+            _nojsReact.React.createElement(
                 'span',
                 { className: 'nj-form-msg-' + status },
                 novalidText
@@ -752,7 +775,7 @@ var formRules = {
 //     Object.assign(Form._config, conf)
 // }
 
-var createdEvents = nj.utils.addEventQueue.call(Form, 'onCreated');
+var createdEvents = _nojsReact2.default.utils.addEventQueue.call(Form, 'onCreated');
 
 //自定义规则
 Form.addRule = function (name, fn, errortext) {
@@ -829,7 +852,7 @@ var statusText = {
     confirm: '2次输入不一致'
 };
 
-var directive = new Directive({
+var directive = new _directiveComponent2.default({
     elementGroups: {
         'form': { children: ['input-group', 'input', 'select'], component: formDirectives['form'] },
         'input-group': { children: ['input', 'select'], component: formDirectives['input-group'] },
@@ -845,14 +868,14 @@ directive.start();
 Form.fill = function (options) {
     options = options || {};
 
-    var Form = $(options.form || document.forms[0]),
+    var Form = (0, _jquery2.default)(options.form || document.forms[0]),
         data = options.data,
         i,
         item,
         type,
         value;
 
-    if (!Form.length || $.type(data) != 'object') {
+    if (!Form.length || _jquery2.default.type(data) != 'object') {
         return;
     }
 
@@ -878,8 +901,8 @@ Form.fill = function (options) {
             handle && handle.setState({ value: value }, function (e) {
                 return handle.verify(false);
             });
-        } else if (type == 'checkbox' && $.type(value) == 'array') {
-            $.each(value, function (i, v) {
+        } else if (type == 'checkbox' && _jquery2.default.type(value) == 'array') {
+            _jquery2.default.each(value, function (i, v) {
                 _item = item.filter('[value="' + v + '"]');
                 handle = _item[0].$handle;
                 handle && handle.setState({ value: v }, function (e) {
@@ -892,7 +915,7 @@ Form.fill = function (options) {
             handle && handle.setState({ value: value }, function (e) {
                 return handle.verify(false);
             });
-        } else if ($.type(value) == 'array') {
+        } else if (_jquery2.default.type(value) == 'array') {
             //填充数组
             value.forEach(function (v, j) {
                 if (item[j]) {
@@ -953,16 +976,16 @@ Form.post = function (options) {
     var _form = options.form;
     var noForm = !_form;
     if (noForm) {
-        _form = $('<form action="" method="post"></form>').appendTo(document.body)[0];
+        _form = (0, _jquery2.default)('<form action="" method="post"></form>').appendTo(document.body)[0];
     }
 
     var name = 'iframe_' + +new Date(),
-        iframe = $('<iframe src="" name="' + name + '" style="display:none"></iframe>').appendTo(document.body),
+        iframe = (0, _jquery2.default)('<iframe src="" name="' + name + '" style="display:none"></iframe>').appendTo(document.body),
         callback = 'jsoncallback_' + +new Date();
 
-    var data = $.extend(true, options.data, { jsoncallback: callback });
+    var data = _jquery2.default.extend(true, options.data, { jsoncallback: callback });
     Form.fill({
-        form: $(_form),
+        form: (0, _jquery2.default)(_form),
         data: data,
         always: true
     });
@@ -985,7 +1008,7 @@ Form.post = function (options) {
         }
 
         iframe.remove();
-        noForm && $(_form).remove();
+        noForm && (0, _jquery2.default)(_form).remove();
         iframe = null;
     };
     options.beforeSend && options.beforeSend.call(options);

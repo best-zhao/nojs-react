@@ -5,10 +5,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /**
  * Switch组件
  */
-var nj = require('./nojs-react');var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
-
+var nj = require('./nojs-react'),
+    React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    mixins = nj.mixins;
 var $ = require('jquery');
 
 var Directive = require('../mixins/directiveComponent').default;

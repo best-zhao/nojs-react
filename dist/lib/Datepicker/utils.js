@@ -33,10 +33,8 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     var type = _jquery2.default.type(params);
     var key = void 0;
 
-    var _options = options = options || {};
-
-    var startWeekIndex = _options.startWeekIndex;
-
+    var _options = options = options || {},
+        startWeekIndex = _options.startWeekIndex;
 
     if (type == 'object') {
         year = params.year;
@@ -103,37 +101,37 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     if (startDay != startWeekIndex) {
         var prevMonth = getNearMonth({ year: year, month: month, step: -1 });
         var prevDays = getDays(prevMonth);
-        var i = 0;
+        var _i = 0;
         //需补充的天数
         var n = startDay > startWeekIndex ? startDay - startWeekIndex : startDay + 7 - startWeekIndex;
         // console.log(12,prevMonth, prevDays)
-        while (i < n) {
+        while (_i < n) {
             allDays.unshift({
                 year: prevMonth.year,
                 month: prevMonth.month,
-                date: prevDays - i,
+                date: prevDays - _i,
                 prevMonth: true,
-                timestamp: new Date(prevMonth.year, prevMonth.month - 1, prevDays - i).getTime(),
-                day: new Date(prevMonth.year, prevMonth.month - 1, prevDays - i).getDay()
+                timestamp: new Date(prevMonth.year, prevMonth.month - 1, prevDays - _i).getTime(),
+                day: new Date(prevMonth.year, prevMonth.month - 1, prevDays - _i).getDay()
             });
-            i++;
+            _i++;
         }
     }
 
     //未补齐至整6行
     if (allDays.length < 42) {
         var nextMonth = getNearMonth({ year: year, month: month, step: 1 });
-        var i = 0;
+        var _i2 = 0;
         // endDay = endDay==6 ? -1 : endDay//月末是周6
         while (allDays.length < 42) {
-            i++;
+            _i2++;
             endDay++;
             allDays.push({
                 year: nextMonth.year,
                 month: nextMonth.month,
-                date: i,
+                date: _i2,
                 nextMonth: true,
-                timestamp: new Date(nextMonth.year, nextMonth.month - 1, i).getTime(),
+                timestamp: new Date(nextMonth.year, nextMonth.month - 1, _i2).getTime(),
                 day: endDay == 6 ? 0 : endDay + 1
             });
         }
@@ -157,17 +155,17 @@ today.day = new Date(today.year, today.month - 1, today.date).getDay();
 
 //获取某月的天数
 var getDays = exports.getDays = function getDays(_ref) {
-    var year = _ref.year;
-    var month = _ref.month;
+    var year = _ref.year,
+        month = _ref.month;
 
     return new Date(year, month, 0).getDate();
 };
 
 //获取相邻月份 前n月或后n月
 var getNearMonth = exports.getNearMonth = function getNearMonth(_ref2) {
-    var year = _ref2.year;
-    var month = _ref2.month;
-    var step = _ref2.step;
+    var year = _ref2.year,
+        month = _ref2.month,
+        step = _ref2.step;
 
     //年跨度
     var yearStep = step < 0 ? Math.ceil(step / 12) : Math.floor(step / 12);

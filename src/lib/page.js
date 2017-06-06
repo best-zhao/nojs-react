@@ -72,11 +72,12 @@ class Page extends React.Component{
             </div>
         )
     }
-})
+}
 
 Page.defaultProps = {
     data : [],
-    perpage : 10//每页个数
+    //每页个数
+    perpage : 10
     //page : 1//当前页码
     //pages : 
     //count : //数据数量

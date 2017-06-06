@@ -17,8 +17,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /**
  * html指令组件
  */
-var React = _lib2.default.React;
-var ReactDOM = _lib2.default.ReactDOM;
+var React = _lib2.default.React,
+    ReactDOM = _lib2.default.ReactDOM;
 
 /**
  * 标记需要手动启动的组件
@@ -34,9 +34,9 @@ var Directive = function Directive(options) {
     this.options = options || {};
 
     //exports 为某个或某类组件集合 对外提供的接口 
-    var _options = this.options;
-    var exports = _options.exports;
-    var elementGroups = _options.elementGroups;
+    var _options = this.options,
+        exports = _options.exports,
+        elementGroups = _options.elementGroups;
 
     //将指令对应的组件挂到exports上
 
@@ -161,10 +161,11 @@ Directive.prototype = {
     getChildComponents: function getChildComponents(component) {
         var _this3 = this;
 
-        var _component$props = component.props;
-        var _childNodes = _component$props._childNodes;
-        var _componentType = _component$props._componentType;
-        var _children = _component$props._children;
+        var _component$props = component.props,
+            _childNodes = _component$props._childNodes,
+            _componentType = _component$props._componentType,
+            _children = _component$props._children;
+        // console.log(_childNodes, _componentType, this.options)
 
         if (!_componentType) {
             //只适用于nj-html方式创建的组件
@@ -178,9 +179,9 @@ Directive.prototype = {
             wrap = component.refs.wrap || ReactDOM.findDOMNode(component);
         }
 
-        var _options$elementGroup = this.options.elementGroups[_componentType];
-        var children = _options$elementGroup.children;
-        var wrapItem = _options$elementGroup.wrapItem;
+        var _options$elementGroup = this.options.elementGroups[_componentType],
+            children = _options$elementGroup.children,
+            wrapItem = _options$elementGroup.wrapItem;
 
 
         var childNodes = _childNodes || []; //_children过滤了非元素节点
@@ -211,7 +212,7 @@ Directive.prototype = {
 };
 
 //<input required>将默认属性值为空的转化为required="required"
-var sameAttrs = ['required', 'readOnly', 'checked'];
+var sameAttrs = ['required', 'readOnly', 'checked', 'disabled'];
 function parseAttrs(attrs) {
     for (var i in attrs) {
         if (attrs[i] === '' && sameAttrs.indexOf(i) >= 0) {

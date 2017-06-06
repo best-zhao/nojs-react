@@ -6,28 +6,25 @@
 
 var $ = require('jquery');
 
-var _require = require('./');
-
-var React = _require.React;
-var render = _require.render;
-var utils = _require.utils;
+var _require = require('./'),
+    React = _require.React,
+    render = _require.render,
+    utils = _require.utils;
 
 var Popover = require('./popover');
 
-var _require2 = require('./switch');
-
-var Switch = _require2.Switch;
-var SwitchMenu = _require2.SwitchMenu;
-var SwitchItem = _require2.SwitchItem;
-
+var _require2 = require('./switch'),
+    Switch = _require2.Switch,
+    SwitchMenu = _require2.SwitchMenu,
+    SwitchItem = _require2.SwitchItem;
 
 var Face = React.createClass({
     displayName: 'Face',
 
     statics: {
         create: function create(options) {
-            var _options = options;
-            var insert = _options.insert;
+            var _options = options,
+                insert = _options.insert;
 
             options = Object.assign(options, {
                 name: 'nj-face-pop',
@@ -121,10 +118,10 @@ var Face = React.createClass({
         // this.insertEvent = utils.addEventQueue.call(this, 'onInsert')
     },
     loadFace: function loadFace() {
-        var _state = this.state;
-        var themes = _state.themes;
-        var themeItems = _state.themeItems;
-        var faces = _state.faces;
+        var _state = this.state,
+            themes = _state.themes,
+            themeItems = _state.themeItems,
+            faces = _state.faces;
 
         themes.forEach(function (f) {
             var item = themeItems[f];
@@ -136,9 +133,9 @@ var Face = React.createClass({
         this.setState({ init: true, faces: faces });
     },
     insertTo: function insertTo(text) {
-        var _props = this.props;
-        var insert = _props.insert;
-        var popover = _props.popover;
+        var _props = this.props,
+            insert = _props.insert,
+            popover = _props.popover;
 
         //将表情插入到光标处
 

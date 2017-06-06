@@ -1,16 +1,24 @@
 'use strict';
 
-/*
- * 无间断滚动
- */
-var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
+var _jquery = require('jquery');
 
-var $ = require('jquery');
-var Directive = require('../mixins/directiveComponent').default;
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _nojsReact = require('./nojs-react');
+
+var _nojsReact2 = _interopRequireDefault(_nojsReact);
+
+var _directiveComponent = require('../mixins/directiveComponent');
+
+var _directiveComponent2 = _interopRequireDefault(_directiveComponent);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 require('./touch');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* 
  * [jQuery animate动画扩展]
@@ -19,17 +27,20 @@ require('./touch');
  * easeOut：减速度缓动；
  * easeInOut：先加速度至50%，再减速度完成动画
  */
-$.extend($.easing, {
+_jquery2.default.extend(_jquery2.default.easing, {
     //指数曲线缓动
     easeOutExpo: function easeOutExpo(x, t, b, c, d) {
         return t == d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
     }
-});
+}); /*
+     * 无间断滚动
+     */
 
-var Scroll = React.createClass({
+
+var Scroll = _nojsReact.React.createClass({
     displayName: 'Scroll',
 
-    mixins: [mixins.childComponents.config],
+    mixins: [_nojsReact.mixins.childComponents.config],
     getDefaultProps: function getDefaultProps() {
         return {
             //滚动方向，默认纵向
@@ -38,14 +49,14 @@ var Scroll = React.createClass({
         };
     },
     getInitialState: function getInitialState() {
-        var _props = this.props;
-        var _props$step = _props.step;
-        var step = _props$step === undefined ? 1 : _props$step;
-        var time = _props.time;
-        var _props$repeat = _props.repeat;
-        var repeat = _props$repeat === undefined ? true : _props$repeat;
-        var _props$auto = _props.auto;
-        var auto = _props$auto === undefined ? true : _props$auto;
+        var _props = this.props,
+            _props$step = _props.step,
+            step = _props$step === undefined ? 1 : _props$step,
+            time = _props.time,
+            _props$repeat = _props.repeat,
+            repeat = _props$repeat === undefined ? true : _props$repeat,
+            _props$auto = _props.auto,
+            auto = _props$auto === undefined ? true : _props$auto;
 
         step = parseInt(step);
         return {
@@ -63,8 +74,8 @@ var Scroll = React.createClass({
     componentDidMount: function componentDidMount() {
         var _this = this;
 
-        this.scrollEvent = nj.utils.addEventQueue.call(this, 'onScroll');
-        this.scrollEndEvent = nj.utils.addEventQueue.call(this, 'onScrollEnd');
+        this.scrollEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onScroll');
+        this.scrollEndEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onScrollEnd');
 
         //React创建的组件 父组件完成后 首次要更新下page
         var page = this.state.page;
@@ -78,19 +89,19 @@ var Scroll = React.createClass({
 
         directive.getChildComponents(this);
 
-        this.props.computed && $(window).on('resize', function () {
+        this.props.computed && (0, _jquery2.default)(window).on('resize', function () {
             _this.reset();
         });
         setTimeout(function () {
             //computed情况下 scroll-items组件必须先计算完成后 这里才reset
             _this.reset();
 
-            var _state = _this.state;
-            var length = _state.length;
-            var view = _state.view;
-            var step = _state.step;
-            var size = _state.size;
-            var itemsComponent = _state.itemsComponent;
+            var _state = _this.state,
+                length = _state.length,
+                view = _state.view,
+                step = _state.step,
+                size = _state.size,
+                itemsComponent = _state.itemsComponent;
             // console.log(length,view)
 
             if (length <= view) {
@@ -105,11 +116,11 @@ var Scroll = React.createClass({
 
             var direction = _this.props.direction;
             if (direction == 'y') {
-                size.total = $(itemsComponent.refs.items).height();
+                size.total = (0, _jquery2.default)(itemsComponent.refs.items).height();
             }
             _this.start();
 
-            var wrap = $(itemsComponent.refs.wrap);
+            var wrap = (0, _jquery2.default)(itemsComponent.refs.wrap);
             wrap.hover(function () {
                 _this.stop();
             }, function () {
@@ -139,18 +150,18 @@ var Scroll = React.createClass({
          * 使用向后追加元素的方式来实现不间断滚动
          * 初始化追加一次 ；每次滚动完毕后检测是否追加
          */
-        var _state2 = this.state;
-        var repeat = _state2.repeat;
-        var length = _state2.length;
-        var size = _state2.size;
-        var itemsComponent = _state2.itemsComponent;
+        var _state2 = this.state,
+            repeat = _state2.repeat,
+            length = _state2.length,
+            size = _state2.size,
+            itemsComponent = _state2.itemsComponent;
 
         if (!repeat) {
             return;
         }
-        var _itemsComponent$props = itemsComponent.props;
-        var children = _itemsComponent$props.children;
-        var _children = _itemsComponent$props._children;
+        var _itemsComponent$props = itemsComponent.props,
+            children = _itemsComponent$props.children,
+            _children = _itemsComponent$props._children;
 
         var copy,
 
@@ -206,11 +217,11 @@ var Scroll = React.createClass({
     start: function start() {
         var _this2 = this;
 
-        var _state3 = this.state;
-        var auto = _state3.auto;
-        var length = _state3.length;
-        var view = _state3.view;
-        var time = _state3.time;
+        var _state3 = this.state,
+            auto = _state3.auto,
+            length = _state3.length,
+            view = _state3.view,
+            time = _state3.time;
         // console.log(length,auto,view)
 
         if (auto && length > view) {
@@ -225,16 +236,16 @@ var Scroll = React.createClass({
     },
     reset: function reset() {
         // var {childComponents} = this.state
-        var _props2 = this.props;
-        var computed = _props2.computed;
-        var direction = _props2.direction;
-        var step = _props2.step;
+        var _props2 = this.props,
+            computed = _props2.computed,
+            direction = _props2.direction,
+            step = _props2.step;
 
         var itemsComponent = this.state.itemsComponent;
         var horizontal = direction == 'x';
-        var wrap = $(itemsComponent.refs.wrap);
-        var content = $(itemsComponent.refs.items);
-        var item = $(itemsComponent.refs.item0);
+        var wrap = (0, _jquery2.default)(itemsComponent.refs.wrap);
+        var content = (0, _jquery2.default)(itemsComponent.refs.items);
+        var item = (0, _jquery2.default)(itemsComponent.refs.item0);
 
         var size = this.state.size = {
             box: horizontal ? wrap.width() : wrap.height(), //容器尺寸
@@ -260,14 +271,14 @@ var Scroll = React.createClass({
          * boolean: 向前/后滚动 控制方向
          * number: 索引值 直接滚动到某一张 （若repeat=true 该索引是相对追加之前的）
          */
-        var _state4 = this.state;
-        var size = _state4.size;
-        var step = _state4.step;
-        var scrollLength = _state4.scrollLength;
-        var totalLength = _state4.totalLength;
-        var length = _state4.length;
-        var view = _state4.view;
-        var itemsComponent = _state4.itemsComponent;
+        var _state4 = this.state,
+            size = _state4.size,
+            step = _state4.step,
+            scrollLength = _state4.scrollLength,
+            totalLength = _state4.totalLength,
+            length = _state4.length,
+            view = _state4.view,
+            itemsComponent = _state4.itemsComponent;
 
         var index;
         if (typeof next == 'number') {
@@ -278,7 +289,7 @@ var Scroll = React.createClass({
         if (next !== undefined) {
             this.start(); //外部控制滚动后 重新开始计时
         }
-        var wrap = $(itemsComponent.refs.wrap);
+        var wrap = (0, _jquery2.default)(itemsComponent.refs.wrap);
 
         var direction = this.props.direction;
 
@@ -286,7 +297,7 @@ var Scroll = React.createClass({
 
         wrap.stop();
 
-        var isExist = nj.utils.elementInDOM(ReactDOM.findDOMNode(this)); //组件是否被移除
+        var isExist = _nojsReact2.default.utils.elementInDOM(_nojsReact.ReactDOM.findDOMNode(this)); //组件是否被移除
         if (!isExist) {
             this.stop();
             wrap.stop();
@@ -369,12 +380,12 @@ var Scroll = React.createClass({
         this.scrollEvent.complete(this.state.index);
     },
     render: function render() {
-        var _props3 = this.props;
-        var className = _props3.className;
-        var children = _props3.children;
+        var _props3 = this.props,
+            className = _props3.className,
+            children = _props3.children;
 
-        className = nj.utils.joinClass('nj-scroll', className);
-        return React.createElement(
+        className = _nojsReact2.default.utils.joinClass('nj-scroll', className);
+        return _nojsReact.React.createElement(
             'div',
             { className: className },
             children
@@ -382,17 +393,17 @@ var Scroll = React.createClass({
     }
 });
 Scroll.PropTypes = {
-    step: React.PropTypes.number,
-    time: React.PropTypes.number,
-    pageTemplate: React.PropTypes.func
+    step: _propTypes2.default.number,
+    time: _propTypes2.default.number,
+    pageTemplate: _propTypes2.default.func
 };
 
-var createdEvents = nj.utils.addEventQueue.call(Scroll, 'onCreated');
+var createdEvents = _nojsReact2.default.utils.addEventQueue.call(Scroll, 'onCreated');
 
-var ScrollItems = React.createClass({
+var ScrollItems = _nojsReact.React.createClass({
     displayName: 'ScrollItems',
 
-    mixins: [mixins.childComponents.setParents([Scroll])],
+    mixins: [_nojsReact.mixins.childComponents.setParents([Scroll])],
     getInitialState: function getInitialState() {
         return {};
     },
@@ -406,18 +417,18 @@ var ScrollItems = React.createClass({
         parentComponent.state.itemsComponent = this;
 
         //适应多分辨率时 设置computed=true可以自动为this.item设置尺寸 因为css中无法设置
-        var _parentComponent$prop = parentComponent.props;
-        var direction = _parentComponent$prop.direction;
-        var computed = _parentComponent$prop.computed;
-        var _parentComponent$prop2 = _parentComponent$prop.view;
-        var view = _parentComponent$prop2 === undefined ? 1 : _parentComponent$prop2;
+        var _parentComponent$prop = parentComponent.props,
+            direction = _parentComponent$prop.direction,
+            computed = _parentComponent$prop.computed,
+            _parentComponent$prop2 = _parentComponent$prop.view,
+            view = _parentComponent$prop2 === undefined ? 1 : _parentComponent$prop2;
 
         var horizontal = direction == 'x';
         var itemStyle = { display: horizontal ? 'inline-block' : 'block' };
 
         if (computed) {
             var value;
-            var wrap = $(this.refs.wrap);
+            var wrap = (0, _jquery2.default)(this.refs.wrap);
             if (horizontal) {
                 value = wrap.width() / view;
                 //view为初始设置的可视区域个数 此处计算适用于百分比设置的宽度
@@ -432,9 +443,9 @@ var ScrollItems = React.createClass({
         this.setState({ itemStyle: itemStyle });
     },
     render: function render() {
-        var _state5 = this.state;
-        var parentComponent = _state5.parentComponent;
-        var itemStyle = _state5.itemStyle;
+        var _state5 = this.state,
+            parentComponent = _state5.parentComponent,
+            itemStyle = _state5.itemStyle;
         // if( !parentComponent ){
         //     console.log(1)
         //     return null
@@ -444,21 +455,21 @@ var ScrollItems = React.createClass({
 
         var horizontal = direction == 'x';
 
-        var _props4 = this.props;
-        var children = _props4.children;
-        var className = _props4.className;
+        var _props4 = this.props,
+            children = _props4.children,
+            className = _props4.className;
 
-        className = nj.utils.joinClass('nj-scroll-item clearfix', className);
+        className = _nojsReact2.default.utils.joinClass('nj-scroll-item clearfix', className);
         var size = parentComponent.state.size;
 
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'div',
             { ref: 'wrap', className: 'nj-scroll-wrap' },
-            React.createElement(
+            _nojsReact.React.createElement(
                 'div',
                 { ref: 'items', className: 'nj-scroll-items clearfix', style: horizontal ? { width: size.total } : {} },
                 children.map(function (item, i) {
-                    return React.createElement(
+                    return _nojsReact.React.createElement(
                         'span',
                         { className: className, ref: 'item' + i, key: i, style: itemStyle },
                         item
@@ -469,10 +480,10 @@ var ScrollItems = React.createClass({
     }
 });
 
-var ScrollPage = React.createClass({
+var ScrollPage = _nojsReact.React.createClass({
     displayName: 'ScrollPage',
 
-    mixins: [mixins.childComponents.setParents([Scroll])],
+    mixins: [_nojsReact.mixins.childComponents.setParents([Scroll])],
     getDefaultProps: function getDefaultProps() {
         return { pages: 0 };
     },
@@ -494,24 +505,24 @@ var ScrollPage = React.createClass({
 
         // console.log(this.props)
         var parentComponent = this.state.parentComponent;
-        var _parentComponent$stat = parentComponent.state;
-        var length = _parentComponent$stat.length;
-        var index = _parentComponent$stat.index;
+        var _parentComponent$stat = parentComponent.state,
+            length = _parentComponent$stat.length,
+            index = _parentComponent$stat.index;
 
         var items = [];
         for (var i = 0; i < length; i++) {
             items.push(i + 1);
         }
-        var _props5 = this.props;
-        var trigger = _props5.trigger;
-        var className = _props5.className;
+        var _props5 = this.props,
+            trigger = _props5.trigger,
+            className = _props5.className;
 
         var template = this.props.template || parentComponent.props.pageTemplate;
 
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'div',
             { className: 'nj-scroll-page ' + className },
-            React.createElement(
+            _nojsReact.React.createElement(
                 'div',
                 { className: '-page-inner' },
                 items.map(function (n, i) {
@@ -519,7 +530,7 @@ var ScrollPage = React.createClass({
                     var child = tmpl || n;
                     var options = {
                         ref: 'item' + i,
-                        className: nj.utils.joinClass('-page-item', n - 1 == index && '-page-active'),
+                        className: _nojsReact2.default.utils.joinClass('-page-item', n - 1 == index && '-page-active'),
                         key: n
                     };
                     if (typeof tmpl == 'string') {
@@ -527,7 +538,7 @@ var ScrollPage = React.createClass({
                         child = null;
                     }
                     options[trigger == 'hover' ? 'onMouseEnter' : 'onClick'] = _this4.handleClick.bind(_this4, n - 1);
-                    return React.createElement(
+                    return _nojsReact.React.createElement(
                         'span',
                         options,
                         child
@@ -538,7 +549,7 @@ var ScrollPage = React.createClass({
     }
 });
 ScrollPage.PropTypes = {
-    pages: React.PropTypes.number
+    pages: _propTypes2.default.number
 };
 
 function getIndex(index, total) {
@@ -547,7 +558,7 @@ function getIndex(index, total) {
     return index;
 }
 
-var directive = new Directive({
+var directive = new _directiveComponent2.default({
     elementGroups: {
         'scroll': {
             children: ['scroll-items', 'scroll-page'],

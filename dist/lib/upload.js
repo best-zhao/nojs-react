@@ -362,8 +362,6 @@ upload.prototype = {
   * 2. 动态添加form对象submit到ifrmae实现无刷新
   */
 	uploading: function uploading(id) {
-		var _this = this;
-
 		var T = this,
 		    opt = this.options,
 		    _file = this.fileItem[id];
@@ -376,75 +374,70 @@ upload.prototype = {
 		}
 
 		if (browser['4']) {
-			var xhr;
 
-			(function () {
+			//console.log(xhr.withCredentials)
 
-				//console.log(xhr.withCredentials)
+			var uploadFile = function uploadFile() {
+				xhr.upload.addEventListener("progress", uploadProgress, false);
+				xhr.addEventListener("load", uploadComplete, false);
+				xhr.addEventListener("error", uploadFailed, false);
+				xhr.addEventListener("abort", uploadCanceled, false);
 
-				var uploadFile = function uploadFile() {
-					xhr.upload.addEventListener("progress", uploadProgress, false);
-					xhr.addEventListener("load", uploadComplete, false);
-					xhr.addEventListener("error", uploadFailed, false);
-					xhr.addEventListener("abort", uploadCanceled, false);
+				xhr.open("POST", opt.uploader, true);
+				//xhr.withCredentials = true;
+				xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+				var headers = opt.headers || {};
+				for (var i in headers) {
+					xhr.setRequestHeader(i, headers[i]);
+				}
 
-					xhr.open("POST", opt.uploader, true);
-					//xhr.withCredentials = true;
-					xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-					var headers = opt.headers || {};
-					for (var i in headers) {
-						xhr.setRequestHeader(i, headers[i]);
-					}
+				var fd = new FormData();
+				fd.append(T.button[0].name, _file.files);
+				fd.append('uploadID', id);
+				for (var i in opt.data) {
+					fd.append(i, opt.data[i]);
+				}
+				xhr.send(fd);
+			};
 
-					var fd = new FormData();
-					fd.append(T.button[0].name, _file.files);
-					fd.append('uploadID', id);
-					for (var i in opt.data) {
-						fd.append(i, opt.data[i]);
-					}
-					xhr.send(fd);
-				};
+			var uploadProgress = function uploadProgress(evt) {
+				var percentComplete,
+				    p = '';
+				if (evt.lengthComputable) {
+					percentComplete = Math.round(evt.loaded * 100 / evt.total);
+					p = percentComplete.toString();
+					T.setProgress(p, null, { loaded: evt.loaded, total: evt.total });
+				}
+			};
 
-				var uploadProgress = function uploadProgress(evt) {
-					var percentComplete,
-					    p = '';
-					if (evt.lengthComputable) {
-						percentComplete = Math.round(evt.loaded * 100 / evt.total);
-						p = percentComplete.toString();
-						T.setProgress(p, null, { loaded: evt.loaded, total: evt.total });
-					}
-				};
-
-				var uploadComplete = function uploadComplete(evt) {
-					//T.setProgress( 100, null );
-					T.state = false;
-					_file.state = null;
-					T.xhr = null;
-					if (!evt.target.response) {
-						T.Events('onError');
-						T.startUpload();
-						return;
-					}
-					var data = evt.target.response ? eval('(' + evt.target.response + ')') : {};
-					browser['2'] && T.preview(data); //这里主要针对safari 不能本地预览  
-					T.Events('onSuccess', data, id);
+			var uploadComplete = function uploadComplete(evt) {
+				//T.setProgress( 100, null );
+				T.state = false;
+				_file.state = null;
+				T.xhr = null;
+				if (!evt.target.response) {
+					T.Events('onError');
 					T.startUpload();
-				};
+					return;
+				}
+				var data = evt.target.response ? eval('(' + evt.target.response + ')') : {};
+				browser['2'] && T.preview(data); //这里主要针对safari 不能本地预览  
+				T.Events('onSuccess', data, id);
+				T.startUpload();
+			};
 
-				var uploadFailed = function uploadFailed(evt) {
-					var data = evt.target.response ? eval('(' + evt.target.response + ')') : {};
-					T.Events('onError', data);
-				};
+			var uploadFailed = function uploadFailed(evt) {
+				var data = evt.target.response ? eval('(' + evt.target.response + ')') : {};
+				T.Events('onError', data);
+			};
 
-				var uploadCanceled = function uploadCanceled(evt) {
-					//已中断
-				};
+			var uploadCanceled = function uploadCanceled(evt) {
+				//已中断
+			};
 
-				xhr = _this.xhr = new XMLHttpRequest();
+			var xhr = this.xhr = new XMLHttpRequest();
 
-
-				uploadFile();
-			})();
+			uploadFile();
 		} else {
 			var name = 'uploadiframe' + +new Date(),
 			    callback = opt.jsoncallback || {

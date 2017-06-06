@@ -533,8 +533,7 @@ formDirectives['select'] = React.createClass({
         var options = Object.assign({}, this.props, {
             ref : 'wrap',
             value : valueLink.value,
-            onChange : valueLink.requestChange,
-
+            onChange : valueLink.requestChange
         })
         delete options.defaultValue
 
@@ -551,13 +550,12 @@ formDirectives['select'] = React.createClass({
         options.className = nj.utils.joinClass(this.props.className, mark && 'input-'+status)
 
         //nj-select 获取的children 数组项为空的占位符
-        var {children} = this.props
+        var {children, _childNodes} = this.props        
         children = children && children.filter(item=>item)
+        
         return (
         <label>
-            <select {...options}>
-            {children}
-            </select>
+            <select {...options}></select>
             <VerifyStatus field={this} />
         </label>  
         )

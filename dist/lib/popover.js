@@ -4,10 +4,10 @@
  * 弹出层
  */
 var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
-var clickEvent = nj.clickEvent;
+var React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    mixins = nj.mixins,
+    clickEvent = nj.clickEvent;
 
 var align = require('./align');
 var $ = require('jquery');
@@ -87,12 +87,12 @@ var Popover = React.createClass({
 
         // var el = $(ReactDOM.findDOMNode(this))
         var self = this;
-        var _state = this.state;
-        var nearby = _state.nearby;
-        var target = _state.target;
-        var _props = this.props;
-        var delegate = _props.delegate;
-        var trigger = _props.trigger;
+        var _state = this.state,
+            nearby = _state.nearby,
+            target = _state.target;
+        var _props = this.props,
+            delegate = _props.delegate,
+            trigger = _props.trigger;
 
         var bindTarget = target || nearby;
 
@@ -150,7 +150,7 @@ var Popover = React.createClass({
                 }, hide);
             };
         } else if (trigger == 'click') {
-            var _show = function _show(e) {
+            var _show2 = function _show2(e) {
                 self.keepVisible = true;
                 self.state.visible && trigger == 'click' ? self.setDisplay(false) : show(this);
                 e.preventDefault();
@@ -160,9 +160,9 @@ var Popover = React.createClass({
                 if (/text|textarea/.test(bindTarget[0].type)) {
                     trigger = 'focus';
                 }
-                bindTarget.on(clickEvent, _show);
+                bindTarget.on(clickEvent, _show2);
             } else if (delegate) {
-                $(delegate[1] || document.body).delegate(delegate[0], trigger, _show);
+                $(delegate[1] || document.body).delegate(delegate[0], trigger, _show2);
             }
 
             this.onDisplayChange(function (visible) {
@@ -232,14 +232,14 @@ var Popover = React.createClass({
         });
     },
     renderLayer: function renderLayer() {
-        var _props2 = this.props;
-        var sharp = _props2.sharp;
-        var name = _props2.name;
-        var _state2 = this.state;
-        var className = _state2.className;
-        var template = _state2.template;
-        var origin = _state2.origin;
-        var direction = _state2.direction;
+        var _props2 = this.props,
+            sharp = _props2.sharp,
+            name = _props2.name;
+        var _state2 = this.state,
+            className = _state2.className,
+            template = _state2.template,
+            origin = _state2.origin,
+            direction = _state2.direction;
 
         className = nj.utils.joinClass('nj-popover', sharp && 'nj-popover-sharp-' + direction, //窗体是否带尖角图标
         className, name);

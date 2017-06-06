@@ -1,9 +1,9 @@
 'use strict';
 
 var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var utils = nj.utils;
+var React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    utils = nj.utils;
 /**
  * 遮罩层组件
  * 提供show/hide 2个事件 
@@ -40,9 +40,9 @@ var Mask = React.createClass({
     });
   },
   render: function render() {
-    var _state = this.state;
-    var name = _state.name;
-    var className = _state.className;
+    var _state = this.state,
+        name = _state.name,
+        className = _state.className;
 
     return React.createElement('div', { ref: 'layer', className: utils.joinClass(name, className) });
   }

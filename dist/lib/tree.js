@@ -5,11 +5,11 @@
  */
 require('../../css/tree.css');
 var nj = require('./nojs-react');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
-var utils = nj.utils;
-var Mui = nj.Mui;
+var React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    mixins = nj.mixins,
+    utils = nj.utils,
+    Mui = nj.Mui;
 
 var $ = require('jquery');
 
@@ -163,10 +163,10 @@ var Tree = React.createClass({
         }, 1);
     },
     componentDidMount: function componentDidMount() {
-        var _state = this.state;
-        var level = _state.level;
-        var dataFormat = _state.dataFormat;
-        var defaultNode = _state.defaultNode;
+        var _state = this.state,
+            level = _state.level,
+            dataFormat = _state.dataFormat,
+            defaultNode = _state.defaultNode;
 
         defaultNode = dataFormat && dataFormat.databyid[defaultNode];
         if (!level && defaultNode) {
@@ -236,9 +236,9 @@ var Tree = React.createClass({
     //获取所有父节点
     getParents: function getParents(node) {
         var parents = [];
-        var _state2 = this.state;
-        var keymap = _state2.keymap;
-        var dataFormat = _state2.dataFormat;
+        var _state2 = this.state,
+            keymap = _state2.keymap,
+            dataFormat = _state2.dataFormat;
 
         var KEY_ID = keymap.id;
         var id = node[KEY_ID];
@@ -332,18 +332,18 @@ var Tree = React.createClass({
     render: function render() {
         var _this4 = this;
 
-        var _state3 = this.state;
-        var data = _state3.data;
-        var level = _state3.level;
-        var parentNode = _state3.parentNode;
-        var keymap = _state3.keymap;
+        var _state3 = this.state,
+            data = _state3.data,
+            level = _state3.level,
+            parentNode = _state3.parentNode,
+            keymap = _state3.keymap;
 
         var visible = !parentNode || parentNode.open ? ' d_show' : ' d_hide';
         var rootScope = this.props.rootScope || this;
-        var _rootScope$state = rootScope.state;
-        var async = _rootScope$state.async;
-        var node = _rootScope$state.node;
-        var textClick = _rootScope$state.textClick;
+        var _rootScope$state = rootScope.state,
+            async = _rootScope$state.async,
+            node = _rootScope$state.node,
+            textClick = _rootScope$state.textClick;
 
 
         return data ? React.createElement(
@@ -594,11 +594,11 @@ Tree.LinkTree = React.createClass({
     getData: function getData(parentid, level) {
         var _this6 = this;
 
-        var _state4 = this.state;
-        var menuData = _state4.menuData;
-        var async = _state4.async;
-        var cache = _state4.cache;
-        var keymap = _state4.keymap;
+        var _state4 = this.state,
+            menuData = _state4.menuData,
+            async = _state4.async,
+            cache = _state4.cache,
+            keymap = _state4.keymap;
 
         if (!async) {
             return;
@@ -686,10 +686,10 @@ Tree.LinkTree = React.createClass({
             name: nj.utils.selectedOptions(select).text //e.target.selectedOptions[0].innerText
         } : {};
 
-        var _state5 = this.state;
-        var menuData = _state5.menuData;
-        var dataFormat = _state5.dataFormat;
-        var async = _state5.async;
+        var _state5 = this.state,
+            menuData = _state5.menuData,
+            dataFormat = _state5.dataFormat,
+            async = _state5.async;
 
 
         if (!maxlevel || level + 1 < maxlevel) {
@@ -714,10 +714,10 @@ Tree.LinkTree = React.createClass({
     render: function render() {
         var _this8 = this;
 
-        var _state6 = this.state;
-        var keymap = _state6.keymap;
-        var ids = _state6.ids;
-        var menuData = _state6.menuData;
+        var _state6 = this.state,
+            keymap = _state6.keymap,
+            ids = _state6.ids,
+            menuData = _state6.menuData;
 
         var KEY_ID = keymap.id;
         var KEY_NAME = keymap.name;
@@ -753,7 +753,7 @@ Tree.LinkTree = React.createClass({
                         React.createElement(
                             'option',
                             { value: '' },
-                            '\u8BF7\u9009\u62E9'
+                            '请选择'
                         ),
                         level.map(function (item, i) {
                             if (id && item[KEY_ID] == id) {

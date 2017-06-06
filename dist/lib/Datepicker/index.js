@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _nojsReact = require('../nojs-react');
 
@@ -32,7 +32,7 @@ var Datepicker = function (_React$Component) {
     function Datepicker(props) {
         _classCallCheck(this, Datepicker);
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Datepicker).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Datepicker.__proto__ || Object.getPrototypeOf(Datepicker)).call(this, props));
 
         _this.state = { value: _this.props.value };
         return _this;
@@ -64,8 +64,8 @@ var Datepicker = function (_React$Component) {
 
                 //重写onChange
                 var onChange = _this2.props.onChange;
-                var _options$auto = options.auto;
-                var auto = _options$auto === undefined ? true : _options$auto; //options.mode=='date'
+                var _options$auto = options.auto,
+                    auto = _options$auto === undefined ? true : _options$auto; //options.mode=='date'
 
                 options.onChange = function (value, data, timestamp) {
                     if (!auto && !self.state._action) {
@@ -74,8 +74,8 @@ var Datepicker = function (_React$Component) {
                     }
                     if (options.input) {
                         //兼容Input组件
-                        var _input = input;
-                        var $handle = _input.$handle;
+                        var _input = input,
+                            $handle = _input.$handle;
 
                         $handle ? $handle.setState({ value: value }) : input.value = value;
                     } else {
@@ -116,7 +116,7 @@ var Datepicker = function (_React$Component) {
                         _nojsReact.React.createElement(
                             'button',
                             { onClick: onSubmit, className: 'nj-button nj-button-small' },
-                            '\u786E\u5B9A'
+                            '确定'
                         )
                     )
                 );
@@ -137,11 +137,11 @@ var Datepicker = function (_React$Component) {
         key: 'render',
         value: function render() {
             var value = this.state.value;
-            var _props = this.props;
-            var placeholder = _props.placeholder;
-            var name = _props.name;
-            var className = _props.className;
-            var input = _props.input;
+            var _props = this.props,
+                placeholder = _props.placeholder,
+                name = _props.name,
+                className = _props.className,
+                input = _props.input;
 
             var attrs = { placeholder: placeholder, name: name, className: className, readOnly: true, value: value, ref: 'input' };
             return input ? null : _nojsReact.React.createElement('input', attrs);

@@ -1,5 +1,7 @@
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -20,30 +22,51 @@ require('../../../css/frame.css');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Root = _react2.default.createClass({
-    displayName: 'Root',
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    //对外提供go方法
-    go: function go(url) {
-        var routers = this.refs.routers;
-        var params = routers.state.params;
-        var router = routers.router;
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-        router.push('/' + params.id + '/' + encodeURIComponent(url));
-    },
-    render: function render() {
-        var props = this.props;
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-        return _react2.default.createElement(
-            _reactRouter.Router,
-            { history: _reactRouter.hashHistory, ref: 'routers' },
-            _react2.default.createElement(
-                _reactRouter.Route,
-                { path: '/', component: _Container2.default, props: props },
-                props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/' + props.defaultNode }) : null,
-                _react2.default.createElement(_reactRouter.Route, { path: '/:id(/:url)', component: _Content2.default, onLeave: _Content2.default.onLeave })
-            )
-        );
+var Root = function (_React$Component) {
+    _inherits(Root, _React$Component);
+
+    function Root() {
+        _classCallCheck(this, Root);
+
+        return _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).apply(this, arguments));
     }
-});
+
+    _createClass(Root, [{
+        key: 'go',
+
+        //对外提供go方法
+        value: function go(url) {
+            var routers = this.refs.routers;
+            var params = routers.state.params,
+                router = routers.router;
+
+            router.push('/' + params.id + '/' + encodeURIComponent(url));
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var props = this.props;
+
+            return _react2.default.createElement(
+                _reactRouter.Router,
+                { history: _reactRouter.hashHistory, ref: 'routers' },
+                _react2.default.createElement(
+                    _reactRouter.Route,
+                    { path: '/', component: _Container2.default, props: props },
+                    props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/' + props.defaultNode }) : null,
+                    _react2.default.createElement(_reactRouter.Route, { path: '/:id(/:url)', component: _Content2.default, onLeave: _Content2.default.onLeave })
+                )
+            );
+        }
+    }]);
+
+    return Root;
+}(_react2.default.Component);
+
 module.exports = Root;

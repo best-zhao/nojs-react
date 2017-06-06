@@ -8,9 +8,9 @@ var nj = require('./nojs-react');
 var $ = require('jquery');
 var align = require('./align');
 var Mask = require('./mask');
-var React = nj.React;
-var ReactDOM = nj.ReactDOM;
-var mixins = nj.mixins;
+var React = nj.React,
+    ReactDOM = nj.ReactDOM,
+    mixins = nj.mixins;
 
 
 var instances = [];
