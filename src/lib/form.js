@@ -80,7 +80,7 @@ var verifyChildComponents = function(real){
 var verifyField = function(real, fromParent) {
     var textField
 
-    let {validing, status, value, _value, dirty} = this.state
+    let {validing, status, value, _value, dirty, isEditor} = this.state
     let el = $(ReactDOM.findDOMNode(this))
     let visible = el.is(':visible') //隐藏的元素不验证
 
@@ -88,6 +88,8 @@ var verifyField = function(real, fromParent) {
         this.setState({status:null, valid:true})
         return true
     }
+
+    value = isEditor ? this.state.text : value
     
     //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
     if( validing || (status && value===_value && dirty) ){
@@ -111,6 +113,7 @@ var verifyField = function(real, fromParent) {
         valid = !visible ? true : rule.fn.call(this, value, rule.target)
         // console.log(3,valid,this.props.name, visible)
         if( !valid || valid=='pending' ){
+            this.state.novalid = rule
             this.state.novalidName = rule.name
             // console.log(this.props.name)            
             break
@@ -124,7 +127,7 @@ var verifyField = function(real, fromParent) {
 
     let {type} = this.props
 
-    // console.log(0, type, valid, value)
+    
 
     //'input-group' 验证子项是否全部通过
     if( valid && type=='input-group' ){
@@ -135,7 +138,7 @@ var verifyField = function(real, fromParent) {
     var isFetching = valid=='pending'
     this.state.status = isFetching ? 'pending' : valid ? 'ok' : 'error'
     this.state.valid = valid = isFetching ? false : valid
-    
+
     //input-group类 子组件输入时 需要更新父组件状态
     var parentComponent = this.state.parentComponent
     if( parentComponent && !fromParent ){
@@ -217,7 +220,6 @@ var Form = formDirectives['form'] = React.createClass({
             })
         }
         createdEvents.complete(this)
-        // Form._config.created && Form._config.created(this)
     },
     verify (real) {
         var valid = verifyChildComponents.call(this, real)
@@ -233,6 +235,7 @@ var Form = formDirectives['form'] = React.createClass({
         )
     }
 })
+
 formDirectives['input-group'] = React.createClass({
     mixins : [mixins.childComponents.setParents([formDirectives['form']])],
     getInitialState () {
@@ -289,14 +292,17 @@ formDirectives['input-group'] = React.createClass({
         )
     }
 })
+
 formDirectives['input'] = React.createClass({ 
     //React.addons.LinkedStateMixin
     mixins: [
         formMixin, 
         mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])
     ],
-    getInitialState () {  
+    getInitialState () {
+        let isEditor = this.props.type=='editor'
         return {
+            isEditor,
             dirty : false,
             valid : true,
             rules : getRules.call(this),
@@ -328,12 +334,11 @@ formDirectives['input'] = React.createClass({
     
     componentDidMount () {
         let {input} = this.refs
-        // let {type} = this.props
-
-        // if( type=='checkbox' || type=='radio' ){
-        //     this.state.valid = input.checked
-        // }
-
+        let {isEditor} = this.state
+        //异步载入编辑器
+        isEditor && System.import('./Editor').then(Editor=>
+            this.setState({Editor:Editor.default})
+        )
         mixins.childComponents.getParentComponent.call(this)
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
@@ -355,12 +360,16 @@ formDirectives['input'] = React.createClass({
         var _value = this.props.value
 
         var {type, trigger} = this.props
+        var {isEditor} = this.state
 
         var valueLink = this.state.valueLink = {
             value : this.state.value,
-            requestChange : e=>{
+            requestChange : (e, text)=>{
                 var newValue
-                if( typeof e=='boolean' ){
+                if( isEditor ){
+                    newValue = e
+                    this.state.text = text.replace(/^[\s\t]+|[\s\t]+$/g, '')
+                }else if( typeof e=='boolean' ){
                     newValue = e
                 }else{
                     newValue = e ? e.target.value : this.state.value
@@ -371,11 +380,6 @@ formDirectives['input'] = React.createClass({
 
                 this.state.value = newValue
                 this.state.status = null
-
-                this.setState({
-                    value : newValue,
-                    dirty : true
-                })
 
                 // update = update===false ? false : (update||!textField)
 
@@ -388,17 +392,20 @@ formDirectives['input'] = React.createClass({
                 
                 //使用blur类型验证的文本框 在onChange事件中就不用重复执行verify了
                 trigger!='blur' && this.verify(false)
+
+                this.setState({
+                    value : newValue,
+                    dirty : true
+                })
                 // this.changeEvent.complete()
             }
         }
-        
-
         return valueLink
     },
     render () {            
         var attrs = this.props            
         var type = attrs.type  
-        var {rules, dirty, status, value, parentComponent} = this.state    
+        var {rules, dirty, status, value, parentComponent, isEditor, Editor} = this.state    
         
         //触发验证的事件类型
         var trigger = {
@@ -411,7 +418,7 @@ formDirectives['input'] = React.createClass({
         })
 
         options.value = this.state.value
-        options.onChange = this.valueLink().requestChange
+        options.onChange = this.valueLink().requestChange.bind(this)
 
         if( type=='checkbox' || type=='radio' ){
             //options.checkedLink = this.valueLink()
@@ -436,21 +443,24 @@ formDirectives['input'] = React.createClass({
                 this.verify(true)
             }
         }
-        if( type=='textarea' ){
-            options.value = options.html || options.value
+        let hasTextarea = isEditor || type=='textarea'
+        if( hasTextarea ){
+            options.value = options.html || options.value || options.children
             delete options.defaultValue
             delete options.children
         }
         return (
             <label className={`nj-input-${type}`}>
-                {type=='textarea' ? <textarea {...options} /> : <input {...options} />}
-                {(type=='checkbox' || type=='radio') && <span className={`nj-${type}-holder`}></span>}
-                {type!='textarea' && <span>{this.props.text}</span>}
+                {hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />}
+                {(type=='checkbox' || type=='radio') && <span className="_holder"></span>}
+                {!hasTextarea && <span>{this.props.text}</span>}
+                {Editor && <Editor {...options}/>}
                 <VerifyStatus field={this} />
             </label>
         )
     }
 })
+
 formDirectives['select'] = React.createClass({
     mixins : [mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState () {  
@@ -458,11 +468,11 @@ formDirectives['select'] = React.createClass({
             dirty : false,
             valid : true,
             rules : getRules.call(this),
-            value : this.props.defaultValue
+            value : this.props.defaultValue || this.props.value || ''
         }
     },  
     getDefaultProps () {
-        return {type:'select'}    
+        return {}    
     },
     componentDidMount () {
         mixins.childComponents.getParentComponent.call(this)
@@ -535,6 +545,7 @@ formDirectives['select'] = React.createClass({
             value : valueLink.value,
             onChange : valueLink.requestChange
         })
+        delete options.type
         delete options.defaultValue
 
         var mark
@@ -554,7 +565,7 @@ formDirectives['select'] = React.createClass({
         children = children && children.filter(item=>item)
         
         return (
-        <label>
+        <label className="nj-select">
             <select {...options}></select>
             <VerifyStatus field={this} />
         </label>  
@@ -587,7 +598,7 @@ var VerifyStatus = React.createClass({
                 showmsg = false
             }
         }
-        var {novalidName, status, errortext, valid, childComponents} = field.state
+        var {novalidName, novalid, status, errortext, valid, childComponents} = field.state
         var novalidText = ''
         var ispending = status=='pending'
 
@@ -612,12 +623,12 @@ var VerifyStatus = React.createClass({
                 }
             }
         }
-
         // console.log(showmsg,status,field.refs.input)
-        // console.log('verifyStatus:',showmsg,status)
         return showmsg && status ? (
             <span className={'nj-form-msg'}>
-                <span className={'nj-form-msg-'+status}>{novalidText}</span>
+                <span className={'nj-form-msg-'+status}>
+                    {typeof novalidText=='function'?novalidText.call(field, novalid) : novalidText}
+                </span>
             </span>
         ) : null
     }
@@ -683,11 +694,6 @@ var formRules = {
     }
 }
 
-// Form._config = {}
-// Form.config = conf=>{
-//     Object.assign(Form._config, conf)
-// }
-
 let createdEvents = nj.utils.addEventQueue.call(Form, 'onCreated')
 
 //自定义规则
@@ -721,9 +727,6 @@ Form.addAsyncRule = function(name, fn, errortext){
         statusText[name] = errortext
     }    
 }
-
-
-
 
 //验证码
 Form.verifyCode = function(verify, refresh){
@@ -762,7 +765,13 @@ var statusText = {
     email : '邮箱格式错误',
     mobile : '手机号码格式错误',
     url : 'url格式错误',
-    confirm : '2次输入不一致'
+    confirm : '2次输入不一致',
+    minlength (rule) {
+        return `不能少于${rule.target}位`
+    },
+    maxlength (rule) {
+        return `不能超过${rule.target}位`
+    }
 }
 
 var directive = new Directive({

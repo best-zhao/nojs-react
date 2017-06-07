@@ -103,7 +103,8 @@ var verifyField = function verifyField(real, fromParent) {
         status = _state.status,
         value = _state.value,
         _value = _state._value,
-        dirty = _state.dirty;
+        dirty = _state.dirty,
+        isEditor = _state.isEditor;
 
     var el = (0, _jquery2.default)(_nojsReact.ReactDOM.findDOMNode(this));
     var visible = el.is(':visible'); //隐藏的元素不验证
@@ -112,6 +113,8 @@ var verifyField = function verifyField(real, fromParent) {
         this.setState({ status: null, valid: true });
         return true;
     }
+
+    value = isEditor ? this.state.text : value;
 
     //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
     if (validing || status && value === _value && dirty) {
@@ -134,6 +137,7 @@ var verifyField = function verifyField(real, fromParent) {
         valid = !visible ? true : rule.fn.call(this, value, rule.target);
         // console.log(3,valid,this.props.name, visible)
         if (!valid || valid == 'pending') {
+            this.state.novalid = rule;
             this.state.novalidName = rule.name;
             // console.log(this.props.name)            
             break;
@@ -146,8 +150,6 @@ var verifyField = function verifyField(real, fromParent) {
     }
 
     var type = this.props.type;
-
-    // console.log(0, type, valid, value)
 
     //'input-group' 验证子项是否全部通过
 
@@ -246,7 +248,6 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
             });
         }
         createdEvents.complete(this);
-        // Form._config.created && Form._config.created(this)
     },
     verify: function verify(real) {
         var valid = verifyChildComponents.call(this, real);
@@ -262,6 +263,7 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
         );
     }
 });
+
 formDirectives['input-group'] = _nojsReact.React.createClass({
     mixins: [_nojsReact.mixins.childComponents.setParents([formDirectives['form']])],
     getInitialState: function getInitialState() {
@@ -320,11 +322,14 @@ formDirectives['input-group'] = _nojsReact.React.createClass({
         );
     }
 });
+
 formDirectives['input'] = _nojsReact.React.createClass({
     //React.addons.LinkedStateMixin
     mixins: [formMixin, _nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
+        var isEditor = this.props.type == 'editor';
         return {
+            isEditor: isEditor,
             dirty: false,
             valid: true,
             rules: getRules.call(this),
@@ -354,13 +359,15 @@ formDirectives['input'] = _nojsReact.React.createClass({
         return valid;
     },
     componentDidMount: function componentDidMount() {
+        var _this3 = this;
+
         var input = this.refs.input;
-        // let {type} = this.props
+        var isEditor = this.state.isEditor;
+        //异步载入编辑器
 
-        // if( type=='checkbox' || type=='radio' ){
-        //     this.state.valid = input.checked
-        // }
-
+        isEditor && System.import('./Editor').then(function (Editor) {
+            return _this3.setState({ Editor: Editor.default });
+        });
         _nojsReact.mixins.childComponents.getParentComponent.call(this);
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
@@ -379,7 +386,7 @@ formDirectives['input'] = _nojsReact.React.createClass({
         }
     },
     valueLink: function valueLink() {
-        var _this3 = this;
+        var _this4 = this;
 
         var _onChange = this.props.onChange;
         var _value = this.props.value;
@@ -387,32 +394,31 @@ formDirectives['input'] = _nojsReact.React.createClass({
         var _props = this.props,
             type = _props.type,
             trigger = _props.trigger;
+        var isEditor = this.state.isEditor;
 
 
         var valueLink = this.state.valueLink = {
             value: this.state.value,
-            requestChange: function requestChange(e) {
+            requestChange: function requestChange(e, text) {
                 var newValue;
-                if (typeof e == 'boolean') {
+                if (isEditor) {
+                    newValue = e;
+                    _this4.state.text = text.replace(/^[\s\t]+|[\s\t]+$/g, '');
+                } else if (typeof e == 'boolean') {
                     newValue = e;
                 } else {
-                    newValue = e ? e.target.value : _this3.state.value;
+                    newValue = e ? e.target.value : _this4.state.value;
                 }
 
                 var textField = textReg.test(type);
                 e && _onChange && _onChange(e);
 
-                _this3.state.value = newValue;
-                _this3.state.status = null;
-
-                _this3.setState({
-                    value: newValue,
-                    dirty: true
-                });
+                _this4.state.value = newValue;
+                _this4.state.status = null;
 
                 // update = update===false ? false : (update||!textField)
 
-                var parentComponent = _this3.state.parentComponent;
+                var parentComponent = _this4.state.parentComponent;
                 if (parentComponent) {
                     parentComponent.state.status = null;
                     parentComponent.state.dirty = true;
@@ -420,15 +426,19 @@ formDirectives['input'] = _nojsReact.React.createClass({
                 // update && this.verify.call(this,false); 
 
                 //使用blur类型验证的文本框 在onChange事件中就不用重复执行verify了
-                trigger != 'blur' && _this3.verify(false);
+                trigger != 'blur' && _this4.verify(false);
+
+                _this4.setState({
+                    value: newValue,
+                    dirty: true
+                });
                 // this.changeEvent.complete()
             }
         };
-
         return valueLink;
     },
     render: function render() {
-        var _this4 = this;
+        var _this5 = this;
 
         var attrs = this.props;
         var type = attrs.type;
@@ -437,7 +447,9 @@ formDirectives['input'] = _nojsReact.React.createClass({
             dirty = _state2.dirty,
             status = _state2.status,
             value = _state2.value,
-            parentComponent = _state2.parentComponent;
+            parentComponent = _state2.parentComponent,
+            isEditor = _state2.isEditor,
+            Editor = _state2.Editor;
 
         //触发验证的事件类型
 
@@ -451,7 +463,7 @@ formDirectives['input'] = _nojsReact.React.createClass({
         });
 
         options.value = this.state.value;
-        options.onChange = this.valueLink().requestChange;
+        options.onChange = this.valueLink().requestChange.bind(this);
 
         if (type == 'checkbox' || type == 'radio') {
             //options.checkedLink = this.valueLink()
@@ -473,28 +485,31 @@ formDirectives['input'] = _nojsReact.React.createClass({
 
             options[trigger] = function (e) {
                 _event && _event(e); //外部添加的事件
-                _this4.verify(true);
+                _this5.verify(true);
             };
         }
-        if (type == 'textarea') {
-            options.value = options.html || options.value;
+        var hasTextarea = isEditor || type == 'textarea';
+        if (hasTextarea) {
+            options.value = options.html || options.value || options.children;
             delete options.defaultValue;
             delete options.children;
         }
         return _nojsReact.React.createElement(
             'label',
             { className: 'nj-input-' + type },
-            type == 'textarea' ? _nojsReact.React.createElement('textarea', options) : _nojsReact.React.createElement('input', options),
-            (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: 'nj-' + type + '-holder' }),
-            type != 'textarea' && _nojsReact.React.createElement(
+            hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options),
+            (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }),
+            !hasTextarea && _nojsReact.React.createElement(
                 'span',
                 null,
                 this.props.text
             ),
+            Editor && _nojsReact.React.createElement(Editor, options),
             _nojsReact.React.createElement(VerifyStatus, { field: this })
         );
     }
 });
+
 formDirectives['select'] = _nojsReact.React.createClass({
     mixins: [_nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
@@ -502,11 +517,11 @@ formDirectives['select'] = _nojsReact.React.createClass({
             dirty: false,
             valid: true,
             rules: getRules.call(this),
-            value: this.props.defaultValue
+            value: this.props.defaultValue || this.props.value || ''
         };
     },
     getDefaultProps: function getDefaultProps() {
-        return { type: 'select' };
+        return {};
     },
     componentDidMount: function componentDidMount() {
         _nojsReact.mixins.childComponents.getParentComponent.call(this);
@@ -531,7 +546,7 @@ formDirectives['select'] = _nojsReact.React.createClass({
         return valid;
     },
     valueLink: function valueLink() {
-        var _this5 = this;
+        var _this6 = this;
 
         var _valueLink = this.props.valueLink;
         var _value = _valueLink && _valueLink.value;
@@ -552,22 +567,22 @@ formDirectives['select'] = _nojsReact.React.createClass({
                 // console.log(this.refs.wrap.selectedOptions[0].value)
                 _valueLink && _valueLink.requestChange(newValue); //合并外部双向绑定
 
-                _this5.state.value = newValue;
-                _this5.state.status = null;
+                _this6.state.value = newValue;
+                _this6.state.status = null;
 
-                _this5.setState({
+                _this6.setState({
                     value: newValue,
                     dirty: true
                 });
 
-                var parentComponent = _this5.state.parentComponent;
+                var parentComponent = _this6.state.parentComponent;
                 if (parentComponent) {
                     parentComponent.state.status = null;
                     parentComponent.state.dirty = true;
                 }
 
-                _this5.verify.call(_this5, false);
-                _this5.changeEvent.complete();
+                _this6.verify.call(_this6, false);
+                _this6.changeEvent.complete();
             }
         };
         return valueLink;
@@ -587,6 +602,7 @@ formDirectives['select'] = _nojsReact.React.createClass({
             value: valueLink.value,
             onChange: valueLink.requestChange
         });
+        delete options.type;
         delete options.defaultValue;
 
         var mark;
@@ -612,7 +628,7 @@ formDirectives['select'] = _nojsReact.React.createClass({
 
         return _nojsReact.React.createElement(
             'label',
-            null,
+            { className: 'nj-select' },
             _nojsReact.React.createElement('select', options),
             _nojsReact.React.createElement(VerifyStatus, { field: this })
         );
@@ -653,6 +669,7 @@ var VerifyStatus = _nojsReact.React.createClass({
         }
         var _field$state2 = field.state,
             novalidName = _field$state2.novalidName,
+            novalid = _field$state2.novalid,
             status = _field$state2.status,
             errortext = _field$state2.errortext,
             valid = _field$state2.valid,
@@ -683,16 +700,14 @@ var VerifyStatus = _nojsReact.React.createClass({
                 }
             }
         }
-
         // console.log(showmsg,status,field.refs.input)
-        // console.log('verifyStatus:',showmsg,status)
         return showmsg && status ? _nojsReact.React.createElement(
             'span',
             { className: 'nj-form-msg' },
             _nojsReact.React.createElement(
                 'span',
                 { className: 'nj-form-msg-' + status },
-                novalidText
+                typeof novalidText == 'function' ? novalidText.call(field, novalid) : novalidText
             )
         ) : null;
     }
@@ -770,11 +785,6 @@ var formRules = {
     }
 };
 
-// Form._config = {}
-// Form.config = conf=>{
-//     Object.assign(Form._config, conf)
-// }
-
 var createdEvents = _nojsReact2.default.utils.addEventQueue.call(Form, 'onCreated');
 
 //自定义规则
@@ -795,7 +805,7 @@ Form.addRule = function (name, fn, errortext) {
 Form.addAsyncRule = function (name, fn, errortext) {
     //重写fn 添加函数节流
     formRules[name] = function (value, target) {
-        var _this6 = this;
+        var _this7 = this;
 
         var async_delay = this.state.async_delay;
 
@@ -803,7 +813,7 @@ Form.addAsyncRule = function (name, fn, errortext) {
 
         this.state.async_delay = setTimeout(function (e) {
             var options = target ? eval('({' + target + '})') : {};
-            fn.call(_this6, value, options);
+            fn.call(_this7, value, options);
         }, 500);
         return 'pending';
     };
@@ -849,7 +859,13 @@ var statusText = {
     email: '邮箱格式错误',
     mobile: '手机号码格式错误',
     url: 'url格式错误',
-    confirm: '2次输入不一致'
+    confirm: '2次输入不一致',
+    minlength: function minlength(rule) {
+        return '不能少于' + rule.target + '位';
+    },
+    maxlength: function maxlength(rule) {
+        return '不能超过' + rule.target + '位';
+    }
 };
 
 var directive = new _directiveComponent2.default({

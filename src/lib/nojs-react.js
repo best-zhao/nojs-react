@@ -48,13 +48,16 @@ window.noJS.ready = function(fn){
 var muiTimer
 function addMui(e){
     var mui = $('<div class="nj-mui"><span></span></div>')
-    var self = $(this)    
-    self.addClass('nj-mui-active').append(mui)
-    mui.children().css(exports.Mui.style(e, this, self.attr('data-mode')))
+    var self = $(this) 
+    var mode = self.attr('data-mode')
+    var className ='nj-mui-active nj-mui-item nj-mui-'+mode
+               
+    self.addClass(className).append(mui)
+    mui.children().css(exports.Mui.style(e, this, mode))
 
     muiTimer && window.clearTimeout(muiTimer)
     muiTimer = window.setTimeout(e=>{
-        self.removeClass('nj-mui-active').children('.nj-mui').remove()
+        self.removeClass(className).children('.nj-mui').remove()
     }, 2500)    
 }
 

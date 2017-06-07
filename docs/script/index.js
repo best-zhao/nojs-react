@@ -33,6 +33,7 @@ const options = {
         'mask' : 'demo/mask',
         'popup' : 'demo/popup',
         'datepicker' : 'demo/datepicker',
+        'editor' : 'demo/editor',
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
         'form/input-group.html' : 'demo/form'

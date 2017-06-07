@@ -96,6 +96,7 @@ Directive.prototype = {
             options._childNodes = nj.utils.toArray(node.childNodes)
             options._componentType = type
             options.text = options.text || node.innerText
+            options.html = options.html || node.innerHTML //for <nj-input type="textarea">123<p>232</p></nj-input>
             options.index = options.index || index || 0
 
             var componentInfo = this.options.elementGroups[type]
@@ -133,6 +134,7 @@ Directive.prototype = {
     //当前组件渲染完毕后 将dom移入组件 并且检测是否有子组件
     getChildComponents (component) {
         var {_childNodes, _componentType, _children} = component.props
+        
         // console.log(_childNodes, _componentType, this.options)
         if( !_componentType ){//只适用于nj-html方式创建的组件
             return

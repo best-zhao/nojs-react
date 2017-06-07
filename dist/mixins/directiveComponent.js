@@ -122,6 +122,7 @@ Directive.prototype = {
             options._childNodes = _lib2.default.utils.toArray(node.childNodes);
             options._componentType = type;
             options.text = options.text || node.innerText;
+            options.html = options.html || node.innerHTML; //for <nj-input type="textarea">123<p>232</p></nj-input>
             options.index = options.index || index || 0;
 
             var componentInfo = this.options.elementGroups[type];
@@ -165,6 +166,7 @@ Directive.prototype = {
             _childNodes = _component$props._childNodes,
             _componentType = _component$props._componentType,
             _children = _component$props._children;
+
         // console.log(_childNodes, _componentType, this.options)
 
         if (!_componentType) {
