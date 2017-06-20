@@ -503,7 +503,9 @@ Tree.SelectTree = LevelSelect
 Tree.LinkTree = React.createClass({
     getDefaultProps () {
         return {
-            selected : []
+            selected : [],
+            listRows : 7,
+            type : 'select'
         }
     },
     getInitialState () {
@@ -517,6 +519,7 @@ Tree.LinkTree = React.createClass({
         }, options.keymap)
 
         options.rootID = options.rootID === undefined ? '0' : options.rootID
+        options.style = this.props.type.indexOf('list')==0 ? 'list' : 'select'
 
         var data = options.data
         if( typeof data=='string' ){
@@ -548,7 +551,34 @@ Tree.LinkTree = React.createClass({
         this.fetchEvent = nj.utils.addEventQueue.call(this, 'onFetch')
         this.fetchCompleteEvent = nj.utils.addEventQueue.call(this, 'onFetchComplete')
 
-        setTimeout(this.getData, 1)
+        setTimeout(e=>{
+            this.state.async ? this.getData() : this.getListSize()
+        }, 1)
+    },
+    componentDidMount () {
+        // $(ReactDOM.findDOMNode(this)).on('touchmove', function(e){
+        //     e = e.originalEvent ? e.originalEvent : e;
+        //     console.log(e.target)
+        // })
+        // $(ReactDOM.findDOMNode(this)).delegate('span.list-item', 'slideY', function(e, touch){
+        //     let {el, y1, y2} = touch
+        //     let distance = y2 - y1
+            
+        //     // el.children().animate({
+        //     //     scrollTop: distance*-1
+        //     // }, 50)
+
+        // }).on('touchend', function(e){
+        //     console.log(123, e)
+        // })
+    },
+    getListSize () {
+        let {listHeight, style} = this.state
+        if( style=='list' && !listHeight){
+            let list = this.refs['select-0']
+            let item = list.firstChild
+            this.setState({listHeight:item.offsetHeight})            
+        }  
     },
     getData (parentid, level) {
         var {menuData, async, cache, keymap} = this.state
@@ -564,7 +594,7 @@ Tree.LinkTree = React.createClass({
 
         var next = (data)=>{
             menuData[level] = [].concat(data)
-            this.setState({menuData})
+            this.setState({menuData}, this.getListSize)
         }
 
         if( cache[pid] ){
@@ -616,55 +646,67 @@ Tree.LinkTree = React.createClass({
             }
         })
     },
-    handleChange (level,e) {
+    handleChange (parentid, level, e) {
+        var {maxlevel} = this.props
         var select = this.refs['select-'+level]
         
-        var maxlevel = parseInt(this.props.maxlevel)
-        var selected = this.state.selected
+        var maxlevel = parseInt(maxlevel)
+        var {selected, style} = this.state
 
         this.resetData(level)
 
         if(!select){
-            // console.log(level)
             return
         }
-        var parentid = select.value
 
-        selected[level] = parentid ? {
+        var {menuData, dataFormat, async, keymap} = this.state
+
+        // var parentid = select.value
+        selected[level] = parentid!=undefined ? {
             id : parentid,
-            name :nj.utils.selectedOptions(select).text //e.target.selectedOptions[0].innerText
+            name : dataFormat.databyid[parentid][keymap.name]
+            // style=='select' ? 
+            //     nj.utils.selectedOptions(select).text :
+            //     e.target.innerText
         } : {}
-
-        var {menuData, dataFormat, async} = this.state
+        
 
         if( !maxlevel || level+1<maxlevel ){
             if( async ){
-                parentid && this.getData(parentid, level+1)
+                parentid!=undefined && this.getData(parentid, level+1)
             }else{
                 var parentNode = dataFormat.databyid[parentid]      
                 var data = parentNode ? [].concat(parentNode.children) : []
                 menuData[level+1] = data
                 this.setState({menuData}) 
             }
+        }else{
+            this.setState({selected})
         }
         var node = dataFormat.databyid[parentid]
 
-        this.changeEvent.complete(node,e)
+        this.changeEvent.complete(node, level, e)
 
         //ios 下多个select 无法聚焦bug
-        e && e.preventDefault()
+        // e && e.preventDefault()
         
         // this.props.onChange && this.props.onChange.call(this,parentid,level,e)
     },
     render () {
-        var {keymap, ids, menuData} = this.state
+        var {keymap, ids, menuData, selected, style, listHeight} = this.state
         var KEY_ID = keymap.id
         var KEY_NAME = keymap.name
-        var maxlevel = this.props.maxlevel
-        var infos = this.props.infos || []//附加信息 如name
-
+        var {maxlevel, type, listRows, infos=[]} = this.props
+        var listCols = maxlevel || 3
+        //infos = infos || []//附加信息 如name
+        
+        // console.log(selected)
+        let className = nj.utils.joinClass(
+            'nj-tree-select clearfix', 
+            type=='list-ios'&&'nj-tree-select-ios'
+        )
         return (
-        <div className="nj-tree-select">
+        <div className={className}>
             {menuData.map((level,i)=>{
                 if( maxlevel && i+1>maxlevel ){
                     return
@@ -676,14 +718,34 @@ Tree.LinkTree = React.createClass({
                 
                 var info = infos[i] || {}
                 var valid
+
                 var el = level && level.length ? (
-                    <span key={i} className="select-item">
+                    <span key={i} className={style+'-item'} style={type=='list-ios' ? {width:100/listCols+'%'} : {}}>
+                    {style=='list' ?
+                    <div className="inner">
+                        <ul ref={'select-'+i} 
+                            className={info.className} 
+                            style={type=='list-ios' ? {padding:(listHeight*(listRows-1)/2)+'px 0'} : {}}
+                        >
+                            {level.map((item,j)=>{
+                                if( id && item[KEY_ID]==id ){//检测被设置的默认选中id是否有效
+                                    valid = true
+                                }
+                                return (<li key={item[KEY_ID]} 
+                                    className={selected[i] && selected[i].id==item[KEY_ID]?'active':''}
+                                    onClick={e=>type=='list' && this.handleChange(item[KEY_ID], i, e)}
+                                    value={item[KEY_ID]}>{item[KEY_NAME]}</li>
+                                )
+                            })}
+                        </ul>
+                    </div>
+                    :
                     <select 
                         className={info.className} 
                         ref={'select-'+i} 
                         value={id} 
                         name={info.name} 
-                        onChange={this.handleChange.bind(this,i)}
+                        onChange={e=>this.handleChange(e.target.value, i, e)}
                     >
                         <option value="">请选择</option>
                         {level.map((item,i)=>{
@@ -693,6 +755,7 @@ Tree.LinkTree = React.createClass({
                             return (<option key={item[KEY_ID]} value={item[KEY_ID]}>{item[KEY_NAME]}</option>)
                         })}
                     </select>
+                    }
                     </span>
                 ) : null 
 
@@ -702,7 +765,8 @@ Tree.LinkTree = React.createClass({
                 if( id && _el ){
                     ids[i] = null//选中后清空 防止重复
                     valid && setTimeout(()=>{
-                        _el.props.onChange()
+                        this.handleChange(id, i)
+                        // _el.props.onChange()
                     }, 1)
                 }               
                 return el

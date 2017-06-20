@@ -57,6 +57,7 @@ module.exports = {
         //某些场景 在事件列表执行完成之后需要清空队列
         function end(){
             queue.length = 0
+            return this
         }
         this[eventName] = add.bind(this)
         typeof when=='function' && when.call(this, complete)

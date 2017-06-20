@@ -36,7 +36,8 @@ const options = {
         'editor' : 'demo/editor',
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
-        'form/input-group.html' : 'demo/form'
+        'form/input-group.html' : 'demo/form',
+        'tree/linkTree' : 'demo/tree'
     },
     loadScript (pageName, callback) {
         // require('bundle!./'+pageName)(callback)

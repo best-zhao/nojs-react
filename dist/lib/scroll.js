@@ -266,6 +266,9 @@ var Scroll = _nojsReact.React.createClass({
     scroll: function scroll(next) {
         var _this3 = this;
 
+        if ((0, _jquery2.default)(_nojsReact.ReactDOM.findDOMNode(this)).is(':hidden')) {
+            return;
+        }
         /*
          * next 
          * boolean: 向前/后滚动 控制方向

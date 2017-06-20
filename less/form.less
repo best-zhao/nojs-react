@@ -33,6 +33,12 @@ body .nj-form .input-error{border-color:red;}
     .ql-toolbar.ql-snow{border-color:red red #ccc}
     .ql-container.ql-snow{border-color:red}
 }
+.ql-editor{
+    em{font-style:italic;}
+    u{text-decoration:underline;}
+    s{text-decoration:line-through;}
+    
+}
 
 .nj-form-msg-ok:before{content:'\e606';color:#00BE00;font:1.3333em  'njicon';}
 .nj-form-msg-error:before{content:'\e60a';color:red;font:1.3333em  'njicon';}
@@ -42,16 +48,16 @@ body .nj-form .input-error{border-color:red;}
 
 /*checkbox*/
 .nj-input-checkbox, .nj-input-radio{
-    position:relative;line-height:14px;margin-right: 2em;
+    position:relative;line-height:1.1667em;margin-right: 2em;
     input{position:absolute;opacity:0;}
     span{display:inline-block;vertical-align:middle;}
     span+span{margin-left:.5em}
-    ._holder{width:12px;height:12px;border-radius:4px;
+    ._holder{width:1em;height:1em;border-radius:25%;
         background:#fff;border:1px solid #ccc;text-align:center;transition:all .2s;
     }
     &:hover ._holder{border-color:#aaa}
 
-    input:checked~._holder{background:#00BBFF;border-color:#00BBFF!important;color:#fff;line-height:12px}
+    input:checked~._holder{background:#00BBFF;border-color:#00BBFF!important;color:#fff;line-height:1em}
     input:checked~._holder:before{content:'\e60e';font:1em 'njicon';}
     input:disabled~._holder{cursor:not-allowed;background:#ddd;border-color:#ccc!important}
 }
@@ -59,8 +65,8 @@ body .nj-form .input-error{border-color:red;}
 
 /*radio*/
 .nj-input-radio{
-    ._holder{border-radius:100%;}
-    input:checked~._holder:before{content:'';width:6px;height:6px;border-radius:100%;background:#fff;
-        overflow:hidden;position:absolute;top:5px;left:4px;
+    ._holder{border-radius:100%;position:relative;}
+    input:checked~._holder:before{content:'';width:.5em;height:.5em;border-radius:100%;background:#fff;
+        overflow:hidden;position:absolute;top:26%;left:27%; 
     }
 }

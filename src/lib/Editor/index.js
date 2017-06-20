@@ -1,3 +1,7 @@
+/**
+ * Quill编辑器
+ * docs:https://quilljs.com/docs/api/
+ */
 import {React, render, utils} from '../nojs-react'
 import PropTypes from 'prop-types'
 import Quill from 'quill'
@@ -24,6 +28,13 @@ export default class Editor extends Component {
         })
         value && editor.clipboard.dangerouslyPasteHTML(value)
         editor.on('text-change', this.handleChange)
+
+        // setTimeout(e=>{
+        //     editor.setSelection(0, 5);
+        //     var range = editor.getSelection();
+        //     console.log(range)
+        //     // editor.insertEmbed(range.index, 'image', 'http://quilljs.com/images/cloud.png');
+        // }, 2000)
     }
     componentWillReceiveProps (nextProps) {
         if (nextProps.value !== this.value) {
@@ -37,9 +48,16 @@ export default class Editor extends Component {
             this.editor.enable(!nextProps.readOnly)
         }
     }
+    insertContent(str, type){
+        let range = editor.getSelection();
+
+    }
     handleChange (e) {
         this.state.action = 'input'//标记手动输入
-        // let text = this.editor.root.innerText.replace(/^[\s\t]+|[\s\t]+$/g, '')
+        setTimeout(e=>{
+            this.state.action = null
+        }, 1)
+        // let text = this.editor.getText()//this.editor.root.innerText.replace(/^[\s\t]+|[\s\t]+$/g, '')
         this.value = this.editor.root.innerHTML
         let {onChange} = this.props
         onChange && onChange(this.value, this.editor.root.innerText)
@@ -99,19 +117,19 @@ Editor.defaultProps = {
     theme: 'snow',
     toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote', 'code-block'],
+        ['blockquote'],//, 'code-block'
         [{ 'header': 1 }, { 'header': 2 }],
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
+        // [{ 'script': 'sub'}, { 'script': 'super' }],
+        // [{ 'indent': '-1'}, { 'indent': '+1' }],
+        // [{ 'direction': 'rtl' }],
         [{ 'size': ['small', false, 'large', 'huge'] }],
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'color': [] }, { 'background': [] }],
-        [{ 'font': [] }],
+        // [{ 'font': [] }],
         [{ 'align': [] }],
         ['link'],
-        ['clean']
+        // ['clean']
     ]
 }
 

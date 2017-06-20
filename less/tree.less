@@ -22,3 +22,19 @@
 .json-tree{font-family:'Courier New','Monospace'}
 .json-tree ._text .key{color:#94008a}
 .json-tree ._text .str{color:#dc0500}
+
+.nj-tree-select{overflow:hidden;
+    .list-item{float:left;height:100%;position:relative;overflow:hidden;}
+    .inner{height:100%;}
+    ul{height:100%;overflow:auto}
+    li{padding:.4em 1em;width:auto}
+    .active{color:#f30}
+}
+.nj-tree-select-ios{background:#eee;height:16.8em;
+    .inner{width:120%;overflow:scroll;-webkit-overflow-scrolling:touch;
+        &:before, &:after{content:'';position:absolute;left:0;width:100%;height:7.2em;background:rgba(255,255,255,.5);}
+        &:before{top:0;border-bottom:1px solid #ddd}
+        &:after{bottom:0;border-top:1px solid #ddd}
+    }
+    ul{height:auto}
+}

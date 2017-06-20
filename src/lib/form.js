@@ -366,7 +366,8 @@ formDirectives['input'] = React.createClass({
             value : this.state.value,
             requestChange : (e, text)=>{
                 var newValue
-                if( isEditor ){
+
+                if( typeof e=='string' ){
                     newValue = e
                     this.state.text = text.replace(/^[\s\t]+|[\s\t]+$/g, '')
                 }else if( typeof e=='boolean' ){
@@ -449,14 +450,17 @@ formDirectives['input'] = React.createClass({
             delete options.defaultValue
             delete options.children
         }
-        return (
-            <label className={`nj-input-${type}`}>
-                {hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />}
-                {(type=='checkbox' || type=='radio') && <span className="_holder"></span>}
-                {!hasTextarea && <span>{this.props.text}</span>}
-                {Editor && <Editor {...options}/>}
-                <VerifyStatus field={this} />
-            </label>
+        let editOptions = Object.assign({}, options)
+
+        return React.createElement(
+            isEditor ? 'span' : 'label',
+            {className: `nj-input-${type}`},
+
+            hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />,
+            (type=='checkbox' || type=='radio') && <span className="_holder"></span>,
+            !hasTextarea && <span>{this.props.text}</span>,
+            Editor && <Editor {...editOptions}/>,
+            <VerifyStatus field={this} />
         )
     }
 })
@@ -734,7 +738,7 @@ Form.verifyCode = function(verify, refresh){
     refresh = refresh || 'verify_refresh';
     verify = document.getElementById(verify);
     refresh = document.getElementById(refresh);
-    if( !verify || !refresh ){
+    if( !verify ){
         return {}
     }
     verify.onclick = function(){
@@ -749,9 +753,11 @@ Form.verifyCode = function(verify, refresh){
         this.src = _src[0] + '?' + ver;
         //this.src= domain.login+'/Index-loginverify.html?t='+(+new Date);
     }
-    refresh.onclick = function(){
-        verify.click();
-        return false;
+    if( refresh ){
+        refresh.onclick = function(){
+            verify.click();
+            return false;
+        }
     }
     return {
         refresh : function(){

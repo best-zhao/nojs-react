@@ -208,6 +208,9 @@ var Scroll = React.createClass({
         itemsComponent.forceUpdate()
     },
     scroll (next) {
+        if( $(ReactDOM.findDOMNode(this)).is(':hidden') ){
+            return
+        }
         /*
          * next 
          * boolean: 向前/后滚动 控制方向

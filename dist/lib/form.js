@@ -401,7 +401,8 @@ formDirectives['input'] = _nojsReact.React.createClass({
             value: this.state.value,
             requestChange: function requestChange(e, text) {
                 var newValue;
-                if (isEditor) {
+
+                if (typeof e == 'string') {
                     newValue = e;
                     _this4.state.text = text.replace(/^[\s\t]+|[\s\t]+$/g, '');
                 } else if (typeof e == 'boolean') {
@@ -494,19 +495,13 @@ formDirectives['input'] = _nojsReact.React.createClass({
             delete options.defaultValue;
             delete options.children;
         }
-        return _nojsReact.React.createElement(
-            'label',
-            { className: 'nj-input-' + type },
-            hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options),
-            (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }),
-            !hasTextarea && _nojsReact.React.createElement(
-                'span',
-                null,
-                this.props.text
-            ),
-            Editor && _nojsReact.React.createElement(Editor, options),
-            _nojsReact.React.createElement(VerifyStatus, { field: this })
-        );
+        var editOptions = Object.assign({}, options);
+
+        return _nojsReact.React.createElement(isEditor ? 'span' : 'label', { className: 'nj-input-' + type }, hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options), (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }), !hasTextarea && _nojsReact.React.createElement(
+            'span',
+            null,
+            this.props.text
+        ), Editor && _nojsReact.React.createElement(Editor, editOptions), _nojsReact.React.createElement(VerifyStatus, { field: this }));
     }
 });
 
@@ -828,7 +823,7 @@ Form.verifyCode = function (verify, refresh) {
     refresh = refresh || 'verify_refresh';
     verify = document.getElementById(verify);
     refresh = document.getElementById(refresh);
-    if (!verify || !refresh) {
+    if (!verify) {
         return {};
     }
     verify.onclick = function () {
@@ -843,10 +838,12 @@ Form.verifyCode = function (verify, refresh) {
         this.src = _src[0] + '?' + ver;
         //this.src= domain.login+'/Index-loginverify.html?t='+(+new Date);
     };
-    refresh.onclick = function () {
-        verify.click();
-        return false;
-    };
+    if (refresh) {
+        refresh.onclick = function () {
+            verify.click();
+            return false;
+        };
+    }
     return {
         refresh: function refresh() {
             verify.click();

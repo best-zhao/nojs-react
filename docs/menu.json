@@ -22,11 +22,7 @@
             {"id":103, "name":"async Actions", "parentid":101,"link":"utils/asyncActions"},
         {"id":201, "name":"Mixins","open":1},
             {"id":202, "name":"Effects", "parentid":201},
-            {"id":203, "name":"ChildComponents", "parentid":201},
-        {"id":301, "name":"Redux Demo","open":1},
-            {"id":302, "name":"Comments", "parentid":301, "link":"app/comments", "demo":"comments"},
-            {"id":303, "name":"Photo Search", "parentid":301, "link":"app/photo-search", "demo":"photos"}
-
+            {"id":203, "name":"ChildComponents", "parentid":201}
     ],
     "data1" : [
         {"id":2, "name":"Mask", "parentid":1, "link":"mask"},
@@ -35,6 +31,9 @@
     ],
     "data5" : [
         {"id":52, "name":"SelectTree", "parentid":5, "link":"tree/selectTree", "demo":"tree"},
-        {"id":53, "name":"LinkTree", "parentid":5, "link":"tree/linkTree", "demo":"tree"}
+        {"id":53, "name":"LinkTree", "parentid":5, "link":"tree/linkTree", "demo":"tree"},
+        {"id":301, "name":"Redux Demo","open":1},
+            {"id":302, "name":"Comments", "parentid":301, "link":"app/comments", "demo":"comments"},
+            {"id":303, "name":"Photo Search", "parentid":301, "link":"app/photo-search", "demo":"photos"}
     ]
 }

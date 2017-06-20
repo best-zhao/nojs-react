@@ -7,7 +7,7 @@ export const init = ()=>{
     
     let defaultValue = `
         13123 <p style="color:red">123</p>
-        <p style="color:red">123</p>
+        <p ><span style="color:red">123</span></p>
         <p style="color:red">123</p>
         <p style="color:red">123</p>
         <p style="color:red">123</p>
@@ -21,9 +21,8 @@ export const init = ()=>{
     `
     //<Editor placeholder="Placeholder……"/>
     render(
-        <Form onSubmit={e=>{e.preventDefault();alert(1)}}>
-            
-            <Input type="editor" className="text" required nj-minlength="5" defaultValue={defaultValue}></Input>
+        <Form onSubmit={e=>{e.preventDefault();console.log(1)}}>            
+            <Input type="editor" className="text" required nj-minlength="5" name="content" defaultValue={defaultValue}></Input>
             <button>submit</button>
         </Form>, 
         document.getElementById('rootEditor')

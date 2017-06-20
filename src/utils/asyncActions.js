@@ -28,7 +28,8 @@ var Actions = module.exports = function(context){
     }
 
     //创建action
-    function Action(options){
+    function Action(name, options){
+        this.name = name
         this.options = options
         this.init()
     }
@@ -71,7 +72,7 @@ var Actions = module.exports = function(context){
         add : function(name, options){
             options = $.extend(true, {}, config, options);
             options.reverse && parseConf(options);
-            var action = Events[name] = new Action(options)
+            var action = Events[name] = new Action(name, options)
 
             var events = $.extend(true, {}, Action.events);
 
@@ -168,7 +169,7 @@ var Actions = module.exports = function(context){
 
             //如果需要post跨域的情况  需要在onFetchBefore事件中阻止ajax提交 在post对应的success中调用conf._callback
             conf._callback = json=>{       
-                target.data('ajaxState', null);
+                target.data('ajaxState', null)[0].disabled = false;
                 if( json.status == 1 && _config.reverse ){//还原反向动作状态
                     conf.state = _config.state = reverse ? null : 1;
                     target.data('state', conf.state);
@@ -181,7 +182,7 @@ var Actions = module.exports = function(context){
             }        
 
             
-            target.data('ajaxState', true);    
+            target.data('ajaxState', true)[0].disabled = true;    
             
             var promise1 = $.ajax(conf)
             var promise2 = _action && _action.fetchEvent.complete(promise1, conf)

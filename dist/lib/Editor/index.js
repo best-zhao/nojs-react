@@ -26,7 +26,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Quill编辑器
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * docs:https://quilljs.com/docs/api/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 var Component = _nojsReact.React.Component,
     isValidElement = _nojsReact.React.isValidElement;
@@ -63,6 +67,13 @@ var Editor = function (_Component) {
             });
             value && editor.clipboard.dangerouslyPasteHTML(value);
             editor.on('text-change', this.handleChange);
+
+            // setTimeout(e=>{
+            //     editor.setSelection(0, 5);
+            //     var range = editor.getSelection();
+            //     console.log(range)
+            //     // editor.insertEmbed(range.index, 'image', 'http://quilljs.com/images/cloud.png');
+            // }, 2000)
         }
     }, {
         key: 'componentWillReceiveProps',
@@ -80,10 +91,20 @@ var Editor = function (_Component) {
             }
         }
     }, {
+        key: 'insertContent',
+        value: function insertContent(str, type) {
+            var range = editor.getSelection();
+        }
+    }, {
         key: 'handleChange',
         value: function handleChange(e) {
+            var _this2 = this;
+
             this.state.action = 'input'; //标记手动输入
-            // let text = this.editor.root.innerText.replace(/^[\s\t]+|[\s\t]+$/g, '')
+            setTimeout(function (e) {
+                _this2.state.action = null;
+            }, 1);
+            // let text = this.editor.getText()//this.editor.root.innerText.replace(/^[\s\t]+|[\s\t]+$/g, '')
             this.value = this.editor.root.innerHTML;
             var onChange = this.props.onChange;
 
@@ -92,7 +113,7 @@ var Editor = function (_Component) {
     }, {
         key: 'renderToolbar',
         value: function renderToolbar(toolbar, index) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (typeof toolbar === 'string') {
                 return _nojsReact.React.createElement('button', { key: toolbar, className: 'ql-' + toolbar });
@@ -103,7 +124,7 @@ var Editor = function (_Component) {
                     'span',
                     { key: index },
                     toolbar.map(function (child, i) {
-                        return _this2.renderToolbar(child, i);
+                        return _this3.renderToolbar(child, i);
                     })
                 );
             }
@@ -170,7 +191,16 @@ Editor.propTypes = {
 Editor.defaultProps = {
     height: 200,
     theme: 'snow',
-    toolbar: [['bold', 'italic', 'underline', 'strike'], ['blockquote', 'code-block'], [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered' }, { 'list': 'bullet' }], [{ 'script': 'sub' }, { 'script': 'super' }], [{ 'indent': '-1' }, { 'indent': '+1' }], [{ 'direction': 'rtl' }], [{ 'size': ['small', false, 'large', 'huge'] }], [{ 'header': [1, 2, 3, 4, 5, 6, false] }], [{ 'color': [] }, { 'background': [] }], [{ 'font': [] }], [{ 'align': [] }], ['link'], ['clean']]
+    toolbar: [['bold', 'italic', 'underline', 'strike'], ['blockquote'], //, 'code-block'
+    [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    // [{ 'script': 'sub'}, { 'script': 'super' }],
+    // [{ 'indent': '-1'}, { 'indent': '+1' }],
+    // [{ 'direction': 'rtl' }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'color': [] }, { 'background': [] }],
+    // [{ 'font': [] }],
+    [{ 'align': [] }], ['link']]
 };
 
 Editor.childContextTypes = {

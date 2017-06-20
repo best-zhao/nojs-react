@@ -540,7 +540,9 @@ Tree.LinkTree = React.createClass({
     displayName: 'LinkTree',
     getDefaultProps: function getDefaultProps() {
         return {
-            selected: []
+            selected: [],
+            listRows: 7,
+            type: 'select'
         };
     },
     getInitialState: function getInitialState() {
@@ -556,6 +558,7 @@ Tree.LinkTree = React.createClass({
         }, options.keymap);
 
         options.rootID = options.rootID === undefined ? '0' : options.rootID;
+        options.style = this.props.type.indexOf('list') == 0 ? 'list' : 'select';
 
         var data = options.data;
         if (typeof data == 'string') {
@@ -585,20 +588,52 @@ Tree.LinkTree = React.createClass({
         return options;
     },
     componentWillMount: function componentWillMount() {
+        var _this6 = this;
+
         this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange');
         this.fetchEvent = nj.utils.addEventQueue.call(this, 'onFetch');
         this.fetchCompleteEvent = nj.utils.addEventQueue.call(this, 'onFetchComplete');
 
-        setTimeout(this.getData, 1);
+        setTimeout(function (e) {
+            _this6.state.async ? _this6.getData() : _this6.getListSize();
+        }, 1);
+    },
+    componentDidMount: function componentDidMount() {
+        // $(ReactDOM.findDOMNode(this)).on('touchmove', function(e){
+        //     e = e.originalEvent ? e.originalEvent : e;
+        //     console.log(e.target)
+        // })
+        // $(ReactDOM.findDOMNode(this)).delegate('span.list-item', 'slideY', function(e, touch){
+        //     let {el, y1, y2} = touch
+        //     let distance = y2 - y1
+
+        //     // el.children().animate({
+        //     //     scrollTop: distance*-1
+        //     // }, 50)
+
+        // }).on('touchend', function(e){
+        //     console.log(123, e)
+        // })
+    },
+    getListSize: function getListSize() {
+        var _state4 = this.state,
+            listHeight = _state4.listHeight,
+            style = _state4.style;
+
+        if (style == 'list' && !listHeight) {
+            var list = this.refs['select-0'];
+            var item = list.firstChild;
+            this.setState({ listHeight: item.offsetHeight });
+        }
     },
     getData: function getData(parentid, level) {
-        var _this6 = this;
+        var _this7 = this;
 
-        var _state4 = this.state,
-            menuData = _state4.menuData,
-            async = _state4.async,
-            cache = _state4.cache,
-            keymap = _state4.keymap;
+        var _state5 = this.state,
+            menuData = _state5.menuData,
+            async = _state5.async,
+            cache = _state5.cache,
+            keymap = _state5.keymap;
 
         if (!async) {
             return;
@@ -612,7 +647,7 @@ Tree.LinkTree = React.createClass({
 
         var next = function next(data) {
             menuData[level] = [].concat(data);
-            _this6.setState({ menuData: menuData });
+            _this7.setState({ menuData: menuData }, _this7.getListSize);
         };
 
         if (cache[pid]) {
@@ -631,7 +666,7 @@ Tree.LinkTree = React.createClass({
                     return true;
                 }
             });
-            _this6.fetchCompleteEvent.complete(data);
+            _this7.fetchCompleteEvent.complete(data);
 
             cache[pid] = data;
             next(data);
@@ -656,77 +691,99 @@ Tree.LinkTree = React.createClass({
 
     //清空数据
     resetData: function resetData(fromLevel) {
-        var _this7 = this;
+        var _this8 = this;
 
         this.state.menuData.forEach(function (data, i) {
             if (i > fromLevel) {
                 //选择空值时 清空所有下级
                 data.length = 0;
-                _this7.state.selected[i] = {};
-                _this7.setState({ menuData: _this7.state.menuData });
+                _this8.state.selected[i] = {};
+                _this8.setState({ menuData: _this8.state.menuData });
             }
         });
     },
-    handleChange: function handleChange(level, e) {
+    handleChange: function handleChange(parentid, level, e) {
+        var maxlevel = this.props.maxlevel;
+
         var select = this.refs['select-' + level];
 
-        var maxlevel = parseInt(this.props.maxlevel);
-        var selected = this.state.selected;
+        var maxlevel = parseInt(maxlevel);
+        var _state6 = this.state,
+            selected = _state6.selected,
+            style = _state6.style;
+
 
         this.resetData(level);
 
         if (!select) {
-            // console.log(level)
             return;
         }
-        var parentid = select.value;
 
-        selected[level] = parentid ? {
+        var _state7 = this.state,
+            menuData = _state7.menuData,
+            dataFormat = _state7.dataFormat,
+            async = _state7.async,
+            keymap = _state7.keymap;
+
+        // var parentid = select.value
+
+        selected[level] = parentid != undefined ? {
             id: parentid,
-            name: nj.utils.selectedOptions(select).text //e.target.selectedOptions[0].innerText
+            name: dataFormat.databyid[parentid][keymap.name]
+            // style=='select' ? 
+            //     nj.utils.selectedOptions(select).text :
+            //     e.target.innerText
         } : {};
-
-        var _state5 = this.state,
-            menuData = _state5.menuData,
-            dataFormat = _state5.dataFormat,
-            async = _state5.async;
-
 
         if (!maxlevel || level + 1 < maxlevel) {
             if (async) {
-                parentid && this.getData(parentid, level + 1);
+                parentid != undefined && this.getData(parentid, level + 1);
             } else {
                 var parentNode = dataFormat.databyid[parentid];
                 var data = parentNode ? [].concat(parentNode.children) : [];
                 menuData[level + 1] = data;
                 this.setState({ menuData: menuData });
             }
+        } else {
+            this.setState({ selected: selected });
         }
         var node = dataFormat.databyid[parentid];
 
         this.changeEvent.complete(node, e);
 
         //ios 下多个select 无法聚焦bug
-        e && e.preventDefault();
+        // e && e.preventDefault()
 
         // this.props.onChange && this.props.onChange.call(this,parentid,level,e)
     },
     render: function render() {
-        var _this8 = this;
+        var _this9 = this;
 
-        var _state6 = this.state,
-            keymap = _state6.keymap,
-            ids = _state6.ids,
-            menuData = _state6.menuData;
+        var _state8 = this.state,
+            keymap = _state8.keymap,
+            ids = _state8.ids,
+            menuData = _state8.menuData,
+            selected = _state8.selected,
+            style = _state8.style,
+            listHeight = _state8.listHeight;
 
         var KEY_ID = keymap.id;
         var KEY_NAME = keymap.name;
-        var maxlevel = this.props.maxlevel;
-        var infos = this.props.infos || []; //附加信息 如name
+        var _props = this.props,
+            maxlevel = _props.maxlevel,
+            type = _props.type,
+            listRows = _props.listRows,
+            _props$infos = _props.infos,
+            infos = _props$infos === undefined ? [] : _props$infos;
 
+        var listCols = maxlevel || 3;
+        //infos = infos || []//附加信息 如name
+
+        // console.log(selected)
+        var className = nj.utils.joinClass('nj-tree-select clearfix', type == 'list-ios' && 'nj-tree-select-ios');
         return React.createElement(
             'div',
-            { className: 'nj-tree-select' },
+            { className: className },
             menuData.map(function (level, i) {
                 if (maxlevel && i + 1 > maxlevel) {
                     return;
@@ -738,17 +795,46 @@ Tree.LinkTree = React.createClass({
 
                 var info = infos[i] || {};
                 var valid;
+
                 var el = level && level.length ? React.createElement(
                     'span',
-                    { key: i, className: 'select-item' },
-                    React.createElement(
+                    { key: i, className: style + '-item', style: type == 'list-ios' ? { width: 100 / listCols + '%' } : {} },
+                    style == 'list' ? React.createElement(
+                        'div',
+                        { className: 'inner' },
+                        React.createElement(
+                            'ul',
+                            { ref: 'select-' + i,
+                                className: info.className,
+                                style: type == 'list-ios' ? { padding: listHeight * (listRows - 1) / 2 + 'px 0' } : {}
+                            },
+                            level.map(function (item, j) {
+                                if (id && item[KEY_ID] == id) {
+                                    //检测被设置的默认选中id是否有效
+                                    valid = true;
+                                }
+                                return React.createElement(
+                                    'li',
+                                    { key: item[KEY_ID],
+                                        className: selected[i] && selected[i].id == item[KEY_ID] ? 'active' : '',
+                                        onClick: function onClick(e) {
+                                            return type == 'list' && _this9.handleChange(item[KEY_ID], i, e);
+                                        },
+                                        value: item[KEY_ID] },
+                                    item[KEY_NAME]
+                                );
+                            })
+                        )
+                    ) : React.createElement(
                         'select',
                         {
                             className: info.className,
                             ref: 'select-' + i,
                             value: id,
                             name: info.name,
-                            onChange: _this8.handleChange.bind(_this8, i)
+                            onChange: function onChange(e) {
+                                return _this9.handleChange(e.target.value, i, e);
+                            }
                         },
                         React.createElement(
                             'option',
@@ -775,7 +861,8 @@ Tree.LinkTree = React.createClass({
                 if (id && _el) {
                     ids[i] = null; //选中后清空 防止重复
                     valid && setTimeout(function () {
-                        _el.props.onChange();
+                        _this9.handleChange(id, i);
+                        // _el.props.onChange()
                     }, 1);
                 }
                 return el;

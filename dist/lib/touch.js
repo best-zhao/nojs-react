@@ -68,6 +68,10 @@ function cancelAll() {
         if (Math.abs(touch.x1 - touch.x2) > 10) {
             // e.preventDefault();
         }
+        if (touch.x2 && Math.abs(touch.x1 - touch.x2) > 30 || touch.y2 && Math.abs(touch.y1 - touch.y2) > 30) {
+            var direction = swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2);
+            touch.el.trigger(direction == 'Left' || direction == 'Right' ? 'slideX' : 'slideY', touch);
+        }
     }).on('touchend', function (e) {
         e = e.originalEvent ? e.originalEvent : e;
         cancelLongTap();
@@ -109,7 +113,7 @@ function cancelAll() {
     $(window).on('scroll', cancelAll);
 })();
 
-['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function (m) {
+['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap', 'slideX', 'slideY'].forEach(function (m) {
     $.fn[m] = function (callback) {
         return this.on(m, callback);
     };
