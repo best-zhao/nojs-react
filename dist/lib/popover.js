@@ -181,7 +181,7 @@ var Popover = React.createClass({
             docWatch.push(this);
 
             layerBind = function layerBind() {
-                $(_this.wrap).click(function (e) {
+                $(_this.wrap)[clickEvent](function (e) {
                     clearTimeout(delay);
                     _this.keepVisible = true;
                 });

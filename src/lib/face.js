@@ -3,9 +3,10 @@
  */
 
 var $ = require('jquery')
-var {React, render, utils} = require('./')
+var {React, render, utils, ReactDOM} = require('./')
 var Popover = require('./popover')
 var {Switch, SwitchMenu, SwitchItem} = require('./switch')
+var Emoji = require('./emoji')
 
 var Face = React.createClass({
     statics : {
@@ -25,6 +26,7 @@ var Face = React.createClass({
             pop.insertEvent = utils.addEventQueue.call(pop, 'onInsert')
             return pop 
         },
+
         //提取表情,不传默认为当前表情插入对象val
         //replaceImage 将图片替换为符号 否则默认替换符号为图片
         replaceFace (con, faces, replaceImage) {
@@ -43,12 +45,12 @@ var Face = React.createClass({
                 var v = faces[i]
                 var faceArray = v.item, N, pic, item;
 
-                for(var i in faceArray){
-                    item = faceArray[i];
+                for(var j in faceArray){
+                    item = faceArray[j];
                     N = i+'_'+item;
 
                     if( con.indexOf("[:"+N+"]")!=-1 ){
-                        pic = '<img src="'+v.url+i+v.fix+'" alt="'+item+'" class="nj_face_image" title="'+item+'" />';
+                        pic = '<img src="'+v.url+j+v.fix+'" alt="'+item+'" class="nj_face_image" title="'+item+'" />';
                         con = con.replace(eval("/\\[:"+N.replace("(","\\(").replace(")","\\)")+"\\]/g"),pic);
 
                     }else if( replaceImage ){
@@ -85,18 +87,12 @@ var Face = React.createClass({
     getInitialState () {
         // var pop = this.props.popover
         // pop.face = this
-        // console.log(1,this.props.popover)
-        return $.extend(true, {
-            themes : ['default'],
-            faces : []
+        let state = Object.assign({
+            faces:[], 
+            themes:['default']
         }, this.constructor._config)
-    },
-    componentDidMount () {
-        this.loadFace()
-        // this.insertEvent = utils.addEventQueue.call(this, 'onInsert')
-    },
-    loadFace () {
-        var {themes, themeItems, faces} = this.state
+
+        var {themes, themeItems, faces} = state
         themes.forEach((f)=>{
             var item = themeItems[f];
             if( item ){
@@ -104,23 +100,57 @@ var Face = React.createClass({
                 faces.push(item);
             }
         })
-        this.setState({init:true, faces})
+        state.faces = faces
+        // this.setState({init:true, faces})        
+        return state
     },
-    insertTo (text) {
-        var {insert, popover} = this.props
+    componentDidMount () {
+        let {faces} = this.state
+        let {tab, emojiTab} = this.refs
+        emojiTab.state.listinit = {}
+        emojiTab.onChange(i=>{
+            this.loadEmoji(i)
+        })
+        
+        if( faces.length ){
+            tab.onChange(i=>{
+                //tab个数为faces.length+1
+                i==faces.length && this.loadEmoji(0)
+            })
+        }else{
+            this.loadEmoji(0)
+        }
+    },
+    loadEmoji (i) {
+        let {emojiTab} = this.refs
+        if( emojiTab.state.listinit[i] ) return
+        let {base, data, fix} = Emoji
+        let item = data[i]
+        let el = $(ReactDOM.findDOMNode(emojiTab)).find('.nj-switch-item')[i]
+        let List = e=><ul className="pack clearfix">{item.items.map((img,j)=>
+            <li key={img.key+img.value+j} onClick={this.insertTo.bind(this, img.value, 'emoji')} title={img.title}>
+                {/*<img src={base+img.key+fix} title={img.title} alt={img.value}/>*/}
+                {img.value}
+            </li>
+        )}</ul>
+        render(<List />, el)
+        emojiTab.state.listinit[i] = true
+    },    
+    insertTo (text, type) {
+        let {insert, popover} = this.props
         
         //将表情插入到光标处
-        var C = new insertOnCursor(insert);
+        let C = new insertOnCursor(insert);
         C.insertAtCaret(text);
         insert.focus();
         
-        var tab = this.refs.tab
-        var data = {
+        let tab = this.refs.tab
+        let data = {
             theme : this.state.themes[tab.state.index],
             text : text,
             content : Face.replaceFace(text)
         };
-        var Input = insert[0].$handle//是否为Input表单组件
+        let Input = insert[0].$handle//是否为Input表单组件
         if( Input ){//setState方法为异步 所以不使用 直接同步赋值
             Input.state.value = insert.val() 
         }
@@ -128,34 +158,43 @@ var Face = React.createClass({
         popover.insertEvent.complete(data)
     },
     render () {
-        var {faces} = this.state
-        var {popover} = this.props
-        return (
-        <div>
-            {faces.length && (<Switch ref="tab">
-                <ul className="nj-switch-menus clearfix">
-                {faces.map((item,i)=><SwitchMenu key={i}><span>{item.name}</span></SwitchMenu>)}
-                </ul>
-                {faces.map((item,i)=>{
-                    return <SwitchItem key={i}>
-                        <ul className={'pack clearfix face-'+item.id}>
-                        {(()=>{
-                            var imgs = [], pack = item.item
-                            for( var j in pack ){
-                                imgs.push(
-                                    <li key={j} onClick={this.insertTo.bind(this, '[:'+item.id+'_'+pack[j]+']')}>
-                                        <img src={item.url+j+item.fix} title={pack[j]} />
-                                    </li>
-                                )
-                            }
-                            return imgs
-                        })()}
-                        </ul>
-                    </SwitchItem>
-                })}
-            </Switch>)}
-        </div>
-        )
+        let {faces} = this.state
+        let {base, data, fix} = Emoji
+        return <Switch ref="tab" className="tab">
+            <ul className="nj-switch-menus clearfix">
+            {faces.map((item,i)=><SwitchMenu key={i}><span>{item.name}</span></SwitchMenu>)}
+            <SwitchMenu>Emoji</SwitchMenu>
+            </ul>
+            <div className="face-wrap">
+            {faces.map((item,i)=>{
+                return <SwitchItem key={i}>
+                    <ul className={'pack clearfix face-'+item.id}>
+                    {(()=>{
+                        let imgs = [], pack = item.item
+                        for( let j in pack ){
+                            imgs.push(
+                                <li key={j} onClick={this.insertTo.bind(this, '[:'+item.id+'_'+pack[j]+']')}>
+                                    <img src={item.url+j+item.fix} title={pack[j]} />
+                                </li>
+                            )
+                        }
+                        return imgs
+                    })()}
+                    </ul>
+                </SwitchItem>
+            })}
+            </div>
+            <SwitchItem>
+                <Switch className="emoji-tab clearfix font-emoji" ref="emojiTab">
+                    <ul className="_menu clearfix">
+                        {data.map(item=><li key={'t'+item.name}><SwitchMenu>{item.name}</SwitchMenu></li>)}
+                    </ul>
+                    <div className="_body">
+                        {data.map(item=><SwitchItem key={item.name}></SwitchItem>)}
+                    </div>
+                </Switch>
+            </SwitchItem>
+        </Switch>
     }
 })
 

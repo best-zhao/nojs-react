@@ -538,6 +538,10 @@ Tree.SelectTree = LevelSelect;
 //select级联菜单
 Tree.LinkTree = React.createClass({
     displayName: 'LinkTree',
+
+    statics: {
+        cache: {}
+    },
     getDefaultProps: function getDefaultProps() {
         return {
             selected: [],
@@ -632,7 +636,6 @@ Tree.LinkTree = React.createClass({
         var _state5 = this.state,
             menuData = _state5.menuData,
             async = _state5.async,
-            cache = _state5.cache,
             keymap = _state5.keymap;
 
         if (!async) {
@@ -642,22 +645,28 @@ Tree.LinkTree = React.createClass({
 
         var KEY_ID = keymap.id;
         var KEY_PID = keymap.parentid;
-        var pid = parentid;
         parentid = parentid || this.state.rootID;
 
         var next = function next(data) {
             menuData[level] = [].concat(data);
             _this7.setState({ menuData: menuData }, _this7.getListSize);
         };
+        var cache = this.constructor.cache;
 
-        if (cache[pid]) {
-            next(cache[pid]);
+        var source = this.props.data + parentid;
+        var cacheData = cache[source];
+        var databyid = this.state.dataFormat.databyid;
+
+        if (cacheData) {
+            cacheData.forEach(function (node) {
+                databyid[node[KEY_ID]] = node;
+            });
+            next(cacheData);
             return;
         }
-        var promise = $.getJSON(this.props.data + parentid);
+        var promise = $.getJSON(source);
         promise = this.fetchEvent.complete(promise, parentid) || promise;
 
-        var databyid = this.state.dataFormat.databyid;
         promise.then(function (json) {
             var data = json || [];
             data = data.filter(function (node) {
@@ -668,7 +677,7 @@ Tree.LinkTree = React.createClass({
             });
             _this7.fetchCompleteEvent.complete(data);
 
-            cache[pid] = data;
+            cache[source] = data;
             next(data);
         });
     },
@@ -749,7 +758,7 @@ Tree.LinkTree = React.createClass({
         }
         var node = dataFormat.databyid[parentid];
 
-        this.changeEvent.complete(node, e);
+        this.changeEvent.complete(node, level, e);
 
         //ios 下多个select 无法聚焦bug
         // e && e.preventDefault()

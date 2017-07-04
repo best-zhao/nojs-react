@@ -1,6 +1,5 @@
 /**
  * 获取组合组件之间的父子关系
- * 通过point与rootID双重验证组件层级关系
  */
 var nj = require('../lib')
 // var {React, ReactDOM} = nj
@@ -18,7 +17,7 @@ var config = exports.config = {
             //     handle : this
             // }
         ],
-
+        focus : [],
         getByHandle (handle) {
             for( var i=0,n=this.instances.length;i<n;i++ ){
                 var item = this.instances[i].handle
@@ -44,6 +43,7 @@ var config = exports.config = {
             handle : this,
             components : []
         })
+        fn.focus.push(this)
         return state
     },  
     /*componentWillMount () {
@@ -51,14 +51,14 @@ var config = exports.config = {
     },  */ 
     componentWillMount  () {
         
-        var fn = this.constructor
-        var state = this.state
+        let fn = this.constructor
+        let state = this.state
 
         //查找存在指针的父组件
-        var parents = fn.parents || []
-        var parentConstructor
-        var parentComponent
-        var parentPoint
+        let parents = fn.parents || []
+        let parentConstructor
+        let parentComponent
+        let parentPoint
 
         for( var i=0; i<parents.length; i++ ){
             parentConstructor = parents[i]
@@ -69,25 +69,34 @@ var config = exports.config = {
                 
                 //遍历父组件中 已存在的同类组件 计算出当前组件所处的索引
                 var index = 0
+                var otherIndex = 0
                 parentComponent.components.forEach(f=>{
-                    if( fn===f.constructor ){
+                    var _index = f.constructor.componentIndex                    
+                    if( fn===f.constructor  ){
                         index++
+                    }else if(_index && fn.componentIndex==_index){//其他同级组件
+                        otherIndex++
                     }
                 })
+
+                //标记了componentIndex的组件 检测是否 成对 （嵌套情形时）
+                if( fn.componentIndex && index+1==otherIndex && parentPoint>0 ){
+                    //达到成对条件 将父组件指针指向上一级
+                    parentConstructor.point = parentPoint-1                    
+                }
+                // console.log('-----', index, otherIndex, this.props, parentComponent.components.length)
                 state.index = index
 
                 //将当前组件添加到有效的父组件中
                 parentComponent.components.push(this)
                 parentComponent = parentComponent.handle
                 state.parentComponent = parentComponent
+                state.parentPoint = parentPoint
                 break;
             }
         }
 
         state.childComponents = fn.instances[fn.instances.length-1].components
-        
-        // console.log(222,this.props.type,this._reactInternalInstance._rootNodeID)
-        //fn.parents = null
     },  
     componentDidMount () {
         var fn = this.constructor
@@ -106,8 +115,9 @@ var config = exports.config = {
     },
 }
 //设置组件可能存在父子组件关系的
-exports.setParents = function(parents){
-    return $.extend(true, {}, config, {statics:{parents:parents}})
+//componentIndex 相同index的为同级组件
+exports.setParents = function(parents, componentIndex){
+    return $.extend(true, {}, config, {statics:{parents, componentIndex}})
 }
 
 /**

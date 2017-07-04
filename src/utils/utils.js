@@ -442,7 +442,8 @@ module.exports = {
             'defaultvalue' : 'defaultValue',
             'defaultchecked' : 'defaultChecked',
             'enctype' : 'encType',
-            'readonly' : 'readOnly'
+            'readonly' : 'readOnly',
+            'enctype' : 'encType'
         }
         for( var i=0,n=attrs.length;i<n;i++ ){
             var attr = attrs[i]

@@ -1,6 +1,8 @@
+import $ from 'jquery'
 import {React, render} from 'nj'
 import {Form} from 'nj/form'
 import {LinkTree} from 'nj/tree'
+import Face from 'nj/face'
 //添加全局异步验证方法async
 // Form.addAsyncRule('async', function(value, options){
 //     Object.assign({type:'get'}, options)
@@ -32,6 +34,14 @@ export const init = ({id, url})=>{
     Form.start()
 
     Form.startOne('verify')
+
+    Face.config({
+        themes : []
+    })
+    Face.create({
+        nearby : 'addFace',
+        insert: $('textarea[name="comment"]')
+    })
 
     let groupVerify = Form.getByHandle('verify-input-group')
     groupVerify && groupVerify.onSubmit(e=>{

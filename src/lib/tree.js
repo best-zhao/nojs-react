@@ -501,6 +501,9 @@ Tree.SelectTree = LevelSelect
 
 //select级联菜单
 Tree.LinkTree = React.createClass({
+    statics : {
+        cache : {}
+    },
     getDefaultProps () {
         return {
             selected : [],
@@ -581,7 +584,7 @@ Tree.LinkTree = React.createClass({
         }  
     },
     getData (parentid, level) {
-        var {menuData, async, cache, keymap} = this.state
+        var {menuData, async, keymap} = this.state
         if( !async ){
             return
         }
@@ -589,22 +592,27 @@ Tree.LinkTree = React.createClass({
 
         var KEY_ID = keymap.id
         var KEY_PID = keymap.parentid
-        var pid = parentid
         parentid = parentid || this.state.rootID
 
         var next = (data)=>{
             menuData[level] = [].concat(data)
             this.setState({menuData}, this.getListSize)
         }
+        var {cache} = this.constructor
+        var source = this.props.data+parentid
+        var cacheData = cache[source]
+        var databyid = this.state.dataFormat.databyid
 
-        if( cache[pid] ){
-            next(cache[pid])
+        if( cacheData ){
+            cacheData.forEach(function(node){
+                databyid[node[KEY_ID]] = node
+            })
+            next(cacheData)
             return
         }
-        var promise = $.getJSON(this.props.data+parentid)
-        promise = this.fetchEvent.complete(promise,parentid) || promise
+        var promise = $.getJSON(source)
+        promise = this.fetchEvent.complete(promise, parentid) || promise
 
-        var databyid = this.state.dataFormat.databyid
         promise.then(json=>{
             var data = json || []
             data = data.filter((node)=>{
@@ -615,7 +623,7 @@ Tree.LinkTree = React.createClass({
             })
             this.fetchCompleteEvent.complete(data)
 
-            cache[pid] = data
+            cache[source] = data
             next(data) 
         })
     },

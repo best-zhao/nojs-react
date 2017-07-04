@@ -9,7 +9,8 @@ var $ = require('jquery');
 var _require = require('./'),
     React = _require.React,
     render = _require.render,
-    utils = _require.utils;
+    utils = _require.utils,
+    ReactDOM = _require.ReactDOM;
 
 var Popover = require('./popover');
 
@@ -17,6 +18,8 @@ var _require2 = require('./switch'),
     Switch = _require2.Switch,
     SwitchMenu = _require2.SwitchMenu,
     SwitchItem = _require2.SwitchItem;
+
+var Emoji = require('./emoji');
 
 var Face = React.createClass({
     displayName: 'Face',
@@ -65,12 +68,12 @@ var Face = React.createClass({
                     pic,
                     item;
 
-                for (var i in faceArray) {
-                    item = faceArray[i];
+                for (var j in faceArray) {
+                    item = faceArray[j];
                     N = i + '_' + item;
 
                     if (con.indexOf("[:" + N + "]") != -1) {
-                        pic = '<img src="' + v.url + i + v.fix + '" alt="' + item + '" class="nj_face_image" title="' + item + '" />';
+                        pic = '<img src="' + v.url + j + v.fix + '" alt="' + item + '" class="nj_face_image" title="' + item + '" />';
                         con = con.replace(eval("/\\[:" + N.replace("(", "\\(").replace(")", "\\)") + "\\]/g"), pic);
                     } else if (replaceImage) {
                         _con.find('img.nj_face_image').each(function () {
@@ -107,21 +110,14 @@ var Face = React.createClass({
     getInitialState: function getInitialState() {
         // var pop = this.props.popover
         // pop.face = this
-        // console.log(1,this.props.popover)
-        return $.extend(true, {
-            themes: ['default'],
-            faces: []
+        var state = Object.assign({
+            faces: [],
+            themes: ['default']
         }, this.constructor._config);
-    },
-    componentDidMount: function componentDidMount() {
-        this.loadFace();
-        // this.insertEvent = utils.addEventQueue.call(this, 'onInsert')
-    },
-    loadFace: function loadFace() {
-        var _state = this.state,
-            themes = _state.themes,
-            themeItems = _state.themeItems,
-            faces = _state.faces;
+
+        var themes = state.themes,
+            themeItems = state.themeItems,
+            faces = state.faces;
 
         themes.forEach(function (f) {
             var item = themeItems[f];
@@ -130,9 +126,61 @@ var Face = React.createClass({
                 faces.push(item);
             }
         });
-        this.setState({ init: true, faces: faces });
+        state.faces = faces;
+        // this.setState({init:true, faces})        
+        return state;
     },
-    insertTo: function insertTo(text) {
+    componentDidMount: function componentDidMount() {
+        var _this2 = this;
+
+        var faces = this.state.faces;
+        var _refs = this.refs,
+            tab = _refs.tab,
+            emojiTab = _refs.emojiTab;
+
+        emojiTab.state.listinit = {};
+        emojiTab.onChange(function (i) {
+            _this2.loadEmoji(i);
+        });
+
+        if (faces.length) {
+            tab.onChange(function (i) {
+                //tab个数为faces.length+1
+                i == faces.length && _this2.loadEmoji(0);
+            });
+        } else {
+            this.loadEmoji(0);
+        }
+    },
+    loadEmoji: function loadEmoji(i) {
+        var _this3 = this;
+
+        var emojiTab = this.refs.emojiTab;
+
+        if (emojiTab.state.listinit[i]) return;
+        var base = Emoji.base,
+            data = Emoji.data,
+            fix = Emoji.fix;
+
+        var item = data[i];
+        var el = $(ReactDOM.findDOMNode(emojiTab)).find('.nj-switch-item')[i];
+        var List = function List(e) {
+            return React.createElement(
+                'ul',
+                { className: 'pack clearfix' },
+                item.items.map(function (img, j) {
+                    return React.createElement(
+                        'li',
+                        { key: img.key + img.value + j, onClick: _this3.insertTo.bind(_this3, img.value, 'emoji') },
+                        React.createElement('img', { src: base + img.key + fix, title: img.title, alt: img.value })
+                    );
+                })
+            );
+        };
+        render(React.createElement(List, null), el);
+        emojiTab.state.listinit[i] = true;
+    },
+    insertTo: function insertTo(text, type) {
         var _props = this.props,
             insert = _props.insert,
             popover = _props.popover;
@@ -158,32 +206,39 @@ var Face = React.createClass({
         popover.insertEvent.complete(data);
     },
     render: function render() {
-        var _this2 = this;
+        var _this4 = this;
 
         var faces = this.state.faces;
-        var popover = this.props.popover;
+        var base = Emoji.base,
+            data = Emoji.data,
+            fix = Emoji.fix;
 
         return React.createElement(
-            'div',
-            null,
-            faces.length && React.createElement(
-                Switch,
-                { ref: 'tab' },
+            Switch,
+            { ref: 'tab', className: 'tab' },
+            React.createElement(
+                'ul',
+                { className: 'nj-switch-menus clearfix' },
+                faces.map(function (item, i) {
+                    return React.createElement(
+                        SwitchMenu,
+                        { key: i },
+                        React.createElement(
+                            'span',
+                            null,
+                            item.name
+                        )
+                    );
+                }),
                 React.createElement(
-                    'ul',
-                    { className: 'nj-switch-menus clearfix' },
-                    faces.map(function (item, i) {
-                        return React.createElement(
-                            SwitchMenu,
-                            { key: i },
-                            React.createElement(
-                                'span',
-                                null,
-                                item.name
-                            )
-                        );
-                    })
-                ),
+                    SwitchMenu,
+                    null,
+                    'Emoji'
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'face-wrap' },
                 faces.map(function (item, i) {
                     return React.createElement(
                         SwitchItem,
@@ -197,7 +252,7 @@ var Face = React.createClass({
                                 for (var j in pack) {
                                     imgs.push(React.createElement(
                                         'li',
-                                        { key: j, onClick: _this2.insertTo.bind(_this2, '[:' + item.id + '_' + pack[j] + ']') },
+                                        { key: j, onClick: _this4.insertTo.bind(_this4, '[:' + item.id + '_' + pack[j] + ']') },
                                         React.createElement('img', { src: item.url + j + item.fix, title: pack[j] })
                                     ));
                                 }
@@ -206,6 +261,36 @@ var Face = React.createClass({
                         )
                     );
                 })
+            ),
+            React.createElement(
+                SwitchItem,
+                null,
+                React.createElement(
+                    Switch,
+                    { className: 'emoji-tab clearfix', ref: 'emojiTab' },
+                    React.createElement(
+                        'ul',
+                        { className: '_menu clearfix' },
+                        data.map(function (item) {
+                            return React.createElement(
+                                'li',
+                                { key: 't' + item.name },
+                                React.createElement(
+                                    SwitchMenu,
+                                    null,
+                                    item.name
+                                )
+                            );
+                        })
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: '_body' },
+                        data.map(function (item) {
+                            return React.createElement(SwitchItem, { key: item.name });
+                        })
+                    )
+                )
             )
         );
     }

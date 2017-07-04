@@ -47,13 +47,13 @@ h4 span{font-size:14px;font-weight:100;color:#666;}
 #demo-nav a:not(:last-child){border-right:1px solid #bbb;}
 #demo-nav .current{color:#f30;}
 #demo-nav a.back{margin-right:20px;border:none}
-
+/*
 .nj-switch{border:1px solid #ddd;border-radius:5px}
 .nj-switch-menus{background:#f0f0f0;border-bottom:1px solid #ddd}
 .nj-switch-menu{float:left;padding:5px 40px;border-right:1px solid #ddd;}
 .nj-switch-menu-active{background:#fff;margin:0 0 -1px;padding-top:6px;}
 .nj-switch-item{padding:15px;}
-
+*/
 .nj-frame-side ._foot{position:absolute;bottom:10px;left:10px;z-index:50}
 .nj-frame-side ._foot a{color:#999}
 .nj-frame-side ._foot a:hover{color:#000}

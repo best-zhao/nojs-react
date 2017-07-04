@@ -2,6 +2,8 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var $ = require('jquery');
 var actions = require('./asyncActions');
 
@@ -449,7 +451,7 @@ module.exports = {
         var options = {};
 
         //部分属性需要替换为符合react规范
-        var needReplace = {
+        var needReplace = _defineProperty({
             'class': 'className',
             'novalidate': 'noValidate',
             'cellpadding': 'cellPadding',
@@ -460,7 +462,7 @@ module.exports = {
             'defaultchecked': 'defaultChecked',
             'enctype': 'encType',
             'readonly': 'readOnly'
-        };
+        }, 'enctype', 'encType');
         for (var i = 0, n = attrs.length; i < n; i++) {
             var attr = attrs[i];
             var name = attr.name;

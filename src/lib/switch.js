@@ -48,7 +48,7 @@ var Switch = React.createClass({
 })
 
 var SwitchMenu = React.createClass({
-    mixins : [mixins.childComponents.setParents([Switch])],    
+    mixins : [mixins.childComponents.setParents([Switch], 1)],    
     componentDidMount () {
         directive.getChildComponents(this)
     },
@@ -75,7 +75,7 @@ var SwitchMenu = React.createClass({
 })
 
 var SwitchItem = React.createClass({
-    mixins : [mixins.childComponents.setParents([Switch])],
+    mixins : [mixins.childComponents.setParents([Switch], 1)],
     componentDidMount () {
         directive.getChildComponents(this)
         //以SwitchItem的数量来更新Switch组件的切换子项个数

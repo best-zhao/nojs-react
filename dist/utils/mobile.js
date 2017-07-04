@@ -46,6 +46,7 @@ if (!metaEl) {
         wrap.appendChild(metaEl);
         document.write(wrap.innerHTML);
     }
+    document.write('<style>html[data-dpr="' + dpr + '"] body{font-size:' + 12 * dpr + 'px}</style>');
 }
 
 var tid = void 0;
@@ -59,13 +60,5 @@ window.addEventListener('pageshow', function (e) {
         tid = setTimeout(getDeviceWidth, 300);
     }
 }, false);
-
-if (document.readyState === 'complete') {
-    document.body.style.fontSize = 12 * dpr + 'px';
-} else {
-    document.addEventListener('DOMContentLoaded', function (e) {
-        document.body.style.fontSize = 12 * dpr + 'px';
-    }, false);
-}
 
 getDeviceWidth();
