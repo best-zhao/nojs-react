@@ -263,10 +263,11 @@ upload.prototype = {
 			var id = 'file' + (+new Date) + parseInt(Math.random()*100);
 			
 			T.fileItem[val] = data.id = id;
-			T.fileItem[id] = {
+			
+			T.fileItem[id] = $.extend({}, data, {
 				file : val,
 				button : T.button
-			};
+			})
 			
 			if( _file ){
 				T.fileItem[id].files = m;

@@ -157,11 +157,15 @@ var Popover = React.createClass({
             };
         } else if (trigger == 'click') {
             var _show2 = function _show2(e) {
+                var _this4 = this;
+
                 self.keepVisible = true;
                 setTimeout(function () {
                     self.keepVisible = null;
                 }, 100);
-                self.state.visible && trigger == 'click' ? self.setDisplay(false) : show(this);
+                self.state.visible && trigger == 'click' ? self.setDisplay(false) : setTimeout(function () {
+                    return show(_this4);
+                }, 5);
                 e.preventDefault();
             };
 
