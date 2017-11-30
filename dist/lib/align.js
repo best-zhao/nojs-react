@@ -139,7 +139,7 @@ Align.prototype = {
 
             style[direction == 'x' ? 'left' : 'top'] = value;
         }
-        var turnPosition = this.checkBorder(size, position, style); //屏幕边界限制
+        var turnPosition = !this.isWrap && this.checkBorder(size, position, style); //屏幕边界限制
         if (turnPosition) {
             this.options.onTurn && this.options.onTurn.call(this, turnPosition);
             this.set({ position: turnPosition, nearby: nearby });

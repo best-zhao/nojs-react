@@ -249,7 +249,10 @@ var _ = _self.Prism = {
 
 	highlight: function (text, grammar, language) {
 		var tokens = _.tokenize(text, grammar);
-		return Token.stringify(_.util.encode(tokens), language);
+		var a = Token.stringify(_.util.encode(tokens), language);
+		a = a.replace(/^[\s\r\n]*|[\s\r\n]*$/g, '').split(/\n/).map(i=>`<li><div>${i}</div></li>`).join('')
+		a = `<ol>${a}</ol>`
+		return a
 	},
 
 	tokenize: function(text, grammar, language) {
@@ -373,7 +376,6 @@ var _ = _self.Prism = {
 				}
 			}
 		}
-
 		return strarr;
 	},
 

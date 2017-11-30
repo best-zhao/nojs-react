@@ -91,6 +91,13 @@ var Face = React.createClass({
             faces:[], 
             themes:['default']
         }, this.constructor._config)
+        state.themes = [].concat(state.themes)
+
+        let i = state.themes.indexOf('emoji')
+        if( i>-1 ){
+            state.themes.splice(i, 1)
+            state.hasEmoji = true
+        }
 
         var {themes, themeItems, faces} = state
         themes.forEach((f)=>{
@@ -105,8 +112,12 @@ var Face = React.createClass({
         return state
     },
     componentDidMount () {
-        let {faces} = this.state
+        let {faces, hasEmoji} = this.state
         let {tab, emojiTab} = this.refs
+        
+        if( !hasEmoji ){
+            return
+        }
         emojiTab.state.listinit = {}
         emojiTab.onChange(i=>{
             this.loadEmoji(i)
@@ -158,12 +169,12 @@ var Face = React.createClass({
         popover.insertEvent.complete(data)
     },
     render () {
-        let {faces} = this.state
+        let {faces,hasEmoji} = this.state
         let {base, data, fix} = Emoji
         return <Switch ref="tab" className="tab">
             <ul className="nj-switch-menus clearfix">
             {faces.map((item,i)=><SwitchMenu key={i}><span>{item.name}</span></SwitchMenu>)}
-            <SwitchMenu>Emoji</SwitchMenu>
+            {hasEmoji ? <SwitchMenu>Emoji</SwitchMenu> : null}
             </ul>
             <div className="face-wrap">
             {faces.map((item,i)=>{
@@ -184,7 +195,7 @@ var Face = React.createClass({
                 </SwitchItem>
             })}
             </div>
-            <SwitchItem>
+            {hasEmoji ? <SwitchItem>
                 <Switch className="emoji-tab clearfix font-emoji" ref="emojiTab">
                     <ul className="_menu clearfix">
                         {data.map(item=><li key={'t'+item.name}><SwitchMenu>{item.name}</SwitchMenu></li>)}
@@ -194,6 +205,7 @@ var Face = React.createClass({
                     </div>
                 </Switch>
             </SwitchItem>
+            : null}
         </Switch>
     }
 })

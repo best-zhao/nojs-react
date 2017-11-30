@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -37,6 +33,8 @@ var Topbar = function (_React$Component) {
     _createClass(Topbar, [{
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var items = this.props.items;
 
             items.forEach(function (item) {
@@ -58,7 +56,7 @@ var Topbar = function (_React$Component) {
                     handle = _ref.handle;
 
                 var options = { key: i, className: joinClass('item', type && 'item-' + type), onClick: handle };
-                return typeof content == 'string' ? _.React.createElement('div', _extends({}, options, { dangerouslySetInnerHTML: { __html: content } })) : typeof content == 'function' ? content(options) || null : _.React.createElement(
+                return typeof content == 'string' ? _.React.createElement('div', _extends({}, options, { dangerouslySetInnerHTML: { __html: content } })) : typeof content == 'function' ? content(options, _this2) || null : _.React.createElement(
                     'div',
                     options,
                     content
@@ -88,4 +86,4 @@ var Topbar = function (_React$Component) {
     return Topbar;
 }(_.React.Component);
 
-exports.default = Topbar;
+module.exports = Topbar;

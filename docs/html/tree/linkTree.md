@@ -8,7 +8,7 @@ import {LinkTree} from 'nj/tree' //引入组件
 </code>
 </pre>
 
-
+<button id="menuTree">menu</button>
 <div id="treeLink" class="nj-tree mb15"></div>
 
 <pre><code class="language-javascript"><script type="text/code">

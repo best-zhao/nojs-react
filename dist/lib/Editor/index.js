@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -62,6 +58,7 @@ var Editor = function (_Component) {
             var editor = this.editor = new _quill2.default(this.refs.editor, {
                 modules: { toolbar: '#' + this.state.id },
                 placeholder: placeholder,
+                // debug: 'info',
                 // readOnly,
                 theme: theme
             });
@@ -116,7 +113,7 @@ var Editor = function (_Component) {
             var _this3 = this;
 
             if (typeof toolbar === 'string') {
-                return _nojsReact.React.createElement('button', { key: toolbar, className: 'ql-' + toolbar });
+                return _nojsReact.React.createElement('button', { key: toolbar, title: toolbar, className: 'ql-' + toolbar });
             }
 
             if (Array.isArray(toolbar)) {
@@ -174,8 +171,7 @@ var Editor = function (_Component) {
     return Editor;
 }(Component);
 
-exports.default = Editor;
-
+module.exports = Editor;
 
 Editor.propTypes = {
     height: _propTypes2.default.number,
@@ -196,9 +192,9 @@ Editor.defaultProps = {
     // [{ 'script': 'sub'}, { 'script': 'super' }],
     // [{ 'indent': '-1'}, { 'indent': '+1' }],
     // [{ 'direction': 'rtl' }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
+    // [{ 'size': ['small', false, 'large', 'huge'] }],
     // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    [{ 'color': [] }, { 'background': [] }],
+    ['video'], [{ 'size': ['0.26rem', '0.31rem', '0.37rem', '0.41rem', '0.47rem', '0.52rem'] }], [{ 'color': [] }, { 'background': [] }],
     // [{ 'font': [] }],
     [{ 'align': [] }], ['link']]
 };

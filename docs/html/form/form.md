@@ -6,8 +6,7 @@
 ### Usage 
 <pre><code class="language-javascript">
 import {Form, Input, InputGroup} from 'nj/form' //引入组件
-</code>
-</pre>
+</code></pre>
 
 
 #### #1 React Component
@@ -17,8 +16,7 @@ var myform = ReactDOM.render((
         <Input type="text" defaultValue="hello" required />
     </Form>
 ), document.getElementById('formRoot'))
-</script></code>
-</pre>
+</script></code></pre>
 
 #### #2 nj-html
 <pre><code class="language-html"><script type="text/code">
@@ -33,8 +31,7 @@ var myform = ReactDOM.render((
         <nj-input class="checkbox" name="skill[]" value="3">javascript</nj-input>
     </nj-input-group>
 </nj-form>
-</script></code>
-</pre>
+</script></code></pre>
 
 通过 <code>handle</code>属性可以获取表单的实例对象
 <pre><code class="language-javascript">

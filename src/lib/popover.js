@@ -102,7 +102,8 @@ var Popover = React.createClass({
         var layerBind
 
 
-        function hide(){            
+        function hide(){     
+            window.clearTimeout(delay)  
             if( self.keepVisible || !self.state.visible ){
                 self.keepVisible = null
                 return
@@ -113,9 +114,10 @@ var Popover = React.createClass({
         }
         if( trigger=='hover' ){
             function _show(e){
+                let _this = this
                 self.setDisplay(false)
                 window.clearTimeout(delay)
-                show(this)
+                delay = setTimeout(()=>show(this), 40)
             }
             if( bindTarget ){
                 _event = 'mouseenter'+eventSP
@@ -142,6 +144,9 @@ var Popover = React.createClass({
         }else if( trigger=='click' ){
             function _show(e){
                 self.keepVisible = true
+                setTimeout(function(){
+                    self.keepVisible = null;
+                }, 100)
                 self.state.visible && trigger=='click' ? self.setDisplay(false) : show(this)
                 e.preventDefault()
             }
@@ -181,6 +186,7 @@ var Popover = React.createClass({
         this.state.trigger = trigger
 
         var showClassName = this.props.showClassName || 'nj-popover-nearby'
+        var delayHideClass
         this.onShow(()=>{
             self.getOrigin()   
             window.clearTimeout(this.hidedelay)//nearby有多个元素集合时 鼠标快速滑过 pop显示在下一目标上 上次的element还未移除
@@ -204,18 +210,22 @@ var Popover = React.createClass({
                 }))
             }
             
+            clearTimeout(delayHideClass)
             $(this.state.nearby).addClass(showClassName)
 
         }).onHide(()=>{
             
-            $(this.state.nearby).removeClass(showClassName)
+            delayHideClass = setTimeout(()=>{
+                $(this.state.nearby).removeClass(showClassName)
+            }, 200)
             // Popover.destory(this)
             
             this.hidedelay = window.setTimeout(e=>{
-                
-                document.body.removeChild(this.element)
-
                 var {layer} = this.refs
+                if( !layer ){//layer已被移除
+                    return
+                }
+                document.body.removeChild(this.element)
                 layer.layer = null
                 this.align = null
             }, 200)
@@ -254,14 +264,18 @@ var Popover = React.createClass({
 var docWatch = (function(){
     var initial
     var pops = []
-    var hide = (e)=>window.setTimeout(i=>{
-        pops.forEach(pop=>{
-            if( pop.state.trigger=='focus' && e.target===pop.state.nearby ){
-                return
-            }
-            pop.setDisplay(false)
-        })
-    }, 0)
+    var delay
+    var hide = (e)=>{
+        window.clearTimeout(delay)
+        delay = window.setTimeout(i=>{
+            pops.forEach(pop=>{
+                if( pop.state.trigger=='focus' && e.target===pop.state.nearby ){
+                    return
+                }
+                pop.setDisplay(false)
+            })
+        }, 0)
+    }
     return {
         push (pop) {
             if( !initial ){
@@ -288,7 +302,8 @@ var Layer = React.createClass({
         // this.renderLayer()
     },
     componentDidUpdate (prevProps,prevState) {
-        this.renderLayer()
+        var {from} = this.props
+        from.state.visible && this.renderLayer()
     },
     render : ()=>null
 })

@@ -2,6 +2,8 @@
  * 滚动条滚动到某位置时固定某元素
  */
 var $ = require('jquery')
+var nj = require('./nojs-react') 
+var {React,ReactDOM,utils} = nj
 var win = $(window)
 var ie6 = false
 
@@ -15,8 +17,9 @@ function fixed(element, options){
     }
     options = options || {};
     options.element = element;
+    element[0].$fixed = options
     element.data('fixedOptions', options);
-    options.wrap = options.wrap || win;
+    options.wrap = $(options.wrap || win);
     
     !fixed.init && fixed.bind(options);  
     
@@ -34,17 +37,20 @@ function fixed(element, options){
      * options.until：直到遇到某个对象时停止固定  
      * @element:底部触碰到该对象时停止
      * @offset:距离element多远时停止 默认0
+     * @scroll:从开始固定算起 滚动过的距离超过该值 停止
      */
-          
+
     var un = options.until;
-    
-    if( !un || !un.element || !un.element.length ){
-        options.until = null;
-    }else{
-        un.offset = un.offset || 0;
-        un.top = un.element.offset().top - un.offset;//until.element的位置可能会不断发生变化，所以需要在scroll事件中更新
-        un.bottom = height;
-    }
+    if( un ){
+        un.element = utils.dom(un.element)
+        if( (un.element && un.element.length) || un.scroll ){
+            un.offset = un.offset || 0;
+            un.top = un.scroll ? (un.scroll+options.top) : (un.element.offset().top - un.offset); //until.element的位置可能会不断发生变化，所以需要在scroll事件中更新
+            un.bottom = height;
+        }else{
+            options.until = null
+        }
+    }    
     
     //添加一个占位元素
     if( !options.Float ){
@@ -53,7 +59,11 @@ function fixed(element, options){
     }
     
     fixed.item.push(options);
+    if( options.autoWidth ){
+        options.width = options.element.parent().width() - parseInt(options.element.css('padding-left')) - parseInt(options.element.css('padding-right'));
+    }
     fixed.scroll();
+
 }
 fixed.item = [];
 
@@ -65,21 +75,23 @@ fixed.scroll = function(resize){
         options = fixed.item[i];
         _top = options.wrap.scrollTop();
         un = options.until;
-        top = options.top //= options.element.offset().top;
+        top = options.top
 
 
         function setSize(){
             var style = {
-                'top' : ie6 ? options.offset + _top : options.offset,
+                'top' : ie6 ? options.offset + _top : wraptop + options.offset,
                 'position' : ie6 ? 'absolute' : 'fixed'
             }
             if( options.autoWidth ){
-                style.width = options.element.parent().width()-parseInt(options.element.css('padding-left'))-parseInt(options.element.css('padding-right'))
+                style.width = options.width
             }
             options.element.css(style).addClass('nj_fixed');
         }
 
-        if( _top > top-options.offset ){
+        var wraptop = options.wrap.offset() ? options.wrap.offset().top : 0
+
+        if( _top > top-wraptop-options.offset ){
             var h = options.element.outerHeight(true)
             if( !options.state && options.holder ){//更新holderStyle 页面布局变化会影响element高度                    
                 options.holderStyle.height = h;
@@ -87,14 +99,18 @@ fixed.scroll = function(resize){
             }
             
             if( un ){
-                un.top = un.element.offset().top - un.offset;
                 un.bottom = h;
+                un.top = un.scroll ? (un.scroll+options.top+h) : (un.element.offset().top - un.offset);
                 if( un.bottom + options.offset + _top >= un.top ){
                     options.state = 2;
                     options.element.css({
                         'position' : 'absolute',
                         'top' : un.top-un.bottom
                     });
+                    var parentFixed = options.element[0].parentNode.$fixed
+                    if( parentFixed ){
+                        parentFixed.element.attr('style', options.style);
+                    }
                     un.enter && un.enter(options.element);
                     continue;
                 }else if( options.state == 2 ){
@@ -128,7 +144,6 @@ fixed.scroll = function(resize){
             //还未开始固定 继续获取其初始top
             top = options.top = options.element.offset().top;
         }
-
         
         options.callback && options.callback();
     }

@@ -516,7 +516,7 @@ var calendar = {
     }
 };
 
-export default {
+module.exports =  {
     solar2lunar : calendar.solar2lunar,
     lunar2solar : calendar.lunar2solar
 }

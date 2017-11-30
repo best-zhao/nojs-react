@@ -38,31 +38,88 @@ var Root = function (_React$Component) {
     }
 
     _createClass(Root, [{
-        key: 'go',
-
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.options = {};
+        }
         //对外提供go方法
-        value: function go(url) {
-            var routers = this.refs.routers;
-            var params = routers.state.params,
-                router = routers.router;
 
-            router.push('/' + params.id + '/' + encodeURIComponent(url));
+    }, {
+        key: 'go',
+        value: function go(params, options) {
+            var menu = this.props.menu;
+            var routers = this.refs.routers;
+            var state = routers.state,
+                router = routers.router;
+            //如果url与另一个节点的link匹配 则直接跳都那个node
+
+            if (params.url && !params.id) {
+                var node_url = menu.filter(function (n) {
+                    return n.link == params.url;
+                });
+                if (node_url.length > 1) {
+                    //多个节点匹配的话 优先选择和当前选中id相同的
+                    node_url = node_url.filter(function (n) {
+                        return n.id == state.params.id;
+                    })[0] || node_url[0];
+                } else {
+                    node_url = node_url[0];
+                }
+                if (node_url) {
+                    params.url = null;
+                    params.id = node_url.id;
+                }
+            }
+            this.options = options || {};
+            var url = this.constructor.parse(params, state.params);
+            router.push(url);
         }
     }, {
         key: 'render',
         value: function render() {
             var props = this.props;
+            var _constructor$config_r = this.constructor.config_route,
+                config_route = _constructor$config_r === undefined ? '' : _constructor$config_r;
 
             return _react2.default.createElement(
                 _reactRouter.Router,
                 { history: _reactRouter.hashHistory, ref: 'routers' },
                 _react2.default.createElement(
                     _reactRouter.Route,
-                    { path: '/', component: _Container2.default, props: props },
-                    props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/' + props.defaultNode }) : null,
-                    _react2.default.createElement(_reactRouter.Route, { path: '/:id(/:url)', component: _Content2.default, onLeave: _Content2.default.onLeave })
+                    { path: '/', component: _Container2.default, props: Object.assign({ root: this }, props) },
+                    props.defaultNode ? _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/id/' + props.defaultNode }) : null,
+                    _react2.default.createElement(_reactRouter.Route, { path: '/id/:id(/url/:url)' + config_route, component: _Content2.default, onLeave: _Content2.default.onLeave })
                 )
             );
+        }
+    }], [{
+        key: 'config',
+        value: function config() {
+            var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            //options.route 添加自定义可选路由 Array
+            var route = options.route;
+
+            this.config_routeKeys = route;
+            this.config_route = Array.isArray(route) && route.map(function (item) {
+                return '(/' + item + '/:' + item + ')';
+            }).join('');
+        }
+    }, {
+        key: 'parse',
+        value: function parse(params, oldParams) {
+            var routeKeys = ['id', 'url'].concat(this.config_routeKeys);
+            var keys = Object.keys(params);
+            return routeKeys.map(function (key) {
+                if (params[key] == null && keys.indexOf(key) >= 0) {
+                    //清除此key
+                    return;
+                }
+                var v = params[key] || oldParams[key];
+                return v && '/' + key + '/' + encodeURIComponent(v);
+            }).filter(function (k) {
+                return !!k;
+            }).join('');
         }
     }]);
 

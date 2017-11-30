@@ -83,7 +83,7 @@ var Popover = React.createClass({
         return this.state.origin;
     },
     componentDidMount: function componentDidMount() {
-        var _this = this;
+        var _this3 = this;
 
         // var el = $(ReactDOM.findDOMNode(this))
         var self = this;
@@ -115,6 +115,7 @@ var Popover = React.createClass({
         var layerBind;
 
         function hide() {
+            window.clearTimeout(delay);
             if (self.keepVisible || !self.state.visible) {
                 self.keepVisible = null;
                 return;
@@ -125,9 +126,14 @@ var Popover = React.createClass({
         }
         if (trigger == 'hover') {
             var _show = function _show(e) {
+                var _this2 = this;
+
+                var _this = this;
                 self.setDisplay(false);
                 window.clearTimeout(delay);
-                show(this);
+                delay = setTimeout(function () {
+                    return show(_this2);
+                }, 40);
             };
 
             if (bindTarget) {
@@ -145,13 +151,16 @@ var Popover = React.createClass({
             }
 
             layerBind = function layerBind() {
-                $(_this.wrap).hover(function (e) {
+                $(_this3.wrap).hover(function (e) {
                     window.clearTimeout(delay);
                 }, hide);
             };
         } else if (trigger == 'click') {
             var _show2 = function _show2(e) {
                 self.keepVisible = true;
+                setTimeout(function () {
+                    self.keepVisible = null;
+                }, 100);
                 self.state.visible && trigger == 'click' ? self.setDisplay(false) : show(this);
                 e.preventDefault();
             };
@@ -166,8 +175,8 @@ var Popover = React.createClass({
             }
 
             this.onDisplayChange(function (visible) {
-                if (!visible && _this.keepVisible) {
-                    _this.keepVisible = null;
+                if (!visible && _this3.keepVisible) {
+                    _this3.keepVisible = null;
                     return false;
                 }
             });
@@ -181,9 +190,9 @@ var Popover = React.createClass({
             docWatch.push(this);
 
             layerBind = function layerBind() {
-                $(_this.wrap)[clickEvent](function (e) {
+                $(_this3.wrap)[clickEvent](function (e) {
                     clearTimeout(delay);
-                    _this.keepVisible = true;
+                    _this3.keepVisible = true;
                 });
             };
         }
@@ -191,43 +200,49 @@ var Popover = React.createClass({
         this.state.trigger = trigger;
 
         var showClassName = this.props.showClassName || 'nj-popover-nearby';
+        var delayHideClass;
         this.onShow(function () {
             self.getOrigin();
-            window.clearTimeout(_this.hidedelay); //nearby有多个元素集合时 鼠标快速滑过 pop显示在下一目标上 上次的element还未移除
+            window.clearTimeout(_this3.hidedelay); //nearby有多个元素集合时 鼠标快速滑过 pop显示在下一目标上 上次的element还未移除
 
             layerBind();
 
-            if (_this.align) {
+            if (_this3.align) {
                 //当鼠标在多个相近得nearby间快速扫动时，align定位不会及时更新 所以加延时处理
                 setTimeout(function (e) {
-                    _this.align.set({
-                        nearby: _this.state.nearby
+                    _this3.align.set({
+                        nearby: _this3.state.nearby
                     });
                 }, 0);
             } else {
-                _this.setAlign(Object.assign({}, _this.props, {
-                    nearby: _this.state.nearby,
-                    element: $(_this.wrap),
+                _this3.setAlign(Object.assign({}, _this3.props, {
+                    nearby: _this3.state.nearby,
+                    element: $(_this3.wrap),
                     onTurn: function onTurn(turnPosition) {
                         self.getOrigin(turnPosition);
                     }
                 }));
             }
 
-            $(_this.state.nearby).addClass(showClassName);
+            clearTimeout(delayHideClass);
+            $(_this3.state.nearby).addClass(showClassName);
         }).onHide(function () {
 
-            $(_this.state.nearby).removeClass(showClassName);
+            delayHideClass = setTimeout(function () {
+                $(_this3.state.nearby).removeClass(showClassName);
+            }, 200);
             // Popover.destory(this)
 
-            _this.hidedelay = window.setTimeout(function (e) {
+            _this3.hidedelay = window.setTimeout(function (e) {
+                var layer = _this3.refs.layer;
 
-                document.body.removeChild(_this.element);
-
-                var layer = _this.refs.layer;
-
+                if (!layer) {
+                    //layer已被移除
+                    return;
+                }
+                document.body.removeChild(_this3.element);
                 layer.layer = null;
-                _this.align = null;
+                _this3.align = null;
             }, 200);
         });
     },
@@ -271,8 +286,10 @@ var Popover = React.createClass({
 var docWatch = function () {
     var initial;
     var pops = [];
+    var delay;
     var hide = function hide(e) {
-        return window.setTimeout(function (i) {
+        window.clearTimeout(delay);
+        delay = window.setTimeout(function (i) {
             pops.forEach(function (pop) {
                 if (pop.state.trigger == 'focus' && e.target === pop.state.nearby) {
                     return;
@@ -309,7 +326,9 @@ var Layer = React.createClass({
         // this.renderLayer()
     },
     componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-        this.renderLayer();
+        var from = this.props.from;
+
+        from.state.visible && this.renderLayer();
     },
 
     render: function render() {

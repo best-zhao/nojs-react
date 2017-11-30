@@ -16,8 +16,12 @@ class Datetime extends React.Component {
         
         let currentMonth
         if( mode=='time' ){
-            let _times = value.match(/\b\d+\b/g) || [0, 0]
-            currentMonth = [Object.assign({hours:parseInt(_times[0]), minutes:parseInt(_times[1])}, today)]
+            let _times = value.match(/\b\d+\b/g) || [0, 0, 0]
+            currentMonth = [Object.assign({
+                hours:parseInt(_times[0]), 
+                minutes:parseInt(_times[1]),
+                seconds:parseInt(_times[2])
+            }, today)]
         }else{
             let startMonth = min && !value ? {year:min.year, month:min.month} : value
             currentMonth = this.getMonthGroups(startMonth)
@@ -28,14 +32,16 @@ class Datetime extends React.Component {
             min = {
                 date : getTimestamp(min),
                 hours : getTimestamp(min, 4),
-                minutes : getTimestamp(min, 5)
+                minutes : getTimestamp(min, 5),
+                seconds : getTimestamp(min, 6)
             }
         }
         if( max ){
             max = {
                 date : getTimestamp(max),
                 hours : getTimestamp(max, 4),
-                minutes : getTimestamp(max, 5)
+                minutes : getTimestamp(max, 5),
+                seconds : getTimestamp(max, 6)
             }
         }
 
@@ -63,20 +69,21 @@ class Datetime extends React.Component {
         }
 
         
-        let {year, month, date, hours, minutes} = currentMonth[0]
+        let {year, month, date, hours, minutes, seconds} = currentMonth[0]
         let day = date && new Date(year, month-1, date).getDay()
 
         this.state = {
             currentMonth,
             value, min, max,
-            hours, minutes,
+            hours, minutes, seconds,
             format : _format, 
             weeks : _weeks,           
             hasDate,  hasTime,
             //当前所选 默认今天 {year, month, date}
             currentDate : mode=='time' ? today : (value && {year, month, date, day}),            
             hoursItems : Array.prototype.concat.apply([], new Array(24)),
-            minutesItems : Array.prototype.concat.apply([], new Array(60))
+            minutesItems : Array.prototype.concat.apply([], new Array(60)),
+            secondsItems : Array.prototype.concat.apply([], new Array(60))
         }
     }   
     componentDidMount () {
@@ -158,8 +165,8 @@ class Datetime extends React.Component {
         // console.log(21, this)
         this.state.animated = clearTimeout(this.state.animated)
     }
-    changeDate ({year, month, date, day, current, prevMonth}) {
-        let {hours, minutes, hasDate, hasTime, format, hoursItems, minutesItems, min, max} = this.state
+    changeDate ({year, month, date, day, current, prevMonth}, type) {
+        let {hours, minutes, seconds, hasDate, hasTime, format, hoursItems, minutesItems, secondsItems, min, max} = this.state
         if( hasDate && !date ){//没有选择天
             return
         }
@@ -192,6 +199,7 @@ class Datetime extends React.Component {
                 this.setState({hours})
             }
 
+            let resetMinute
             minutesItems.map((h,i)=>{
                 let d = Object.assign({}, currentDate, {hours, minutes:i})
                 let timestamp = getTimestamp(d, 5)
@@ -204,43 +212,80 @@ class Datetime extends React.Component {
             })
             // console.log(hours, minutes, resetHour)
             if( minutes==undefined || resetHour ){//当hours重置后 minutes也需重置
+                resetMinute = true
                 minutes = minutesItems.filter(h=>h>=0)[0]
                 this.setState({minutes})
+            }
+
+            secondsItems.map((h,i)=>{
+                let d = Object.assign({}, currentDate, {hours, minutes, seconds:i})
+                let timestamp = getTimestamp(d, 6)
+                let disabled = this.checkDisabled(timestamp, 'seconds')
+
+                if( disabled && seconds==i ){//当前选中的被禁用
+                    seconds=undefined
+                }
+                secondsItems[i] = disabled ? -1 : i
+            })
+            if( seconds==undefined || resetMinute ){//当minutes重置后 seconds也需重置
+                seconds = secondsItems.filter(h=>h>=0)[0]
+                this.setState({seconds})
             }
         }  
 
         let value = dateParse({
-            date : [year, month, date].join('-')+' '+[hours, minutes].join(':'),
+            date : [year, month, date].join('-')+' '+[hours, minutes, seconds].join(':'),
             format
         })
 
-        this.setState({currentDate, value}, ()=>this.submit())
+        this.setState({currentDate, value}, ()=>this.submit(type))
     }
-    submit () {
+    submit (type) {
         let {onChange} = this.props
-        let {hours, minutes, currentDate, value, hasTime, min, max} = this.state
+        let {hours, minutes, currentDate, value, hasTime} = this.state
         
         //没有选中日期时 点击确定默认为今天
         if( !currentDate || !value ){
-            let todayDisabled//检测今天是否可选
-            if( min ){
-                todayDisabled = (+new Date)<min.minutes
-            }
-            if( !todayDisabled && max ){
-                todayDisabled = (+new Date)>min.minutes
-            }
-            !todayDisabled && this.changeDate(Object.assign({}, today, {
-                current : true
-            }))
+            this.setNow()
             return
         }
-        let data = Object.assign({hours, minutes}, currentDate)
+        let data = Object.assign({hours, minutes, type}, currentDate)
+        let dataStr = {}
+        for( let i in data ){
+            dataStr[i+'_str'] = parseNumber(data[i])
+        }
         let timestamp = getTimestamp(data, 6)        
-        onChange && onChange.call(this, value, data, timestamp)
+        onChange && onChange.call(this, value, Object.assign(data, dataStr), timestamp)
+    }
+    setNow () {
+        let {min, max} = this.state
+        let todayDisabled//检测今天是否可选
+        let _date = new Date()
+        let now = _date.getTime()
+
+        if( min ){
+            todayDisabled = now<min.seconds
+        }
+        if( !todayDisabled && max ){
+            todayDisabled = now>max.seconds
+        }
+        if( todayDisabled ){
+            return
+        }
+        let hours = _date.getHours()
+        let minutes = _date.getMinutes()
+        let seconds = _date.getSeconds()
+        
+        this.setState({hours, minutes, seconds}, ()=>{
+            this.changeDate(Object.assign({}, today, {
+                current : true
+            }), 'now')
+        })
+        
     }
     changeTime(key, e){
         this.state[key] = parseInt(e.target.value)
-        this.changeDate(Object.assign({current:true}, this.state.currentDate))
+        this.changeDate(Object.assign({current:true}, this.state.currentDate), key)
     }    
     checkDisabled (data, key) {
         let {min, max} = this.state
@@ -262,9 +307,9 @@ class Datetime extends React.Component {
         let {months, mode, disableAnimation} = this.props
         let {
             weeks, direction, animate,
-            hours, minutes, 
+            hours, minutes, seconds,
             hasDate, hasTime,
-            hoursItems, minutesItems, 
+            hoursItems, minutesItems, secondsItems,
             currentMonth, currentDate={}           
         } = this.state
 
@@ -298,6 +343,16 @@ class Datetime extends React.Component {
                 } 
                 return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
             })
+
+            secondsItems = secondsItems.map((h,i)=>{
+                let disabled 
+                if( currentDate.date ){
+                    let d = Object.assign({}, currentDate, {hours, minutes, seconds:i})
+                    let timestamp = getTimestamp(d, 6)
+                    disabled = this.checkDisabled(timestamp, 'seconds')                    
+                } 
+                return <option disabled={disabled} key={i} value={i}>{parseNumber(i)}</option>
+            })
         }
 
         const dateItem = (item,i)=>{
@@ -311,7 +366,7 @@ class Datetime extends React.Component {
             )
             return <button data-mode="circle" type="button" disabled={disabled}
                 key={[item.year, item.month, item.date].join('')}
-                onClick={this.changeDate.bind(this, item)}
+                onClick={this.changeDate.bind(this, item, 'date')}
                 className={className}
             >
                 <span className="date">{item.date}</span>
@@ -346,6 +401,7 @@ class Datetime extends React.Component {
                 {hasTime?
                 <div className="gray">{parseNumber(hours)}:{parseNumber(minutes)}:00</div>
                 :null}
+                <button onClick={this.setNow.bind(this)} className="nj-button nj-button-flat set-now">现在</button>
             </div>
             :null}
 
@@ -389,6 +445,14 @@ class Datetime extends React.Component {
                     >
                         {minutesItems}
                     </select>
+
+                    <select 
+                        value={seconds} 
+                        // disabled={hasDate&&!currentDate.date}
+                        onChange={this.changeTime.bind(this, 'seconds')}
+                    >
+                        {secondsItems}
+                    </select>
                 </div>
                 : null}
             </div>
@@ -406,4 +470,4 @@ Datetime.defaultProps = {
     startWeekIndex : 1    
 }
 
-export default Datetime
+module.exports =  Datetime

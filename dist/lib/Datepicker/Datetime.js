@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _nojsReact = require('../nojs-react');
@@ -47,8 +43,12 @@ var Datetime = function (_React$Component) {
 
         var currentMonth = void 0;
         if (mode == 'time') {
-            var _times = value.match(/\b\d+\b/g) || [0, 0];
-            currentMonth = [Object.assign({ hours: parseInt(_times[0]), minutes: parseInt(_times[1]) }, _utils.today)];
+            var _times = value.match(/\b\d+\b/g) || [0, 0, 0];
+            currentMonth = [Object.assign({
+                hours: parseInt(_times[0]),
+                minutes: parseInt(_times[1]),
+                seconds: parseInt(_times[2])
+            }, _utils.today)];
         } else {
             var startMonth = min && !value ? { year: min.year, month: min.month } : value;
             currentMonth = _this.getMonthGroups(startMonth);
@@ -58,14 +58,16 @@ var Datetime = function (_React$Component) {
             min = {
                 date: (0, _utils.getTimestamp)(min),
                 hours: (0, _utils.getTimestamp)(min, 4),
-                minutes: (0, _utils.getTimestamp)(min, 5)
+                minutes: (0, _utils.getTimestamp)(min, 5),
+                seconds: (0, _utils.getTimestamp)(min, 6)
             };
         }
         if (max) {
             max = {
                 date: (0, _utils.getTimestamp)(max),
                 hours: (0, _utils.getTimestamp)(max, 4),
-                minutes: (0, _utils.getTimestamp)(max, 5)
+                minutes: (0, _utils.getTimestamp)(max, 5),
+                seconds: (0, _utils.getTimestamp)(max, 6)
             };
         }
 
@@ -97,21 +99,23 @@ var Datetime = function (_React$Component) {
             month = _currentMonth$.month,
             date = _currentMonth$.date,
             hours = _currentMonth$.hours,
-            minutes = _currentMonth$.minutes;
+            minutes = _currentMonth$.minutes,
+            seconds = _currentMonth$.seconds;
 
         var day = date && new Date(year, month - 1, date).getDay();
 
         _this.state = {
             currentMonth: currentMonth,
             value: value, min: min, max: max,
-            hours: hours, minutes: minutes,
+            hours: hours, minutes: minutes, seconds: seconds,
             format: _format,
             weeks: _weeks,
             hasDate: hasDate, hasTime: hasTime,
             //当前所选 默认今天 {year, month, date}
             currentDate: mode == 'time' ? _utils.today : value && { year: year, month: month, date: date, day: day },
             hoursItems: Array.prototype.concat.apply([], new Array(24)),
-            minutesItems: Array.prototype.concat.apply([], new Array(60))
+            minutesItems: Array.prototype.concat.apply([], new Array(60)),
+            secondsItems: Array.prototype.concat.apply([], new Array(60))
         };
         return _this;
     }
@@ -220,7 +224,7 @@ var Datetime = function (_React$Component) {
         }
     }, {
         key: 'changeDate',
-        value: function changeDate(_ref) {
+        value: function changeDate(_ref, type) {
             var _this3 = this;
 
             var year = _ref.year,
@@ -232,11 +236,13 @@ var Datetime = function (_React$Component) {
             var _state2 = this.state,
                 hours = _state2.hours,
                 minutes = _state2.minutes,
+                seconds = _state2.seconds,
                 hasDate = _state2.hasDate,
                 hasTime = _state2.hasTime,
                 format = _state2.format,
                 hoursItems = _state2.hoursItems,
                 minutesItems = _state2.minutesItems,
+                secondsItems = _state2.secondsItems,
                 min = _state2.min,
                 max = _state2.max;
 
@@ -277,6 +283,7 @@ var Datetime = function (_React$Component) {
                     this.setState({ hours: hours });
                 }
 
+                var resetMinute = void 0;
                 minutesItems.map(function (h, i) {
                     var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
                     var timestamp = (0, _utils.getTimestamp)(d, 5);
@@ -291,66 +298,111 @@ var Datetime = function (_React$Component) {
                 // console.log(hours, minutes, resetHour)
                 if (minutes == undefined || resetHour) {
                     //当hours重置后 minutes也需重置
+                    resetMinute = true;
                     minutes = minutesItems.filter(function (h) {
                         return h >= 0;
                     })[0];
                     this.setState({ minutes: minutes });
                 }
+
+                secondsItems.map(function (h, i) {
+                    var d = Object.assign({}, currentDate, { hours: hours, minutes: minutes, seconds: i });
+                    var timestamp = (0, _utils.getTimestamp)(d, 6);
+                    var disabled = _this3.checkDisabled(timestamp, 'seconds');
+
+                    if (disabled && seconds == i) {
+                        //当前选中的被禁用
+                        seconds = undefined;
+                    }
+                    secondsItems[i] = disabled ? -1 : i;
+                });
+                if (seconds == undefined || resetMinute) {
+                    //当minutes重置后 seconds也需重置
+                    seconds = secondsItems.filter(function (h) {
+                        return h >= 0;
+                    })[0];
+                    this.setState({ seconds: seconds });
+                }
             }
 
             var value = dateParse({
-                date: [year, month, date].join('-') + ' ' + [hours, minutes].join(':'),
+                date: [year, month, date].join('-') + ' ' + [hours, minutes, seconds].join(':'),
                 format: format
             });
 
             this.setState({ currentDate: currentDate, value: value }, function () {
-                return _this3.submit();
+                return _this3.submit(type);
             });
         }
     }, {
         key: 'submit',
-        value: function submit() {
+        value: function submit(type) {
             var onChange = this.props.onChange;
             var _state3 = this.state,
                 hours = _state3.hours,
                 minutes = _state3.minutes,
                 currentDate = _state3.currentDate,
                 value = _state3.value,
-                hasTime = _state3.hasTime,
-                min = _state3.min,
-                max = _state3.max;
+                hasTime = _state3.hasTime;
 
             //没有选中日期时 点击确定默认为今天
 
             if (!currentDate || !value) {
-                var todayDisabled = void 0; //检测今天是否可选
-                if (min) {
-                    todayDisabled = +new Date() < min.minutes;
-                }
-                if (!todayDisabled && max) {
-                    todayDisabled = +new Date() > min.minutes;
-                }
-                !todayDisabled && this.changeDate(Object.assign({}, _utils.today, {
-                    current: true
-                }));
+                this.setNow();
                 return;
             }
-            var data = Object.assign({ hours: hours, minutes: minutes }, currentDate);
+            var data = Object.assign({ hours: hours, minutes: minutes, type: type }, currentDate);
+            var dataStr = {};
+            for (var i in data) {
+                dataStr[i + '_str'] = (0, _utils.parseNumber)(data[i]);
+            }
             var timestamp = (0, _utils.getTimestamp)(data, 6);
-            onChange && onChange.call(this, value, data, timestamp);
+            onChange && onChange.call(this, value, Object.assign(data, dataStr), timestamp);
+        }
+    }, {
+        key: 'setNow',
+        value: function setNow() {
+            var _this4 = this;
+
+            var _state4 = this.state,
+                min = _state4.min,
+                max = _state4.max;
+
+            var todayDisabled = void 0; //检测今天是否可选
+            var _date = new Date();
+            var now = _date.getTime();
+
+            if (min) {
+                todayDisabled = now < min.seconds;
+            }
+            if (!todayDisabled && max) {
+                todayDisabled = now > max.seconds;
+            }
+            if (todayDisabled) {
+                return;
+            }
+            var hours = _date.getHours();
+            var minutes = _date.getMinutes();
+            var seconds = _date.getSeconds();
+
+            this.setState({ hours: hours, minutes: minutes, seconds: seconds }, function () {
+                _this4.changeDate(Object.assign({}, _utils.today, {
+                    current: true
+                }), 'now');
+            });
         }
     }, {
         key: 'changeTime',
         value: function changeTime(key, e) {
             this.state[key] = parseInt(e.target.value);
-            this.changeDate(Object.assign({ current: true }, this.state.currentDate));
+            this.changeDate(Object.assign({ current: true }, this.state.currentDate), key);
         }
     }, {
         key: 'checkDisabled',
         value: function checkDisabled(data, key) {
-            var _state4 = this.state,
-                min = _state4.min,
-                max = _state4.max;
+            var _state5 = this.state,
+                min = _state5.min,
+                max = _state5.max;
 
             var disabled = void 0;
 
@@ -373,25 +425,27 @@ var Datetime = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this4 = this;
+            var _this5 = this;
 
             var _props2 = this.props,
                 months = _props2.months,
                 mode = _props2.mode,
                 disableAnimation = _props2.disableAnimation;
-            var _state5 = this.state,
-                weeks = _state5.weeks,
-                direction = _state5.direction,
-                animate = _state5.animate,
-                hours = _state5.hours,
-                minutes = _state5.minutes,
-                hasDate = _state5.hasDate,
-                hasTime = _state5.hasTime,
-                hoursItems = _state5.hoursItems,
-                minutesItems = _state5.minutesItems,
-                currentMonth = _state5.currentMonth,
-                _state5$currentDate = _state5.currentDate,
-                currentDate = _state5$currentDate === undefined ? {} : _state5$currentDate;
+            var _state6 = this.state,
+                weeks = _state6.weeks,
+                direction = _state6.direction,
+                animate = _state6.animate,
+                hours = _state6.hours,
+                minutes = _state6.minutes,
+                seconds = _state6.seconds,
+                hasDate = _state6.hasDate,
+                hasTime = _state6.hasTime,
+                hoursItems = _state6.hoursItems,
+                minutesItems = _state6.minutesItems,
+                secondsItems = _state6.secondsItems,
+                currentMonth = _state6.currentMonth,
+                _state6$currentDate = _state6.currentDate,
+                currentDate = _state6$currentDate === undefined ? {} : _state6$currentDate;
 
             //检查是否为当前选中日期
 
@@ -417,7 +471,7 @@ var Datetime = function (_React$Component) {
                     if (currentDate.date) {
                         var d = Object.assign({}, currentDate, { hours: i });
                         var timestamp = (0, _utils.getTimestamp)(d, 4);
-                        disabled = _this4.checkDisabled(timestamp, 'hours');
+                        disabled = _this5.checkDisabled(timestamp, 'hours');
                     }
                     return _nojsReact.React.createElement(
                         'option',
@@ -431,7 +485,21 @@ var Datetime = function (_React$Component) {
                     if (currentDate.date) {
                         var d = Object.assign({}, currentDate, { hours: hours, minutes: i });
                         var timestamp = (0, _utils.getTimestamp)(d, 5);
-                        disabled = _this4.checkDisabled(timestamp, 'minutes');
+                        disabled = _this5.checkDisabled(timestamp, 'minutes');
+                    }
+                    return _nojsReact.React.createElement(
+                        'option',
+                        { disabled: disabled, key: i, value: i },
+                        (0, _utils.parseNumber)(i)
+                    );
+                });
+
+                secondsItems = secondsItems.map(function (h, i) {
+                    var disabled = void 0;
+                    if (currentDate.date) {
+                        var d = Object.assign({}, currentDate, { hours: hours, minutes: minutes, seconds: i });
+                        var timestamp = (0, _utils.getTimestamp)(d, 6);
+                        disabled = _this5.checkDisabled(timestamp, 'seconds');
                     }
                     return _nojsReact.React.createElement(
                         'option',
@@ -442,13 +510,13 @@ var Datetime = function (_React$Component) {
             }
 
             var dateItem = function dateItem(item, i) {
-                var disabled = _this4.checkDisabled(item.timestamp, 'date');
+                var disabled = _this5.checkDisabled(item.timestamp, 'date');
                 var className = joinClass('date-item', checkCurrentDate(item, i) && 'active', !item.current && 'gray', disabled && 'disabled', item.isToday && 'today');
                 return _nojsReact.React.createElement(
                     'button',
                     { 'data-mode': 'circle', type: 'button', disabled: disabled,
                         key: [item.year, item.month, item.date].join(''),
-                        onClick: _this4.changeDate.bind(_this4, item),
+                        onClick: _this5.changeDate.bind(_this5, item, 'date'),
                         className: className
                     },
                     _nojsReact.React.createElement(
@@ -524,7 +592,12 @@ var Datetime = function (_React$Component) {
                         ':',
                         (0, _utils.parseNumber)(minutes),
                         ':00'
-                    ) : null
+                    ) : null,
+                    _nojsReact.React.createElement(
+                        'button',
+                        { onClick: this.setNow.bind(this), className: 'nj-button nj-button-flat set-now' },
+                        '现在'
+                    )
                 ) : null,
                 _nojsReact.React.createElement(
                     'div',
@@ -576,6 +649,15 @@ var Datetime = function (_React$Component) {
                                 , onChange: this.changeTime.bind(this, 'minutes')
                             },
                             minutesItems
+                        ),
+                        _nojsReact.React.createElement(
+                            'select',
+                            {
+                                value: seconds
+                                // disabled={hasDate&&!currentDate.date}
+                                , onChange: this.changeTime.bind(this, 'seconds')
+                            },
+                            secondsItems
                         )
                     ) : null
                 )
@@ -596,4 +678,4 @@ Datetime.defaultProps = {
     startWeekIndex: 1
 };
 
-exports.default = Datetime;
+module.exports = Datetime;

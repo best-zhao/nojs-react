@@ -3,6 +3,7 @@ import {React, render} from 'nj'
 import {Form} from 'nj/form'
 import {LinkTree} from 'nj/tree'
 import Face from 'nj/face'
+import Autocomplete from 'nj/autocomplete'
 //添加全局异步验证方法async
 // Form.addAsyncRule('async', function(value, options){
 //     Object.assign({type:'get'}, options)
@@ -17,9 +18,8 @@ import Face from 'nj/face'
 
 Form.addAsyncRule('checkname', function(value, options){
     setTimeout(e=>{
-        let status = false
+        let status = true
         let {name} = this.props
-        console.log(options)
         if( status ){
             this.setValid(true)
         }else{
@@ -31,9 +31,13 @@ Form.addAsyncRule('checkname', function(value, options){
 
 export const init = ({id, url})=>{
     render(<Nav url={url} />, document.getElementById('demo-nav'))
-    Form.start()
-
+    
+    // Form.start()
+    
     Form.startOne('verify')
+    Autocomplete.start()
+    // console.log(Autocomplete.getByHandle('ac'))
+
 
     Face.config({
         themes : []

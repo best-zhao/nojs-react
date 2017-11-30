@@ -44,7 +44,7 @@ if( !metaEl ){
         wrap.appendChild(metaEl)
         document.write(wrap.innerHTML)
     }
-    document.write('<style>html[data-dpr="'+dpr+'"] body{font-size:'+12 * dpr + 'px}</style>')
+    document.write('<style>body{font-size:'+12 * dpr + 'px}</style>')
 }
 
 let tid
@@ -59,5 +59,29 @@ window.addEventListener('pageshow', function(e) {
     }
 }, false)
 
+function checkFontsize(){
+    var tags = document.body.querySelectorAll('[style*="font-size"], [style*="line-height"]')
+    for( var i=0,n=tags.length;i<n;i++ ){
+        var el = tags[i]
+        var style = el.getAttribute('style')
+        var testFont = /font-size\s?:\s?(\d+)px/.exec(style)
+        if( testFont && testFont[1] ){
+            el.style.fontSize = testFont[1]*dpr + 'px'
+        }
+        var testLine = /line-height\s?:\s?(\d+)px/.exec(style)
+        if( testLine && testLine[1] ){
+            el.style.lineHeight = testLine[1]*dpr + 'px'
+        }
+    }
+}
+
+if( document.readyState === 'complete' ){
+    document.body.style.fontSize = 12 * dpr + 'px'
+} else {
+    document.addEventListener('DOMContentLoaded', function(e) {
+        document.body.style.fontSize = 12 * dpr + 'px'
+        dpr>1 && checkFontsize()
+    }, false)
+}
 
 getDeviceWidth()

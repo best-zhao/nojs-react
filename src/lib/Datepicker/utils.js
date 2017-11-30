@@ -14,6 +14,7 @@ export const getMonthData = (params, options)=>{
     let _date
     let hours = 0
     let minutes = 0
+    let seconds = 0
     let type = $.type(params)
     let key
 
@@ -44,6 +45,7 @@ export const getMonthData = (params, options)=>{
         if( params ){
             hours = _date.getHours()
             minutes = _date.getMinutes()
+            seconds = _date.getSeconds()
         }
     }   
     key = year + '-' + month
@@ -52,7 +54,7 @@ export const getMonthData = (params, options)=>{
     let cache = dateCache[key]
     if( cache ){
         if( params && _date ){//传入的具体日期时 更新date/hours等值
-            return Object.assign({}, cache, {date, hours, minutes})
+            return Object.assign({}, cache, {date, hours, minutes, seconds})
         }
         // return cache
         //当params传入的是对象时 也只返回年月日数据(除去date, hours, minutes)
@@ -124,7 +126,7 @@ export const getMonthData = (params, options)=>{
 
 
     let data = dateCache[key] = {
-        year, month, date, hours, minutes,
+        year, month, date, hours, minutes, seconds,
         dates : allDays
     }    
     return data

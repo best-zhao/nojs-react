@@ -55,7 +55,7 @@ lazyload.prototype = {
 			}
 			src = m.attr(_this.attr);
 
-			if (src) {
+			if (src && m.is(':visible')) {
 				if (!isCtrl) {
 					if (_this.scroll[0] !== window) {
 						P.top = 0;

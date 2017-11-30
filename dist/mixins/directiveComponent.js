@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _lib = require('../lib');
 
 var _lib2 = _interopRequireDefault(_lib);
@@ -84,15 +80,15 @@ var Directive = function Directive(options) {
 
 Directive.prototype = {
     start: function start(container) {
-        this.directiveInit(this.rootDirective, container || document.body);
+        return this.directiveInit(this.rootDirective, container || document.body);
     },
     directiveInit: function directiveInit(type, context, parentComponent) {
         var _this2 = this;
 
-        if (!context) {
-            return;
-        }
         var components = [];
+        if (!context) {
+            return components;
+        }
         var formElements = _lib2.default.utils.toArray(context.getElementsByTagName('nj-' + type));
         formElements.forEach(function (node, i) {
             var c = _this2.initial(node, type, parentComponent, i);
@@ -232,4 +228,4 @@ function getComponentName(name) {
     });
 }
 
-exports.default = Directive;
+module.exports = Directive;

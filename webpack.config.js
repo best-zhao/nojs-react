@@ -25,6 +25,7 @@ var resolve = {
       css : rs+'/css'
     }
 }
+
 var plugins = [
   new webpack.optimize.CommonsChunkPlugin({
       name: 'seed',

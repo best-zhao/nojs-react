@@ -176,7 +176,7 @@ upload.pasteUpload = function (el, up) {
 				// only paste 1 image at a time
 				break;
 			} else {
-				e.preventDefault();
+				//e.preventDefault()
 			}
 		}
 	});
@@ -326,7 +326,7 @@ upload.prototype = {
 			T.fileItem[id].wrap = e;
 
 			//给添加的容器绑定移除事件  class='cancel'
-			T.fileItem[id].wrap.find('.cancel').click(function (e) {
+			e && e.find('.cancel').click(function (e) {
 				// var id = this.id || $(this).data('id')
 				T.cancelUpload(id);
 				return false;

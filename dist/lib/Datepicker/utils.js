@@ -30,6 +30,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     var _date = void 0;
     var hours = 0;
     var minutes = 0;
+    var seconds = 0;
     var type = _jquery2.default.type(params);
     var key = void 0;
 
@@ -58,6 +59,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
         if (params) {
             hours = _date.getHours();
             minutes = _date.getMinutes();
+            seconds = _date.getSeconds();
         }
     }
     key = year + '-' + month;
@@ -67,7 +69,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     if (cache) {
         if (params && _date) {
             //传入的具体日期时 更新date/hours等值
-            return Object.assign({}, cache, { date: date, hours: hours, minutes: minutes });
+            return Object.assign({}, cache, { date: date, hours: hours, minutes: minutes, seconds: seconds });
         }
         // return cache
         //当params传入的是对象时 也只返回年月日数据(除去date, hours, minutes)
@@ -138,7 +140,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     }
 
     var data = dateCache[key] = {
-        year: year, month: month, date: date, hours: hours, minutes: minutes,
+        year: year, month: month, date: date, hours: hours, minutes: minutes, seconds: seconds,
         dates: allDays
     };
     return data;

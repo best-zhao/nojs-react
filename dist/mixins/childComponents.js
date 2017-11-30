@@ -30,6 +30,9 @@ var config = exports.config = {
         }
     },
     getDefaultProps: function getDefaultProps() {
+        //这里重写是防止不同的类会共享同一个数组
+        this.instances = [];
+        this.focus = [];
         return {};
     },
     getInitialState: function getInitialState() {

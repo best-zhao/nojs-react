@@ -135,3 +135,12 @@ pre[class*="language-"] {
 .token.entity {
 	cursor: help;
 }
+
+
+pre[class*="language-"] ol{padding-left:3em;list-style: decimal;}
+pre[class*="language-"] li{list-style-type: decimal;color:#bbb;
+    border-left: 1px solid #ddd;
+    padding: 0 0.5em;
+    list-style-position: outside;
+}
+pre[class*="language-"] li>div{color:#444}

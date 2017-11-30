@@ -16,11 +16,11 @@ module.exports = {
             className: this.effects()[2] || this.effects()[0]
         };
     },
-    setDisplay: function setDisplay(visible, e) {
+    setDisplay: function setDisplay(visible, data) {
         if (this.state.visible == visible) {
             return;
         }
-        if (this._changeDisplay.complete(visible) === false) {
+        if (this._changeDisplay.complete(visible, data) === false) {
             return;
         }
         this.state.visible = visible;
@@ -29,7 +29,7 @@ module.exports = {
         //effect[2]始终存在的样式
         this.setState({ visible: visible, className: className });
 
-        this[visible ? '_showEvents' : '_hideEvents'].complete();
+        this[visible ? '_showEvents' : '_hideEvents'].complete(data);
     },
     effects: function effects() {
         var effects = {

@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -48,10 +44,22 @@ var Menu = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var tree = this.refs.tree;
-            var onReady = this.props.onReady;
+            var _props = this.props,
+                onReady = _props.onReady,
+                parentSelect = _props.parentSelect;
             //组件渲染完毕后 向外传递格式化后的节点数据
 
             onReady && onReady(tree.state.dataFormat.databyid);
+
+            if (!parentSelect) {
+                //不允许父节点选中 点击展开
+                tree.onChange(function (node, e) {
+                    if (node.children.length) {
+                        e.preventDefault();
+                        tree.toggle(node);
+                    }
+                });
+            }
         }
     }, {
         key: 'componentWillReceiveProps',
@@ -66,10 +74,11 @@ var Menu = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props = this.props,
-                defaultNode = _props.defaultNode,
-                menu = _props.menu,
-                sidebar = _props.sidebar;
+            var _props2 = this.props,
+                defaultNode = _props2.defaultNode,
+                menu = _props2.menu,
+                sidebar = _props2.sidebar,
+                parentSelect = _props2.parentSelect;
 
             var tree = _react2.default.createElement(
                 'div',
@@ -80,10 +89,15 @@ var Menu = function (_React$Component) {
                     defaultNode: defaultNode
                     //使用Link组件更新路由 css控制Link覆盖文字之上
                     , defineName: function defineName(item) {
+                        var allowSelect = item.link;
+                        if (item.children.length && !parentSelect) {
+                            //不允许父节点选中
+                            allowSelect = false;
+                        }
                         return _react2.default.createElement(
                             'span',
                             null,
-                            item.link ? _react2.default.createElement(_reactRouter.Link, { to: '/' + item.id }) : null,
+                            allowSelect ? _react2.default.createElement(_reactRouter.Link, { to: '/id/' + item.id }) : null,
                             ' ',
                             item.name
                         );
@@ -108,4 +122,4 @@ var Menu = function (_React$Component) {
     return Menu;
 }(_react2.default.Component);
 
-exports.default = Menu;
+module.exports = Menu;

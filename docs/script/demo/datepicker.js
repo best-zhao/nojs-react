@@ -1,15 +1,15 @@
 import $ from 'jquery'
 import nj, {React, render} from 'nj'
-import Datepicker, {Datetime} from 'nj/datepicker'
+import Datepicker from 'nj/datepicker'
 import {Form} from 'nj/form'
 
 
 export const init = ()=>{
-    let startVal = "2017-06-04 05:01:00"
+    let startVal = "2017-11-05 05:01:00"
     let start = (max)=>render(
         <Datepicker months="1" 
+            value={startVal}
             min={new Date()} 
-            value={startVal} 
             placeholder="开始时间" 
             max={max} 
             onChange={value=>end(value)} 
@@ -17,7 +17,7 @@ export const init = ()=>{
         document.getElementById('rootDatepicker')
     )
     let end = (min)=>render(
-        <Datepicker min={min||new Date()} onChange={value=>start(value)} />, 
+        <Datepicker  onChange={value=>start(value)} />, 
         document.getElementById('rootDatepicker1')
     )
     start()

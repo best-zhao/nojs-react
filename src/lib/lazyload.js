@@ -42,10 +42,10 @@ lazyload.prototype = {
 			
 		function show(i){
 			m = f.eq(i);
-			if(!m.length){return;}
+			if(!m.length ){return;}
 			src = m.attr(_this.attr);
 			
-			if( src ){
+			if( src && m.is(':visible') ){
 				if( !isCtrl ){
 					if( _this.scroll[0]!==window ){
 						P.top = 0;

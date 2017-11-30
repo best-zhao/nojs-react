@@ -14,6 +14,14 @@
             </div>
         </li>
         <li class="item">
+            <span class="lab"><i class="red">*</i>Nickname:</span>
+            <div class="fields">
+                <nj-autocomplete handle="ac" required class="text" type="email"
+                    data='["a","b","c"]'
+                ></nj-autocomplete>
+            </div>
+        </li>
+        <li class="item">
             <span class="lab"><i class="red">*</i>Email:</span>
             <div class="fields">
                 <div class="mb15">
@@ -52,9 +60,12 @@
         <li class="item">
             <span class="lab"><i class="red">*</i>Skills:</span>
             <div class="fields">
-                <nj-input name="skill" type="radio">skill1</nj-input>
-                <nj-input name="skill" type="radio" >skill2</nj-input>
-
+                <nj-input name="skill" type="radio" value="1">skill1</nj-input>
+                <nj-input name="skill" type="radio" checked="checked" value="2">skill2</nj-input>
+                <nj-input name="skill" type="radio" disabled value="2">skill3</nj-input>
+                <nj-input name="skill" type="radio" readonly="readonly" value="2">skill3</nj-input>
+                
+                <!-- <nj-input required type="textarea">13</nj-input> -->
                 <!-- <select>
                   <optgroup label="Swedish Cars">
                     <option value ="volvo">Volvo</option>

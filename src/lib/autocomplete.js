@@ -5,22 +5,28 @@ var nj = require('./nojs-react')
 var {React, ReactDOM, mixins, utils, Mui} = nj
 var $ = require('jquery')
 var Popover = require('./popover')
+var {Form, Input} = require('./form')
 // var fetch = require('isomorphic-fetch')
+var Directive = require('../mixins/directiveComponent')
 
 var Autocomplete = module.exports = React.createClass({
+    mixins : [mixins.childComponents.config], 
     getDefaultProps () {
         return {getItem : item=>String(item), disableEnter:false, max:20}
     },
-    getInitialState () {        
+    getInitialState () {  
+        let {results=[], disable, value=''} = this.props
         return {
-            results : this.props.results || [],
+            results,
+            value,
+            disable,
             //缓存远程数据
-            cache : {},
-            value : this.props.value || ''
+            cache : {}
         }
     },
     keyup (e) {
-        var key = e.keyCode, value = e.target.value, delay;
+        var self = this
+        var key = e.keyCode, value = e.target.value;
         // 有效输入键
         // [8 : backspace] [32 : space] [46: delete]
         if( key==8 || key==32 || key==46         
@@ -31,12 +37,12 @@ var Autocomplete = module.exports = React.createClass({
             || (key>185 && key<193)   // [186-192 : ;=<->/`]
             || (key>218 && key<223)   // [219-222 : [\]' ]
         ){
-            clearTimeout(delay);
-            // T.showBox('hide');
-            delay = setTimeout(()=>{
-                this.filter(value);
-                // T.onKeyup && T.onKeyup.call(T,T.state);
-            }, 100)
+            clearTimeout(this._delay);            
+            function search() {
+                self.filter(value);
+                self.keyupEvent.complete(value, key);
+            }
+            this._delay = setTimeout(search, this.props.source ? 300 : 0);
         }
     },
     keydown (e) {
@@ -45,8 +51,9 @@ var Autocomplete = module.exports = React.createClass({
             case 13://enter
                 this.move('enter');
                 if( this.props.disableEnter ){//阻止触发表单事件 
-                    e.preventDefault()                    
+                                
                 }
+                e.preventDefault()        
                 break;                
             case 38://up
                 this.move("up");
@@ -60,9 +67,13 @@ var Autocomplete = module.exports = React.createClass({
     move (direction) {
         var {index, results} = this.state
         var length = results.length
+        var value, item
         index = typeof index=='number' ? index : -1
 
-        if( direction=='enter' ){            
+        if( direction=='enter' ){ 
+            item = results[index]
+            value = item ? this.props.getItem(item) : this.state.value
+            this.enterEvent.complete(index, value);           
             index>=0 && this.select(index, 'enter')
             return
         }
@@ -72,24 +83,33 @@ var Autocomplete = module.exports = React.createClass({
         }else if( direction=='down' ){
             index = index>=length-1 ? 0 : ++index
         }
-        var item = this.state.results[index], value
+        item = results[index]
         value = item ? this.props.getItem(item) : this.state.value
         this.setState({index, value})
+        this.moveEvent.complete(index, value)
+
+        var onChange = this.props.onChange
+        onChange && onChange(value, index)
     },
     select (index, type, e) {
         var item = this.state.results[index]
         if( !item ){
             return
         }
+        var {text, container} = this.refs
+        var {input} = text.refs
         var value = this.props.getItem(item)
+        var onChange = this.props.onChange
+        onChange && onChange(value)
         
         this.state.value = value
         this.state.index = index
 
         this.setState({value, index})  
         this.chooseEvent.complete(item, type==='enter')
-        type=='click' && this.refs.input.focus() 
-        window.setTimeout(e=>this.setDisplay(false), 240)
+        type=='click' && input.focus() 
+        this.setDisplay(false)
+        window.setTimeout(e=>this.setDisplay(false), 450)
     },
     componentDidMount () {
         var {results} = this.state//默认传入的results
@@ -98,14 +118,20 @@ var Autocomplete = module.exports = React.createClass({
                 //var {container} = this.refs                
             })            
         }
+        this.fetchBeforeEvent = utils.addEventQueue.call(this, 'onFetchBefore')
         this.fetchEvent = utils.addEventQueue.call(this, 'onFetch')
         this.fetchCompleteEvent = utils.addEventQueue.call(this, 'onFetchComplete')
-        this.chooseEvent = utils.addEventQueue.call(this, 'onChoose')
-        this.completeEvent = utils.addEventQueue.call(this, 'onComplete')
 
+        this.completeEvent = utils.addEventQueue.call(this, 'onComplete')//筛选完成后触发
+
+        this.chooseEvent = utils.addEventQueue.call(this, 'onChoose')        
+        this.enterEvent = utils.addEventQueue.call(this, 'onEnter')
+        this.moveEvent = utils.addEventQueue.call(this, 'onMove')
+        this.keyupEvent = utils.addEventQueue.call(this, 'onKeyup')//输入时触发
     },
     componentDidUpdate () {
-        var {input, container} = this.refs
+        var {text, container} = this.refs
+        var {input} = text.refs
         
         if( container && !container._init_ ){
             container._init_ = true
@@ -113,24 +139,33 @@ var Autocomplete = module.exports = React.createClass({
                 $(container.wrap).width($(input).outerWidth())                
             }).onDisplayChange(visible=>{
                 var {results} = this.state
-                if( visible && !results.length ){//没有结果 阻止显示
+                if( visible && (!results.length || !input.value) ){//没有结果 阻止显示
                     return false
                 }
             })
         }
     },
+    componentWillReceiveProps (nextProps) {
+        let {value, disable} = nextProps
+        this.setState({disable})
+        value!==undefined && this.setState({value})
+    },
     setDisplay (display) {
         var container = this.refs.container
-        container && container.setDisplay(display)
+        if( container ){
+            container.setDisplay(display);
+            display && container.align.set()
+        }
     },
     filter (value) {
-        var container = this.refs.container
+        var {text, container} = this.refs
+        var {input} = text.refs
         
         var done = results => {
             results = results.slice(0,max)
             this.setState({results, index:null})
-            this.setDisplay(results.length?true:false)
-            this.completeEvent.complete(results, this.refs.input.value)
+            this.setDisplay(results.length&&input.value?true:false)
+            this.completeEvent.complete(results, input.value)
         }
 
         if( !value ){
@@ -139,6 +174,7 @@ var Autocomplete = module.exports = React.createClass({
             return
         }
         var {data, source, getItem, max} = this.props
+        data = data && typeof data=='string' ? JSON.parse(data) : data
 
         if( data ){
             var results = data.filter(item=>{
@@ -149,6 +185,11 @@ var Autocomplete = module.exports = React.createClass({
         }else if( source ){//remote fetch
             var {cache} = this.state
             var _data = cache[source+value]
+
+            var res = this.fetchBeforeEvent.complete(value, _data)
+            if( res===false ){
+                return
+            }
 
             if( _data ){
                 done(_data)
@@ -167,21 +208,28 @@ var Autocomplete = module.exports = React.createClass({
             promise.then(json=>{
                 json = this.fetchCompleteEvent.complete(json) || json || []
                 cache[source+value] = json
-                done(json)
+                if( input.value ){
+                    done(json);
+                }else{
+                    this.setDisplay(false)
+                }   
             })
         }
     },
     change (e) {
-        this.setState({value:e.target.value})
+        let {onChange} = this.props
+        let value = e.target.value
+        this.setState({value})
+        onChange && onChange(value)
         e.stopPropagation()//onChange事件会影响到父组件 阻止冒泡
     },
     render () {
 
         var {container, getItem, name} = this.props
-        var {index, value, results} = this.state
-        var {input} = this.refs
+        var {index, value, results, disable} = this.state
+        var {text} = this.refs
         
-        if( !container ){
+        if( !container && value ){
             var list = <ul>{
                 results.map((item,i)=>{
                     item = getItem(item)
@@ -191,16 +239,15 @@ var Autocomplete = module.exports = React.createClass({
         }
         return (
         <span>
-            <input {...this.props} 
-                ref="input" 
-                value={value} 
+            <Input {...this.props} 
+                ref="text" 
                 onChange={this.change} 
                 onKeyDown={this.keydown} 
-                onKeyUp={this.keyup} />
+                onKeyUp={!disable && this.keyup} />
 
-            {!container && input && 
+            {!container && text && !disable &&
                 <Popover 
-                    nearby={input} 
+                    nearby={text.refs.input} 
                     trigger="click"
                     ref="container" 
                     name={'auto-complete-pop auto-complete-'+name}
@@ -209,4 +256,11 @@ var Autocomplete = module.exports = React.createClass({
         </span>
         )
     }
+})
+
+var directive = new Directive({
+    elementGroups : {
+        'autocomplete' : {component:Autocomplete}        
+    },
+    exports : exports
 })

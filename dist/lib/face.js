@@ -46,6 +46,7 @@ var Face = React.createClass({
             return pop;
         },
 
+
         //提取表情,不传默认为当前表情插入对象val
         //replaceImage 将图片替换为符号 否则默认替换符号为图片
         replaceFace: function replaceFace(con, faces, replaceImage) {
@@ -114,6 +115,13 @@ var Face = React.createClass({
             faces: [],
             themes: ['default']
         }, this.constructor._config);
+        state.themes = [].concat(state.themes);
+
+        var i = state.themes.indexOf('emoji');
+        if (i > -1) {
+            state.themes.splice(i, 1);
+            state.hasEmoji = true;
+        }
 
         var themes = state.themes,
             themeItems = state.themeItems,
@@ -133,11 +141,17 @@ var Face = React.createClass({
     componentDidMount: function componentDidMount() {
         var _this2 = this;
 
-        var faces = this.state.faces;
+        var _state = this.state,
+            faces = _state.faces,
+            hasEmoji = _state.hasEmoji;
         var _refs = this.refs,
             tab = _refs.tab,
             emojiTab = _refs.emojiTab;
 
+
+        if (!hasEmoji) {
+            return;
+        }
         emojiTab.state.listinit = {};
         emojiTab.onChange(function (i) {
             _this2.loadEmoji(i);
@@ -171,8 +185,8 @@ var Face = React.createClass({
                 item.items.map(function (img, j) {
                     return React.createElement(
                         'li',
-                        { key: img.key + img.value + j, onClick: _this3.insertTo.bind(_this3, img.value, 'emoji') },
-                        React.createElement('img', { src: base + img.key + fix, title: img.title, alt: img.value })
+                        { key: img.key + img.value + j, onClick: _this3.insertTo.bind(_this3, img.value, 'emoji'), title: img.title },
+                        img.value
                     );
                 })
             );
@@ -208,7 +222,9 @@ var Face = React.createClass({
     render: function render() {
         var _this4 = this;
 
-        var faces = this.state.faces;
+        var _state2 = this.state,
+            faces = _state2.faces,
+            hasEmoji = _state2.hasEmoji;
         var base = Emoji.base,
             data = Emoji.data,
             fix = Emoji.fix;
@@ -230,11 +246,11 @@ var Face = React.createClass({
                         )
                     );
                 }),
-                React.createElement(
+                hasEmoji ? React.createElement(
                     SwitchMenu,
                     null,
                     'Emoji'
-                )
+                ) : null
             ),
             React.createElement(
                 'div',
@@ -262,12 +278,12 @@ var Face = React.createClass({
                     );
                 })
             ),
-            React.createElement(
+            hasEmoji ? React.createElement(
                 SwitchItem,
                 null,
                 React.createElement(
                     Switch,
-                    { className: 'emoji-tab clearfix', ref: 'emojiTab' },
+                    { className: 'emoji-tab clearfix font-emoji', ref: 'emojiTab' },
                     React.createElement(
                         'ul',
                         { className: '_menu clearfix' },
@@ -291,7 +307,7 @@ var Face = React.createClass({
                         })
                     )
                 )
-            )
+            ) : null
         );
     }
 });

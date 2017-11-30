@@ -5,7 +5,12 @@ import {Form} from 'nj/form'
 import Marked from 'marked'
 import Menu from 'json-loader!../menu.json'
 import Prism from './prism'
+// import Base64 from 'base64-js'
 
+Frame.config({
+    route : ['a', 'b']
+})
+// console.log(Base64);
 const options = {
     // style : 2,
     defaultNode : "0",
@@ -14,7 +19,7 @@ const options = {
         <h3 style={{padding:'1.5em 1em', fontWeight:'100', margin:0}}>nojs-react</h3>
         {tree}
     </div>,
-    showTopbar : false,
+    // showTopbar : false,
     topbarItems : [
         // {content:'<div style="width:170px">logo</div>', align:'left', index:-1, type:'button'},
         {content:'<a href="form/normal.html">aaa21312</a>', type:'link'},
@@ -28,10 +33,23 @@ const options = {
     ],
     template : ({id, url}) => 'html/'+url+(url.indexOf('.')<0 ? '.md' : ''),
     htmlParse : (html, {id, url}) => url.indexOf('.')<0 ? Marked(html) : html,
-    onComplete : ({id, url}) => Prism.highlightAll(),
+    onComplete : (params, node, pageName, parent) => {
+        Prism.highlightAll()
+        pageName && System.import("./" + pageName).then(p=>{
+            p.init && p.init(params, node)
+        })
+    },
+    onReady (params) {
+        // console.log(1, params)
+    },
+    onChange (nextParams, params) {
+        // console.log(2, nextParams, params)
+    },
     scripts : {
+        'index' : 'demo/index',
         'mask' : 'demo/mask',
         'popup' : 'demo/popup',
+        'popover' : 'demo/popup',
         'datepicker' : 'demo/datepicker',
         'editor' : 'demo/editor',
         'form/normal.html' : 'demo/form',
@@ -39,14 +57,21 @@ const options = {
         'form/input-group.html' : 'demo/form',
         'tree/linkTree' : 'demo/tree'
     },
-    loadScript (pageName, callback) {
-        // require('bundle!./'+pageName)(callback)
-        System.import("./" + pageName).then(callback)
-    }
+    // loadScript (pageName, callback) {
+    //     // require('bundle!./'+pageName)(callback)
+    // }
 }
 
-let frame = render(
+let frame = window.rootFrame = render(
     <Frame {...options} />, 
     document.getElementById('root')
 )
+
+frame.tree.onChange((node,e)=>{
+    if( node.children.length ){
+        e.preventDefault()
+        frame.tree.toggle(node)
+    }
+})
+
 

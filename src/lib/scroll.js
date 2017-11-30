@@ -395,8 +395,10 @@ var ScrollPage = React.createClass({
     getDefaultProps () {
         return {pages:0}
     },
-    handleClick (index) {
+    handleClick (page) {
         var {parentComponent} = this.state
+        var {step} = parentComponent.state
+        var index = page*step
         parentComponent.stop()
         parentComponent.scroll(index)
     },
@@ -409,11 +411,13 @@ var ScrollPage = React.createClass({
     render () {
         // console.log(this.props)
         var {parentComponent} = this.state
-        var {length, index} = parentComponent.state
+        var {length, index, step} = parentComponent.state
         var items = []
-        for( var i=0; i<length; i++ ){
+        var pages = Math.ceil(length/step)
+        for( var i=0; i<pages; i++ ){
             items.push(i+1)
         }
+        var page = Math.ceil((index+1)/step)-1
         var {trigger, className} = this.props
         var template = this.props.template || parentComponent.props.pageTemplate
         
@@ -425,14 +429,14 @@ var ScrollPage = React.createClass({
                 var child = tmpl || n
                 var options = {
                     ref : 'item'+i,
-                    className : nj.utils.joinClass('-page-item', n-1==index&&'-page-active'),
+                    className : nj.utils.joinClass('-page-item', page == i&&'-page-active'),
                     key : n
                 }
                 if( typeof tmpl=='string' ){
                     options.dangerouslySetInnerHTML = {__html:tmpl}
                     child = null
                 }
-                options[trigger=='hover'?'onMouseEnter':'onClick'] = this.handleClick.bind(this,n-1)
+                options[trigger=='hover'?'onMouseEnter':'onClick'] = this.handleClick.bind(this,i)
                 return <span {...options}>{child}</span>
             })}
             </div>
@@ -469,4 +473,4 @@ var directive = new Directive({
 })
 
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start()
+// directive.start()

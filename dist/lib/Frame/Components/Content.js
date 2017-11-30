@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -54,7 +50,22 @@ var Content = function (_React$Component) {
     _createClass(Content, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.jump();
+            var _props = this.props,
+                params = _props.params,
+                _props$routes = _slicedToArray(_props.routes, 1),
+                rootProps = _props$routes[0].props,
+                root = _props.root;
+
+            var onReady = rootProps.onReady;
+
+
+            this.jump(null, function () {
+                //页面首次载入完成后回调
+                onReady && onReady(params);
+            });
+
+            root.reload = this.jump.bind(this); //对外提供reload方法
+
             this.context.router.setRouteLeaveHook(this.props.route, this.routerWillLeave);
         }
     }, {
@@ -69,37 +80,47 @@ var Content = function (_React$Component) {
         }
     }, {
         key: 'jump',
-        value: function jump(props) {
+        value: function jump(props, callback) {
             var _ref = props || this.props,
                 _ref$routes = _slicedToArray(_ref.routes, 1),
                 rootProps = _ref$routes[0].props,
-                _ref$params = _ref.params,
-                id = _ref$params.id,
-                url = _ref$params.url;
+                params = _ref.params;
 
             var menu = rootProps.menu;
+            var id = params.id,
+                url = params.url;
             //获取当前节点
 
             var node = menu.filter(function (n) {
                 return n.id == id;
             })[0];
-            this.load(url || node && node.link, id);
+            this.load(params, node, callback); //url||node&&node.link, id
         }
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
-            var params = this.props.params;
-            var nParams = nextProps.params;
+            var _props2 = this.props,
+                params = _props2.params,
+                _props2$routes = _slicedToArray(_props2.routes, 1),
+                rootProps = _props2$routes[0].props;
 
+            var nParams = nextProps.params;
+            var onChange = rootProps.onChange,
+                onChangeBefore = rootProps.onChangeBefore;
+
+            onChangeBefore && onChangeBefore(nParams, params);
             (nParams.id != params.id || nParams.url != params.url) && this.jump(nextProps);
+            //url发生变化时回调
+            onChange && onChange(nParams, params);
         }
     }, {
         key: 'load',
-        value: function load(url, id) {
+        value: function load(params, node, callback) {
             var _this2 = this;
 
-            var _props$routes = _slicedToArray(this.props.routes, 1),
-                rootProps = _props$routes[0].props;
+            //(url, id)
+            var _props$routes2 = _slicedToArray(this.props.routes, 1),
+                rootProps = _props$routes2[0].props;
 
             var template = rootProps.template,
                 htmlParse = rootProps.htmlParse,
@@ -107,24 +128,38 @@ var Content = function (_React$Component) {
                 loadScript = rootProps.loadScript,
                 _rootProps$scripts = rootProps.scripts,
                 scripts = _rootProps$scripts === undefined ? {} : _rootProps$scripts;
+            var url = params.url,
+                id = params.id;
 
-
+            url = url || node && node.link;
             var realUrl = url;
+
             if (url && typeof template == 'function') {
                 realUrl = template({ id: id, url: url });
             }
 
-            realUrl && _jquery2.default.get(realUrl).then(function (html) {
+            if (!realUrl) return;
+
+            // this.setState({html:'<div class="page-pending">loading……</div>'})
+            this.setState({ status: 'pending' });
+
+            _jquery2.default.get(realUrl).then(function (html) {
+                var $wrap = (0, _jquery2.default)(_this2.refs.wrap);
+                $wrap.scrollTop(0);
                 if (typeof htmlParse == 'function') {
                     html = htmlParse(html, { id: id, url: url });
                 }
-                _this2.setState({ html: html }, function (e) {
+                //在html后添加随机个空格
+                var random = Math.ceil(Math.random() * 10); //获取10以内的随机数 
+                for (var i = 0; i < random; i++) {
+                    html += '&nbsp;';
+                }
+                _this2.setState({ html: html, status: 'complete' }, function (e) {
                     var parent = _this2.props.parent;
 
                     var node = rootProps.menu.filter(function (n) {
                         return n.id == id;
                     })[0];
-                    onComplete && onComplete({ id: id, url: url }, node);
 
                     //更新html后 需要加载相应组件
 
@@ -132,37 +167,53 @@ var Content = function (_React$Component) {
                      * 在页面中添加一个隐藏域来标识当前页面 <input id="$pageName" value="index">
                      * 当id或url都不方便匹配时(url中存在动态参数) 可使用此方法
                      */
-                    var _pageName = (0, _jquery2.default)('#__pageName__').val();
+                    var _pageName = $wrap.find('#__pageName__').val();
 
                     var pageName = scripts[_pageName] || scripts[url] || scripts[id];
 
                     if (!scripts[url] && scripts[id]) {
                         //只有id匹配 需检查url是否跟id所在节点的link是否匹配
                         if (url != node.link) {
-
-                            return;
+                            pageName = null;
+                            //return
                         }
                     }
-                    pageName && typeof loadScript == 'function' && loadScript(pageName, function (p) {
-                        _this2.constructor.leaveEvent = p.onLeave;
-                        p.init && p.init({ id: id, url: url });
-                    });
+                    if (pageName && typeof loadScript == 'function') {
+                        // loadScript(pageName, p=>{
+                        // this.constructor.leaveEvent = p.onLeave
+                        // p.init && p.init(params, node)
 
-                    setTimeout(function (e) {
-                        return parent.forceUpdate();
-                    }, 1);
+                        // })
+                    }
+                    onComplete && onComplete(params, node, pageName, parent);
+                    callback && callback(params, node);
+                    // setTimeout(e=>parent.forceUpdate(), 1)
                 });
-            }).fail(function (data) {});
+            }).fail(function (data) {
+                _this2.setState({ status: 'fail' });
+            });
         }
     }, {
         key: 'render',
         value: function render() {
-            var _state$html = this.state.html,
-                html = _state$html === undefined ? '' : _state$html;
+            var _props$routes3 = _slicedToArray(this.props.routes, 1),
+                rootProps = _props$routes3[0].props;
+
+            var _rootProps$pending = rootProps.pending,
+                pending = _rootProps$pending === undefined ? _react2.default.createElement(
+                'div',
+                { className: 'page-pending' },
+                _react2.default.createElement('i', { className: 'nj-icon nj-icon-loading' })
+            ) : _rootProps$pending;
+            var _state = this.state,
+                _state$html = _state.html,
+                html = _state$html === undefined ? '' : _state$html,
+                status = _state.status;
 
             return _react2.default.createElement(
                 'div',
-                { className: 'grid-main' },
+                { className: 'grid-main', ref: 'wrap' },
+                status == 'pending' ? pending : null,
                 _react2.default.createElement('div', { className: 'grid-inner', dangerouslySetInnerHTML: { __html: html } })
             );
         }
@@ -175,4 +226,4 @@ Content.contextTypes = {
     router: _propTypes2.default.object
 };
 
-exports.default = Content;
+module.exports = Content;

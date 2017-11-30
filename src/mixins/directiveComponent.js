@@ -60,13 +60,13 @@ const Directive = function(options){
 
 Directive.prototype = {
     start (container) {      
-        this.directiveInit(this.rootDirective, container||document.body)
+        return this.directiveInit(this.rootDirective, container||document.body)
     },
     directiveInit (type, context, parentComponent) {
-        if( !context ){
-            return
-        }
         var components = []
+        if( !context ){
+            return components
+        }
         var formElements = nj.utils.toArray(context.getElementsByTagName('nj-'+type))
         formElements.forEach((node,i)=>{
             var c = this.initial(node, type, parentComponent,i)
@@ -194,4 +194,4 @@ function getComponentName(name){
     })
 }
 
-export default Directive
+module.exports =  Directive

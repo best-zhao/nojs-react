@@ -1,9 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _nojsReact = require('../nojs-react');
@@ -11,6 +7,8 @@ var _nojsReact = require('../nojs-react');
 var _popover = require('../popover');
 
 var _popover2 = _interopRequireDefault(_popover);
+
+var _form = require('../form');
 
 var _Datetime = require('./Datetime');
 
@@ -47,7 +45,7 @@ var Datepicker = function (_React$Component) {
             var input = this.refs.input;
 
 
-            input = options.input || input;
+            input = options.input || input.refs.input;
 
             var pop = this.state.pop = _popover2.default.create({
                 nearby: input,
@@ -58,7 +56,6 @@ var Datepicker = function (_React$Component) {
             }).onShow(function () {
 
                 var self = _this2;
-
                 //获取初始value
                 options.value = input.value;
 
@@ -84,8 +81,7 @@ var Datepicker = function (_React$Component) {
 
                     var hasTime = this.state.hasTime;
 
-                    !hasTime && pop.setDisplay(false);
-
+                    !hasTime || data.type == 'now' && pop.setDisplay(false);
                     onChange && onChange.call(self, value, data, timestamp);
                 };
 
@@ -99,13 +95,12 @@ var Datepicker = function (_React$Component) {
                     pop.setDisplay(false);
                     _this2.state._action = "submit";
 
-                    datetime.submit.call(datetime);
+                    datetime.submit.call(datetime, 'submit');
 
                     setTimeout(function (e) {
                         self.state._action = null;
                     }, 1);
                 };
-
                 var template = _nojsReact.React.createElement(
                     'div',
                     { className: 'pop-wrap clearfix' },
@@ -131,6 +126,9 @@ var Datepicker = function (_React$Component) {
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
+            var value = nextProps.value;
+
+            this.setState({ value: value });
             Object.assign(this.state.options, nextProps);
         }
     }, {
@@ -142,13 +140,14 @@ var Datepicker = function (_React$Component) {
                 name = _props.name,
                 className = _props.className,
                 input = _props.input;
+            // let attrs = {placeholder, name, className, readOnly:true, value, ref:'input'}
 
-            var attrs = { placeholder: placeholder, name: name, className: className, readOnly: true, value: value, ref: 'input' };
-            return input ? null : _nojsReact.React.createElement('input', attrs);
+            var attrs = Object.assign({}, this.props, { readOnly: true, value: value, ref: 'input' });
+            return input ? null : _nojsReact.React.createElement(_form.Input, attrs);
         }
     }]);
 
     return Datepicker;
 }(_nojsReact.React.Component);
 
-exports.default = Datepicker;
+module.exports = Datepicker;

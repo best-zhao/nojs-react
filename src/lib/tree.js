@@ -5,6 +5,7 @@ require('../../css/tree.css')
 var nj = require('./nojs-react') 
 var {React, ReactDOM, mixins, utils, Mui} = nj;
 var $ = require('jquery')
+var Popover = require('./popover')
 
 var Tree = React.createClass({
     statics : {
@@ -97,7 +98,7 @@ var Tree = React.createClass({
                 'parentid' : 'parentid'
             }, options.keymap)
 
-            options.rootID = options.rootID === undefined ? '0' : options.rootID
+            options.rootID === undefined ? '0' : options.rootID
 
             var data = options.data
             if( typeof data=='string' ){
@@ -116,33 +117,43 @@ var Tree = React.createClass({
     getDefaultProps () {
         return {level:0, allowSelect:true, allowToggle:true}
     },
+    componentWillReceiveProps (nextProps) {
+        if( !nextProps.level ){
+            var options = this.rootInit(nextProps)
+            //this.setState(options)
+        }else{
+            //this.setState(nextProps)
+        }   
+    },
+    rootInit (props) {
+        var options = Object.assign({}, props)
+        options.keymap = Object.assign(_keymap, options.keymap)
+
+        options.rootID = options.rootID === undefined ? '0' : options.rootID
+        
+        var level = options.level || 0
+
+        if( typeof options.data=='string' ){
+            options.async = true
+            options.dataFormat = {
+                databyid : {},
+                databylevel : []
+            }
+            options.source = options.data
+            options.data = []
+        }else{
+            var data = Tree.parse(options)
+            var children = data.databylevel[level]
+            options.data = children
+            options.dataFormat = data
+        }
+        return options
+    },
     getInitialState () {
         var options = Object.assign({}, this.props)
         if( !options.level ){
-            options.keymap = Object.assign(_keymap, options.keymap)
-
-            options.rootID = options.rootID === undefined ? '0' : options.rootID
-            
-            var level = options.level || 0
-
-            if( typeof options.data=='string' ){
-                options.async = true
-                options.dataFormat = {
-                    databyid : {},
-                    databylevel : []
-                }
-                options.source = options.data
-                options.data = []
-            }else{
-                var data = Tree.parse(options)
-                var children = data.databylevel[level]
-                options.data = children
-                options.dataFormat = data
-            }
-        }else{
-
+            options = this.rootInit(options)
         }
-        // console.log(this.constructor.parse)
         return options
     },
     componentWillMount (){
@@ -153,6 +164,7 @@ var Tree = React.createClass({
             this.pullEvent = utils.addEventQueue.call(this, 'onPull')
             this.fetchEvent = utils.addEventQueue.call(this, 'onFetch')
             this.fetchCompleteEvent = utils.addEventQueue.call(this, 'onFetchComplete')
+            this.checkEvent = utils.addEventQueue.call(this, 'onChecked')
         }
         //这里还处于外部render过程 外部还未完成 添加事件动作
         setTimeout(()=>{
@@ -237,7 +249,22 @@ var Tree = React.createClass({
             parentNode = allnodes[parentNode[KEY_PID]]
         }
         return parents
-    },    
+    },  
+    //获取所有子节点
+    getChildren (node) {
+        var children = node.children || []
+        var {keymap, dataFormat} = this.state
+        var KEY_ID = keymap.id
+        var id = node[KEY_ID]
+        var allnodes = dataFormat.databyid
+        if( !allnodes[id] ){
+            return children
+        } 
+        children.forEach(item=>{
+            children = children.concat(this.getChildren(item))
+        })
+        return children
+    },  
     //设置节点显示状态
     setNodeDisplay (node, display) {
         if( !node ){
@@ -284,7 +311,7 @@ var Tree = React.createClass({
         var source = rootScope.state.source
         var promise = $.getJSON(source+parentid)
 
-        promise = rootScope.fetchEvent.complete(promise,parentid) || promise
+        promise = rootScope.fetchEvent.complete(promise, parentid, level) || promise
 
         promise.then(json=>{
             var data = json || []
@@ -292,12 +319,13 @@ var Tree = React.createClass({
             data = data.filter((node)=>{            
                 if( !node[KEY_PID] || String(node[KEY_PID])==parentid ){//筛选parentid正确的节点
                     databyid[node[KEY_ID]] = node
+                    node[KEY_PID] = parentid//返回的数据可能没有指定pid 
                     return true
                 }
             })
             
             rootScope.pullEvent.complete(this, data)//暂时保留
-            rootScope.fetchCompleteEvent.complete(data, this)
+            rootScope.fetchCompleteEvent.complete(data, parentid, level, this)
 
             if( parentNode ){
                 parentNode.pending = null
@@ -309,11 +337,26 @@ var Tree = React.createClass({
             }
         })
     },
+    checkHandle (item, e) {
+        item.checked = e.target.checked
+        this.checkEvent.complete(item, e)
+        this.forceUpdate()
+    },
+    //获取所有已选的ids
+    getChecked () {
+        let {dataFormat} = this.state
+        let allnodes = dataFormat.databyid
+        let checked = []
+        for( let i in allnodes ){
+            allnodes[i].checked && checked.push(i)
+        }
+        return checked
+    },
     render(){
         var {data, level, parentNode, keymap} = this.state        
         var visible = !parentNode || parentNode.open ? ' d_show' : ' d_hide'
         var rootScope = this.props.rootScope || this
-        var {async, node, textClick} = rootScope.state
+        var {async, node, textClick, allowSelect, checkbox} = rootScope.state
 
         return data ? (
             <ul className={'level'+level+visible}>
@@ -334,7 +377,7 @@ var Tree = React.createClass({
                         }
                         var nodeClass = ['item']
                         var childOptions = {
-                            keymap
+                            keymap, level
                         }
                         var nochild
 
@@ -366,7 +409,7 @@ var Tree = React.createClass({
                         node && item.select && nodeClass.push('selected')
 
                         //节点显示名称可以通过函数自定义
-                        var nodeName = item.name
+                        var nodeName = item[keymap.name]
                         var defineName = rootScope.props.defineName
                         if( typeof defineName=='function' ){
                             nodeName = defineName.call(rootScope,item)
@@ -379,21 +422,71 @@ var Tree = React.createClass({
 
                         i==data.length-1 && nodeClass.push('last-item')
 
+                        var itemOptions = {
+                            key : i,
+                            'data-id' : item[KEY_ID],
+                            className : utils.joinClass('level'+level+'-item', 'has-children')
+                        }
+                        if( rootScope.props.style=='menu' && !nochild ){//下拉菜单 添加hover 展示子菜单
+                            itemOptions.onMouseEnter = e=>{
+                                item.open = false
+                                this.toggle.call(this, item, e)
+                            }
+                            itemOptions.onMouseLeave = e=>{
+                                item.open = true
+                                this.toggle.call(this, item, e)
+                            }
+                        }
                         return (
-                        <li key={i} data-id={item[KEY_ID]} className={'level'+level+'-item'}>
+                        <li {...itemOptions}>
+                        {React.createElement(
+                            allowSelect ? Mui : 'span',
+                            {
+                                onClick (e) {
+                                    rootScope.select.call(rootScope,item,e);
+                                    !nochild&&textClick&&this.toggle.call(this,item,e)
+                                },
+                                className:nodeClass.join(' ')
+                            },
+                            rootScope.props.style!='menu' && holder.map((h,j) => 
+                                <span key={j} className={'_line'+(j+1>=level?' _line_begin _line'+(j-level+1):'')}></span>
+                            ),
+                            rootScope.props.style!='menu' && <span className="_icon" onClick={!nochild&&this.toggle.bind(this,item)}></span>,
+                            checkbox ? (
+                                <span className="_checkbox">
+                                    <input type="checkbox" 
+                                        name={checkbox.name} 
+                                        checked={!!item.checked} 
+                                        onChange={rootScope.checkHandle.bind(rootScope, item)}
+                                        value={item[KEY_ID]} 
+                                        disabled={item.disabled}/>
+                                </span>
+                            ) : null,
+                            
+                            typeof nodeName=='string' ?  
+                                <span className="_text" dangerouslySetInnerHTML={{__html:nodeName}}></span> : 
+                                <span className="_text">{nodeName}</span>,
+
+                            rootScope.props.style=='menu' && !nochild && <i className="nj-icon nj-icon-right"></i>
+                        )}
+                        {/*
                         <Mui 
-                            onClick={e=>{rootScope.select.call(rootScope,item,e);!nochild&&textClick&&this.toggle.call(this,item,e)}} 
-                            className={nodeClass.join(' ')}>
+                            onClick={e=>{
+                                rootScope.select.call(rootScope,item,e);
+                                !nochild&&textClick&&this.toggle.call(this,item,e)}
+                            } 
+                            className={nodeClass.join(' ')}
+                        >
 
                             {holder.map((h,j) => 
                                 <span key={j} className={'_line'+(j+1>=level?' _line_begin _line'+(j-level+1):'')}></span>
                             )}
                             
                             <span className="_icon" onClick={!nochild&&this.toggle.bind(this,item)}></span>
-                            {rootScope.props.checkbox ? (
+                            {checkbox ? (
                                 <span className="_checkbox">
                                     <input type="checkbox" 
-                                        name={rootScope.props.checkbox.name} 
+                                        name={checkbox.name} 
                                         defaultChecked={item.checked} 
                                         value={item[KEY_ID]} 
                                         disabled={item.disabled}/>
@@ -405,6 +498,7 @@ var Tree = React.createClass({
                                 <span className="_text">{nodeName}</span>
                             }   
                         </Mui>
+                        */}
                         {children.length ? (<Tree {...childOptions} />) : null}
                         </li>
                         )
@@ -477,19 +571,19 @@ var LevelSelect = React.createClass({
                 getItems(node.children)
             })
         }
-
-        var rootNode = this.props.rootNode===false ? false : true
+        var {rootNode, size, name, className, value} = this.props
+        rootNode = rootNode===false ? false : true
 
         rootNode && items.push(<option value={this.state.rootID} key={++key} className="root-node" style={{color:'#999'}}>{'----根节点----'}</option>)
         getItems(levels[0])
         
         return (
             <select 
-                size={this.props.size} 
-                name={this.props.name} 
-                className={this.props.className} 
+                size={size} 
+                name={name} 
+                className={className} 
                 onChange={this.handleChange}
-                defaultValue={this.props.defaultValue}>
+                defaultValue={value}>
 
                 {items}
             </select>
@@ -508,13 +602,14 @@ Tree.LinkTree = React.createClass({
         return {
             selected : [],
             listRows : 7,
-            type : 'select'
+            type : 'select',
+            trigger : 'click'
         }
     },
-    getInitialState () {
+    initState (props) {
         var options = Object.assign({
             ids : []
-        }, this.props)
+        }, props || this.props)
         options.keymap = $.extend({
             'id' : 'id',
             'name' : 'name',
@@ -522,7 +617,7 @@ Tree.LinkTree = React.createClass({
         }, options.keymap)
 
         options.rootID = options.rootID === undefined ? '0' : options.rootID
-        options.style = this.props.type.indexOf('list')==0 ? 'list' : 'select'
+        options.style = options.type.indexOf('list')==0 ? 'list' : 'select'
 
         var data = options.data
         if( typeof data=='string' ){
@@ -544,10 +639,17 @@ Tree.LinkTree = React.createClass({
         }
         options.menuData = data
         window.setTimeout(()=>{
-            this.select(this.props.selected.filter(p=>p));
+            this.select(options.selected.filter(p=>p));
         }, 1)
 
         return options;
+    },
+    getInitialState () {
+        return this.initState()
+    },
+    componentWillReceiveProps(nextProps){
+        (nextProps.data!==this.props.data || nextProps.selected!==this.props.selected ) && 
+            this.setState(this.initState(nextProps));
     },
     componentWillMount () {
         this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
@@ -579,8 +681,10 @@ Tree.LinkTree = React.createClass({
         let {listHeight, style} = this.state
         if( style=='list' && !listHeight){
             let list = this.refs['select-0']
-            let item = list.firstChild
-            this.setState({listHeight:item.offsetHeight})            
+            if( list ){
+                let item = list.firstChild
+                this.setState({listHeight:item.offsetHeight})   
+            }                     
         }  
     },
     getData (parentid, level) {
@@ -670,7 +774,7 @@ Tree.LinkTree = React.createClass({
         var {menuData, dataFormat, async, keymap} = this.state
 
         // var parentid = select.value
-        selected[level] = parentid!=undefined ? {
+        selected[level] = parentid!=undefined && dataFormat.databyid[parentid] ? {
             id : parentid,
             name : dataFormat.databyid[parentid][keymap.name]
             // style=='select' ? 
@@ -695,20 +799,16 @@ Tree.LinkTree = React.createClass({
 
         this.changeEvent.complete(node, level, e)
 
-        //ios 下多个select 无法聚焦bug
-        // e && e.preventDefault()
-        
         // this.props.onChange && this.props.onChange.call(this,parentid,level,e)
     },
     render () {
         var {keymap, ids, menuData, selected, style, listHeight} = this.state
         var KEY_ID = keymap.id
         var KEY_NAME = keymap.name
-        var {maxlevel, type, listRows, infos=[]} = this.props
+        var {maxlevel, type, listRows, infos=[], trigger} = this.props
         var listCols = maxlevel || 3
         //infos = infos || []//附加信息 如name
         
-        // console.log(selected)
         let className = nj.utils.joinClass(
             'nj-tree-select clearfix', 
             type=='list-ios'&&'nj-tree-select-ios'
@@ -739,20 +839,25 @@ Tree.LinkTree = React.createClass({
                                 if( id && item[KEY_ID]==id ){//检测被设置的默认选中id是否有效
                                     valid = true
                                 }
-                                return (<li key={item[KEY_ID]} 
-                                    className={selected[i] && selected[i].id==item[KEY_ID]?'active':''}
-                                    onClick={e=>type=='list' && this.handleChange(item[KEY_ID], i, e)}
-                                    value={item[KEY_ID]}>{item[KEY_NAME]}</li>
+                                let itemOptions = {
+                                    key : item[KEY_ID],
+                                    className : selected[i] && selected[i].id==item[KEY_ID]?'active':'',
+                                    [trigger=='click'?'onClick':'onMouseOver'] : e=>type=='list' && this.handleChange(item[KEY_ID], i, e),
+                                    value : item[KEY_ID]
+                                }
+                                return (<li {...itemOptions}>
+                                    {item[KEY_NAME]}
+                                    {item.children.length ? <i className="nj-icon nj-icon-right"></i> : null}
+                                </li>
                                 )
                             })}
                         </ul>
                     </div>
                     :
                     <select 
-                        className={info.className} 
+                        {...info}
                         ref={'select-'+i} 
-                        value={id} 
-                        name={info.name} 
+                        value={id || selected[i] && selected[i].id} 
                         onChange={e=>this.handleChange(e.target.value, i, e)}
                     >
                         <option value="">请选择</option>
@@ -784,7 +889,142 @@ Tree.LinkTree = React.createClass({
     }
 })
 
+//无限级下拉菜单
+Tree.MenuTree = props=>{
+    let {target, trigger, data} = props
+    let pop = Popover.create({
+        trigger,
+        nearby : target,
+        name : 'nj-menu',
+        template : <div className="nj-tree nj-menu-tree">
+            <Tree 
+                {...props}
+                style='menu'
+            />
+        </div>
+    })
+    pop.onHide(()=>{
+        data.forEach(n=>{
+            n.open = false
+        })
+    })
+    return pop
+}
+Tree._MenuTree = React.createClass({
+    getInitialState () {
+        let options = Object.assign({
+            keymap : {
+                'id' : 'id',
+                'name' : 'name',
+                'parentid' : 'parentid'
+            },
+            rootID : '0'
+        }, this.props)
+        let dataFormat = Tree.parse(options)
+        return {pops:[], dataFormat, options, selected:[]}
+    },
+    componentDidMount () {
+        let {target, trigger} = this.props
+        let {pops, dataFormat} = this.state
 
+        pops[0] = Popover.create({
+            trigger,
+            nearby : target,
+            name : 'nj-menu nj-menu-0',
+            template : this.renderMenu(dataFormat.databylevel[0], 0)
+        })
+        this.bindPop(pops[0], 0)
+    },    
+    createPop (level) {
+        let {trigger} = this.props
+        let {pops, dataFormat} = this.state
+
+        let parentPop = pops[level-1]
+        let pop = pops[level] = Popover.create({
+            trigger,
+            name : 'nj-menu nj-menu-'+level,
+            position : {left:100, top:0},
+            nearby : $(parentPop.wrap).find('li.has-children')
+            // delegate : ['li.has-children', parentPop.wrap]            
+        })
+        .onShow(()=>{
+            let parentid  = $(pop.state.nearby).data('id')
+            let parentNode = dataFormat.databyid[parentid]
+            let template = this.renderMenu(parentNode.children, level)
+            pop.setState({template})            
+        })
+        pop.parentPop = parentPop
+        this.bindPop(pop, level)    
+    },
+    bindPop (pop, level) {
+        let {pops} = this.state
+        let parentPop = pop.parentPop
+        pop.onShow(()=>{
+            this.createPop(level+1)
+            // pops[level+1].setState({nearby:$(pop.wrap).find('li.has-children')})
+
+            $(pop.wrap)           
+            .on('mouseenter.relation', e=>{
+                clearTimeout(pop.delayhide)
+                if( !parentPop ) return
+                parentPop.keepVisible = true
+                //stop hide parents
+                pops.forEach((p,i)=>{
+                    i<level && clearTimeout(p.delayhide)
+                })
+            })
+            .on('mouseleave.relation', e=>{
+                //hide self
+                pop.delayhide = setTimeout(()=>{
+                    pop.keepVisible = null
+                    pop.setDisplay(false)
+                }, 40)
+                //hide parents
+                if( !parentPop ) return
+                pops.forEach((p,i)=>{
+                    if( i<level ){
+                        p.delayhide = setTimeout(()=>{
+                            p.keepVisible = null
+                            p.setDisplay(false)    
+                        }, 40)
+                    }                    
+                })                
+            })
+        })
+    },
+    renderMenu (data, level) {
+        let {onChange} = this.props
+        let {options:{keymap}, dataFormat, selected, pops} = this.state
+        let KEY_ID = keymap.id
+        let KEY_PID = keymap.parentid
+        let KEY_NAME = keymap.name
+        return <ul>
+            {data.map(item=>{
+                let id = item[KEY_ID]
+                let n = item.children.length
+                return <li 
+                    key={id} 
+                    data-id={id} 
+                    className={utils.joinClass(n && 'has-children', selected[level]===item&&'active')}
+                    onClick={e=>{
+                        selected = selected.slice(0, level+1)//清空level所有下级
+                        selected[level] = item
+                        this.setState({selected}, ()=>{
+                            pops[level].setState({template:this.renderMenu(data,level)})  
+                        })
+                        onChange && onChange(item, level)
+                    }}
+                >
+                    {item[KEY_NAME]}
+                    {n ? <i className="nj-icon nj-icon-right"></i> : null}
+                </li>
+            })}
+        </ul>
+    },
+    render () {
+        return null
+    }
+})
 //json or array
 Tree.JsonTree = React.createClass({
     getDefaultProps () {

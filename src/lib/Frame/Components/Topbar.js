@@ -18,7 +18,7 @@ class Topbar extends React.Component{
             let options = {key:i, className:joinClass('item', type && 'item-'+type), onClick:handle}
             return typeof content=='string'
                 ? <div {...options} dangerouslySetInnerHTML={{__html:content}}></div>
-                : typeof content=='function' ? content(options) || null : <div {...options}>{content}</div>
+                : typeof content=='function' ? content(options, this) || null : <div {...options}>{content}</div>
         }
         return <div className="grid-topbar">
             <div className="_inner clearfix">
@@ -33,4 +33,4 @@ class Topbar extends React.Component{
     }
 }
 
-export default Topbar
+module.exports =  Topbar

@@ -1,5 +1,6 @@
 import Popup from 'nj/popup'
 import $ from 'jquery'
+import Popover from 'nj/popover'
 
 export const init = ()=>{
     var popup = Popup.create({
@@ -27,4 +28,11 @@ export const init = ()=>{
             Popup.tip.show('ok', res?'选择了是':'选择了否')
         })
     ))
+
+
+    Popover.create({
+        template : '<div style="width:200px;height:140px">12313</div>',
+        effect : 'normal',
+        nearby : 'demo-popover-button'
+    })
 }

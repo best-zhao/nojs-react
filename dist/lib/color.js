@@ -27,7 +27,7 @@ function color(obj) {
     },
         preview;
 
-    function add(o) {
+    function add(o, callback) {
 
         /*
          * 添加一组触发对象
@@ -40,6 +40,7 @@ function color(obj) {
         obj.data('colorpicker', 1);
         for (var i = 0; i < len; i++) {
             (function (m) {
+                m.data('callback', callback);
                 m.click(function (e) {
                     e.stopPropagation();
                     show(m);
@@ -114,7 +115,10 @@ function color(obj) {
             });
         });
         box.find('.ok').click(function () {
-            $(obj).val('#' + pos.color);
+            var target = $(box[0].target);
+            var callback = target.data('callback');
+            target.val('#' + pos.color);
+            callback && callback(pos, target);
             hide();
         });
     }
@@ -156,6 +160,7 @@ function color(obj) {
         obj = m;
         box = $('#nj_color');
         !box.length && init();
+        box[0].target = m;
         var left = m.offset().left + 'px',
             top = m.offset().top + m.outerHeight() + 'px';
         box.css({

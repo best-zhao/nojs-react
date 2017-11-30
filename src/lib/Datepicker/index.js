@@ -1,5 +1,6 @@
 import {React, render} from '../nojs-react'
 import Popover from '../popover'
+import {Form, Input} from '../form'
 import Datetime from './Datetime'
 import {today} from './utils'
 
@@ -12,7 +13,7 @@ class Datepicker extends React.Component {
         let options = this.state.options = Object.assign({}, this.props)
         let {input} = this.refs
 
-        input = options.input || input
+        input = options.input || input.refs.input
 
         let pop = this.state.pop = Popover.create({
             nearby : input,
@@ -23,7 +24,6 @@ class Datepicker extends React.Component {
         }).onShow(()=>{
 
             let self = this
-
             //获取初始value
             options.value = input.value
             
@@ -44,8 +44,7 @@ class Datepicker extends React.Component {
                 }
 
                 let {hasTime} = this.state
-                !hasTime && pop.setDisplay(false)
-
+                !hasTime || data.type=='now' && pop.setDisplay(false)
                 onChange && onChange.call(self, value, data, timestamp)
             }
 
@@ -59,13 +58,12 @@ class Datepicker extends React.Component {
                 pop.setDisplay(false)
                 this.state._action="submit"
 
-                datetime.submit.call(datetime)
+                datetime.submit.call(datetime, 'submit')
 
                 setTimeout(e=>{
                     self.state._action = null
                 }, 1)
             }
-
             let template = <div className="pop-wrap clearfix">
                 <Datetime {...options}/>
 
@@ -83,14 +81,17 @@ class Datepicker extends React.Component {
         })
     }
     componentWillReceiveProps(nextProps){
+        let {value} = nextProps
+        this.setState({value})
         Object.assign(this.state.options, nextProps)
     }
     render () {
         let {value} = this.state
         let {placeholder, name, className, input} = this.props
-        let attrs = {placeholder, name, className, readOnly:true, value, ref:'input'}
-        return input ? null : <input {...attrs}/>        
+        // let attrs = {placeholder, name, className, readOnly:true, value, ref:'input'}
+        let attrs = Object.assign({}, this.props, {readOnly:true, value, ref:'input'})
+        return input ? null : <Input {...attrs}/>        
     }
 }
 
-export default Datepicker
+module.exports =  Datepicker

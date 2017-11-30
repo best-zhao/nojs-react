@@ -11,9 +11,18 @@ class Menu extends React.Component{
     }
     componentDidMount () {
         const {tree} = this.refs
-        const {onReady} = this.props
+        const {onReady, parentSelect} = this.props
         //组件渲染完毕后 向外传递格式化后的节点数据
         onReady && onReady(tree.state.dataFormat.databyid)
+
+        if( !parentSelect ){//不允许父节点选中 点击展开
+            tree.onChange((node,e)=>{
+                if( node.children.length ){
+                    e.preventDefault()
+                    tree.toggle(node)
+                }
+            })
+        }
     }
     componentWillReceiveProps (nextProps) {
         //通过props.defaultNode来更新当前选中节点
@@ -23,14 +32,20 @@ class Menu extends React.Component{
         defaultNode && tree.select(defaultNode)
     }
     render () {
-        let {defaultNode, menu, sidebar} = this.props
+        let {defaultNode, menu, sidebar, parentSelect} = this.props
         let tree = <div className="nj-tree">
             <Tree ref="tree" 
                 data={menu} 
                 onChange={this.changeHandle.bind(this)} 
                 defaultNode={defaultNode}
                 //使用Link组件更新路由 css控制Link覆盖文字之上
-                defineName={item=><span>{item.link ? <Link to={'/'+item.id}></Link> : null} {item.name}</span> }
+                defineName={item=>{
+                    let allowSelect = item.link
+                    if( item.children.length && !parentSelect ){//不允许父节点选中
+                        allowSelect = false
+                    }
+                    return <span>{allowSelect ? <Link to={'/id/'+item.id}></Link> : null} {item.name}</span>
+                } }
             />
         </div>            
         if( typeof sidebar=='function' ){
@@ -42,4 +57,4 @@ class Menu extends React.Component{
     }
 }
 
-export default Menu
+module.exports =  Menu

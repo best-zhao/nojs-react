@@ -8,12 +8,13 @@ import Directive from '../mixins/directiveComponent'
 
 var formDirectives = {}
 
-var getRules = function(){
-    var attrs = this.props
+var getRules = function getRules(props) {
+    var attrs = props || this.props;
     var type = attrs.type
     var rules = []
     
-    if( formRules[type] ){//type="email"
+    if( formRules[type] ){
+        //type="email"
         rules.push({
             key : 'type',
             name : type,
@@ -25,7 +26,7 @@ var getRules = function(){
     for( var i in attrs ){
         var name = i.replace(/^nj-/, '')
         var rule = formRules[i] || formRules[name]
-
+        if( attrs[i]===false ) continue //required={false}
         if( rule ){//有效规则
             if( formRules[i] ){
                 name = i
@@ -82,7 +83,8 @@ var verifyField = function(real, fromParent) {
 
     let {validing, status, value, _value, dirty, isEditor} = this.state
     let el = $(ReactDOM.findDOMNode(this))
-    let visible = el.is(':visible') //隐藏的元素不验证
+    let {type} = this.props
+    let visible = el.is(':visible') || type=='hidden' //隐藏的元素不验证
 
     if( !visible ){
         this.setState({status:null, valid:true})
@@ -90,7 +92,7 @@ var verifyField = function(real, fromParent) {
     }
 
     value = isEditor ? this.state.text : value
-    
+
     //status存在表示用户未再次手动更改 value和_value不等表示从外部修改了value值（相等就是value没变）
     if( validing || (status && value===_value && dirty) ){
         // console.log(2,this.props.name, this.state.validing , this.state.status, this.state.valid)
@@ -121,13 +123,9 @@ var verifyField = function(real, fromParent) {
     }   
 
 
-    if( !rules.required && !value ){//非必填项
+    if( !rules.required && !value && value!==0 ){//非必填项
         valid = true
     }
-
-    let {type} = this.props
-
-    
 
     //'input-group' 验证子项是否全部通过
     if( valid && type=='input-group' ){
@@ -199,7 +197,7 @@ var Form = formDirectives['form'] = React.createClass({
     },
     reset () {
         this.state.childComponents.forEach((item)=>{
-            item.setState({value:'',status:null})
+            item.setState({value:item.state.defaultValue,status:null, dirty:null})
         })
     },     
     componentDidMount () {
@@ -210,7 +208,10 @@ var Form = formDirectives['form'] = React.createClass({
         this.submitEvent = nj.utils.addEventQueue.call(this, 'onSubmit')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify')
 
-        this.state.verfiyCode = Form.verifyCode()
+        this.state.verfiyCode = Form.verifyCode(
+            $(this.refs.wrap).find('#verify_img')[0],
+            $(this.refs.wrap).find('#verify_refresh')[0]
+        )
 
         var {parentComponent} = this.props//form表单所处的父组件
         if( parentComponent ){                
@@ -220,6 +221,7 @@ var Form = formDirectives['form'] = React.createClass({
             })
         }
         createdEvents.complete(this)
+        this.refs.wrap.$handle = this
     },
     verify (real) {
         var valid = verifyChildComponents.call(this, real)
@@ -300,13 +302,16 @@ formDirectives['input'] = React.createClass({
         mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])
     ],
     getInitialState () {
-        let isEditor = this.props.type=='editor'
+        let {type, defaultValue, value, html} = this.props
+        let isEditor = type=='editor'
+        defaultValue = defaultValue || value || html || ''
         return {
             isEditor,
             dirty : false,
             valid : true,
             rules : getRules.call(this),
-            value : this.props.defaultValue || this.props.value || ''
+            value : defaultValue,
+            defaultValue
         }
     },  
     getDefaultProps () {
@@ -326,9 +331,12 @@ formDirectives['input'] = React.createClass({
         let valid = verifyField.call(this, real, fromParent) 
             
         this.verifyEvent.complete(valid)
-        //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
-            //this.refs.input.focus()
-        //}
+        if( !valid && this.state.status!='pending' && parentComponent && parentComponent.state.action=='submit' ){
+            this.refs.input.focus()
+            if(this.props.type=='hidden'){
+                $(window).scrollTop($(this.refs.input).parent().offset().top-90)
+            }
+        }
         return valid
     }, 
     
@@ -337,12 +345,13 @@ formDirectives['input'] = React.createClass({
         let {isEditor} = this.state
         //异步载入编辑器
         isEditor && System.import('./Editor').then(Editor=>
-            this.setState({Editor:Editor.default})
+            this.setState({Editor})
         )
         mixins.childComponents.getParentComponent.call(this)
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify')
+        this.fetchCompleteEvent  = nj.utils.addEventQueue.call(this, 'onFetchComplete');//for async rule
         //对外引用组件
         input.$handle = this
     },      
@@ -353,7 +362,9 @@ formDirectives['input'] = React.createClass({
         if( _value!==undefined && this.state.value!==_value ){
             this.state.value = nextProps.value
             this.valueLink().requestChange()
-        }
+            this.state.status = null
+        }        
+        this.state.rules = getRules.call(this, nextProps)
     },
     valueLink () {
         var _onChange = this.props.onChange
@@ -423,7 +434,8 @@ formDirectives['input'] = React.createClass({
 
         if( type=='checkbox' || type=='radio' ){
             //options.checkedLink = this.valueLink()
-
+            options.text = options.text || options.children
+            delete options.children
         }else{
             var mark
             if( rules.length && status ){
@@ -446,11 +458,13 @@ formDirectives['input'] = React.createClass({
         }
         let hasTextarea = isEditor || type=='textarea'
         if( hasTextarea ){
-            options.value = options.html || options.value || options.children
+            // console.log(1, options.value ,2, options.html , 3,options.children)
+            //options.value = options.value || options.html || options.children || ''
             delete options.defaultValue
             delete options.children
+            // console.log(options)
         }
-        let editOptions = Object.assign({}, options)
+        let editOptions = Object.assign({}, options);
 
         return React.createElement(
             isEditor ? 'span' : 'label',
@@ -458,7 +472,7 @@ formDirectives['input'] = React.createClass({
 
             hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />,
             (type=='checkbox' || type=='radio') && <span className="_holder"></span>,
-            !hasTextarea && <span>{this.props.text}</span>,
+            !hasTextarea && <span className="_c">{options.text}</span>,
             Editor && <Editor {...editOptions}/>,
             <VerifyStatus field={this} />
         )
@@ -467,12 +481,15 @@ formDirectives['input'] = React.createClass({
 
 formDirectives['select'] = React.createClass({
     mixins : [mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
-    getInitialState () {  
+    getInitialState () { 
+        let {defaultValue, value} = this.props
+        defaultValue = defaultValue || value || ''
         return {
             dirty : false,
             valid : true,
             rules : getRules.call(this),
-            value : this.props.defaultValue || this.props.value || ''
+            value : defaultValue,
+            defaultValue
         }
     },  
     getDefaultProps () {
@@ -497,7 +514,10 @@ formDirectives['select'] = React.createClass({
         }
 
         var valid = verifyField.call(this, real, fromParent)
-        this.verifyEvent.complete(valid)       
+        this.verifyEvent.complete(valid)   
+        if( !valid && parentComponent && parentComponent.state.action=='submit' ){
+            this.refs.wrap.focus()
+        }    
         return valid
     },  
     valueLink () {
@@ -535,7 +555,7 @@ formDirectives['select'] = React.createClass({
                 }
 
                 this.verify.call(this,false); 
-                this.changeEvent.complete()
+                this.changeEvent.complete(newValue)
             }
         }      
         return valueLink
@@ -605,8 +625,6 @@ var VerifyStatus = React.createClass({
         var {novalidName, novalid, status, errortext, valid, childComponents} = field.state
         var novalidText = ''
         var ispending = status=='pending'
-
-        // console.log(showmsg, valid, status, field.refs.input)
         
         if( showmsg ){
             if( !valid || ispending ){
@@ -614,7 +632,7 @@ var VerifyStatus = React.createClass({
             }
 
             var showicon = parentComponent ? parentComponent.props.showicon : field.props.showicon
-            if( showicon!='all' && status != showicon && !ispending ){//ispending始终显示
+            if( showicon && showicon!='all' && status != showicon && !ispending ){//ispending始终显示
                 return null
             }
             //适合'input-group'子项为text类
@@ -622,7 +640,7 @@ var VerifyStatus = React.createClass({
             if( field.props.type=='input-group' && child && textReg.test(child.props.type) ){ 
                 //valid_all=false: 有未通过的验证项时 状态体现在子项上 不显示group状态 
                 //valid=true：已输入的全部通过 状态体现在子项上 group无需显示状态   
-                if( !field.state.valid_all || valid ){                    
+                if( !field.state.valid_all || valid ){ 
                     return null
                 }
             }
@@ -640,7 +658,7 @@ var VerifyStatus = React.createClass({
 
 var formRules = {
     required (value) {
-        return !!value
+        return typeof value=='number' ? true : !!value
     },
     minlength (value, target) {
         return value && value.length >= parseInt(target)
@@ -680,9 +698,10 @@ var formRules = {
         var instances = formDirectives['input'].instances
         var self = this
         var field
+        var parentComponent = this.state.parentComponent
         for( var i=0,n=instances.length; i<n; i++ ){
             field = instances[i].handle
-            if( field.props.name==target ){
+            if( field.props.name==target && field.state.parentComponent===parentComponent ){
                 if( !field.state.addConfirmEvent ){
                     //当target组件被重新修改时 清空当前组件的验证状态
                     field.onVerify(function(){
@@ -718,12 +737,15 @@ Form.addRule = function(name, fn, errortext){
 Form.addAsyncRule = function(name, fn, errortext){
     //重写fn 添加函数节流
     formRules[name] = function(value, target){
-        let {async_delay} = this.state
+        let {async_delay, parentComponent} = this.state
+        let action = parentComponent && parentComponent.state.action
         window.clearTimeout(async_delay)
 
         this.state.async_delay = setTimeout(e=>{
             let options = target ? eval('({'+target+'})') : {}
-            fn.call(this, value, options)
+            let callback = this.fetchCompleteEvent.complete
+            options.action = action
+            fn.call(this, value, options, callback)
         }, 500)
         return 'pending'
     }    
@@ -736,22 +758,18 @@ Form.addAsyncRule = function(name, fn, errortext){
 Form.verifyCode = function(verify, refresh){
     verify = verify || 'verify_img';
     refresh = refresh || 'verify_refresh';
-    verify = document.getElementById(verify);
-    refresh = document.getElementById(refresh);
+    verify = typeof verify=='string' ? document.getElementById(verify) : verify;
+    refresh = typeof refresh=='string' ? document.getElementById(refresh) : refresh;
     if( !verify ){
         return {}
     }
+    var _src = verify.src
     verify.onclick = function(){
-        var _src = this.src.split('?'),
-            ver = _src[1] || '',
-            r = /((\?|&)t=)[\d]+/;
-        if( r.test(ver) ){
-            ver = _src[0] + '?' + ver.replace(r,'$1'+(+new Date));
-        }else{
-            ver = 't='+(+new Date);
+        var src = _src + '?t='+(+new Date);
+        if( src.indexOf('?')>0 ){
+            src = _src + '&t=' + (+new Date);
         }
-        this.src = _src[0] + '?' + ver;
-        //this.src= domain.login+'/Index-loginverify.html?t='+(+new Date);
+        this.src = src;
     }
     if( refresh ){
         refresh.onclick = function(){
@@ -790,7 +808,7 @@ var directive = new Directive({
     exports : exports
 })
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start()
+// directive.start()
 
 /*填充表单数据*/
 Form.fill = function(options){
@@ -805,41 +823,51 @@ Form.fill = function(options){
     }
     
     for( i in data ){
-        item = Form.find('[name="'+i+'"]');
+        value = data[i];
+        var dataType = $.type(value)
+        item = Form.find('[name="'+i+(dataType=='array'?'[]':'')+'"]');
 
         if( !item.length ){
-            if( options.always ){//当options.always为true时 已隐藏域的形式填充到表单中
+            if(!options.always) continue;
+            if( dataType!='array' ){//当options.always为true时 已隐藏域的形式填充到表单中
                 Form.append('<input name="'+i+'" type="hidden" value="'+data[i]+'" />');
-            }
-            continue;
+            }            
         }
-        type = item[0].type;
-        value = data[i];
-        var handle = item[0].$handle
+        
+        var handle = item[0] && item[0].$handle
         var _item
-
+        type = item[0] && item[0].type;
+        
         if( type=='radio' ){
             _item = item.filter('[value="'+value+'"]')
             _item.click()
             _item.attr('checked', true);
-            handle && handle.setState({value}, e=>handle.verify(false))
+            _item[0] && (function(handle){
+                handle && handle.setState({value, status:null}, e=>handle.verify(false))
+            })(_item[0].$handle);
             
         }else if( type=='checkbox' && $.type(value)=='array' ){
             $.each(value, function(i,v){
-                _item = item.filter('[value="'+v+'"]')
-                handle = _item[0].$handle
-                handle && handle.setState({value:v}, e=>handle.verify(false))
+                _item = item.filter('[value="'+v+'"]');
+                // handle = _item[0].$handle
+                // handle && handle.setState({value:v}, e=>handle.verify(false))
+                (function(handle){
+                    handle && handle.setState({value:v, status:null}, e=>handle.verify(false))
+                })(_item[0].$handle);
                 _item.click();
             })
         }else if( typeof value=='string' || typeof value=='number' ){
             item.val(value);         
-            handle && handle.setState({value}, e=>handle.verify(false))
-        }else if( $.type(value)=='array' ){//填充数组
+            (function(handle){
+                handle && handle.setState({value, status:null}, e=>handle.verify(false))
+            })(handle);
+        }else if( dataType=='array' ){//填充数组
             value.forEach((v,j)=>{
                 if( item[j] ){
                     item[j].value = v
+                    item[j].name = i+'[]'
                 }else{
-                    Form.append('<input name="'+i+'" type="hidden" value="'+v+'" />');
+                    Form.append('<input name="'+i+'[]" type="hidden" value="'+v+'" />');
                 }
             })
             //dom个数大于数组个数时 移除

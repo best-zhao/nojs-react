@@ -23,8 +23,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var formDirectives = {};
 
-var getRules = function getRules() {
-    var attrs = this.props;
+var getRules = function getRules(props) {
+    var attrs = props || this.props;
     var type = attrs.type;
     var rules = [];
 
@@ -41,7 +41,7 @@ var getRules = function getRules() {
     for (var i in attrs) {
         var name = i.replace(/^nj-/, '');
         var rule = formRules[i] || formRules[name];
-
+        if (attrs[i] === false) continue; //required={false}
         if (rule) {
             //有效规则
             if (formRules[i]) {
@@ -107,7 +107,9 @@ var verifyField = function verifyField(real, fromParent) {
         isEditor = _state.isEditor;
 
     var el = (0, _jquery2.default)(_nojsReact.ReactDOM.findDOMNode(this));
-    var visible = el.is(':visible'); //隐藏的元素不验证
+    var type = this.props.type;
+
+    var visible = el.is(':visible') || type == 'hidden'; //隐藏的元素不验证
 
     if (!visible) {
         this.setState({ status: null, valid: true });
@@ -144,15 +146,12 @@ var verifyField = function verifyField(real, fromParent) {
         }
     }
 
-    if (!rules.required && !value) {
+    if (!rules.required && !value && value !== 0) {
         //非必填项
         valid = true;
     }
 
-    var type = this.props.type;
-
     //'input-group' 验证子项是否全部通过
-
     if (valid && type == 'input-group') {
         valid = this.state.valid_all;
     }
@@ -226,7 +225,7 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
     },
     reset: function reset() {
         this.state.childComponents.forEach(function (item) {
-            item.setState({ value: '', status: null });
+            item.setState({ value: item.state.defaultValue, status: null, dirty: null });
         });
     },
     componentDidMount: function componentDidMount() {
@@ -237,7 +236,7 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
         this.submitEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onSubmit');
         this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
 
-        this.state.verfiyCode = Form.verifyCode();
+        this.state.verfiyCode = Form.verifyCode((0, _jquery2.default)(this.refs.wrap).find('#verify_img')[0], (0, _jquery2.default)(this.refs.wrap).find('#verify_refresh')[0]);
 
         var parentComponent = this.props.parentComponent; //form表单所处的父组件
 
@@ -248,6 +247,7 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
             });
         }
         createdEvents.complete(this);
+        this.refs.wrap.$handle = this;
     },
     verify: function verify(real) {
         var valid = verifyChildComponents.call(this, real);
@@ -327,13 +327,21 @@ formDirectives['input'] = _nojsReact.React.createClass({
     //React.addons.LinkedStateMixin
     mixins: [formMixin, _nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
-        var isEditor = this.props.type == 'editor';
+        var _props = this.props,
+            type = _props.type,
+            defaultValue = _props.defaultValue,
+            value = _props.value,
+            html = _props.html;
+
+        var isEditor = type == 'editor';
+        defaultValue = defaultValue || value || html || '';
         return {
             isEditor: isEditor,
             dirty: false,
             valid: true,
             rules: getRules.call(this),
-            value: this.props.defaultValue || this.props.value || ''
+            value: defaultValue,
+            defaultValue: defaultValue
         };
     },
     getDefaultProps: function getDefaultProps() {
@@ -353,9 +361,12 @@ formDirectives['input'] = _nojsReact.React.createClass({
         var valid = verifyField.call(this, real, fromParent);
 
         this.verifyEvent.complete(valid);
-        //if( !valid && parentComponent && parentComponent.state.action=='submit' ){
-        //this.refs.input.focus()
-        //}
+        if (!valid && this.state.status != 'pending' && parentComponent && parentComponent.state.action == 'submit') {
+            this.refs.input.focus();
+            if (this.props.type == 'hidden') {
+                (0, _jquery2.default)(window).scrollTop((0, _jquery2.default)(this.refs.input).parent().offset().top - 90);
+            }
+        }
         return valid;
     },
     componentDidMount: function componentDidMount() {
@@ -366,12 +377,13 @@ formDirectives['input'] = _nojsReact.React.createClass({
         //异步载入编辑器
 
         isEditor && System.import('./Editor').then(function (Editor) {
-            return _this3.setState({ Editor: Editor.default });
+            return _this3.setState({ Editor: Editor });
         });
         _nojsReact.mixins.childComponents.getParentComponent.call(this);
 
         // this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange')
         this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
+        this.fetchCompleteEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onFetchComplete'); //for async rule
         //对外引用组件
         input.$handle = this;
     },
@@ -383,7 +395,9 @@ formDirectives['input'] = _nojsReact.React.createClass({
         if (_value !== undefined && this.state.value !== _value) {
             this.state.value = nextProps.value;
             this.valueLink().requestChange();
+            this.state.status = null;
         }
+        this.state.rules = getRules.call(this, nextProps);
     },
     valueLink: function valueLink() {
         var _this4 = this;
@@ -391,9 +405,9 @@ formDirectives['input'] = _nojsReact.React.createClass({
         var _onChange = this.props.onChange;
         var _value = this.props.value;
 
-        var _props = this.props,
-            type = _props.type,
-            trigger = _props.trigger;
+        var _props2 = this.props,
+            type = _props2.type,
+            trigger = _props2.trigger;
         var isEditor = this.state.isEditor;
 
 
@@ -468,7 +482,8 @@ formDirectives['input'] = _nojsReact.React.createClass({
 
         if (type == 'checkbox' || type == 'radio') {
             //options.checkedLink = this.valueLink()
-
+            options.text = options.text || options.children;
+            delete options.children;
         } else {
             var mark;
             if (rules.length && status) {
@@ -491,16 +506,18 @@ formDirectives['input'] = _nojsReact.React.createClass({
         }
         var hasTextarea = isEditor || type == 'textarea';
         if (hasTextarea) {
-            options.value = options.html || options.value || options.children;
+            // console.log(1, options.value ,2, options.html , 3,options.children)
+            //options.value = options.value || options.html || options.children || ''
             delete options.defaultValue;
             delete options.children;
+            // console.log(options)
         }
         var editOptions = Object.assign({}, options);
 
         return _nojsReact.React.createElement(isEditor ? 'span' : 'label', { className: 'nj-input-' + type }, hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options), (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }), !hasTextarea && _nojsReact.React.createElement(
             'span',
-            null,
-            this.props.text
+            { className: '_c' },
+            options.text
         ), Editor && _nojsReact.React.createElement(Editor, editOptions), _nojsReact.React.createElement(VerifyStatus, { field: this }));
     }
 });
@@ -508,11 +525,17 @@ formDirectives['input'] = _nojsReact.React.createClass({
 formDirectives['select'] = _nojsReact.React.createClass({
     mixins: [_nojsReact.mixins.childComponents.setParents([formDirectives['input-group'], formDirectives['form']])],
     getInitialState: function getInitialState() {
+        var _props3 = this.props,
+            defaultValue = _props3.defaultValue,
+            value = _props3.value;
+
+        defaultValue = defaultValue || value || '';
         return {
             dirty: false,
             valid: true,
             rules: getRules.call(this),
-            value: this.props.defaultValue || this.props.value || ''
+            value: defaultValue,
+            defaultValue: defaultValue
         };
     },
     getDefaultProps: function getDefaultProps() {
@@ -538,6 +561,9 @@ formDirectives['select'] = _nojsReact.React.createClass({
 
         var valid = verifyField.call(this, real, fromParent);
         this.verifyEvent.complete(valid);
+        if (!valid && parentComponent && parentComponent.state.action == 'submit') {
+            this.refs.wrap.focus();
+        }
         return valid;
     },
     valueLink: function valueLink() {
@@ -577,7 +603,7 @@ formDirectives['select'] = _nojsReact.React.createClass({
                 }
 
                 _this6.verify.call(_this6, false);
-                _this6.changeEvent.complete();
+                _this6.changeEvent.complete(newValue);
             }
         };
         return valueLink;
@@ -613,9 +639,9 @@ formDirectives['select'] = _nojsReact.React.createClass({
         options.className = _nojsReact2.default.utils.joinClass(this.props.className, mark && 'input-' + status);
 
         //nj-select 获取的children 数组项为空的占位符
-        var _props2 = this.props,
-            children = _props2.children,
-            _childNodes = _props2._childNodes;
+        var _props4 = this.props,
+            children = _props4.children,
+            _childNodes = _props4._childNodes;
 
         children = children && children.filter(function (item) {
             return item;
@@ -673,15 +699,13 @@ var VerifyStatus = _nojsReact.React.createClass({
         var novalidText = '';
         var ispending = status == 'pending';
 
-        // console.log(showmsg, valid, status, field.refs.input)
-
         if (showmsg) {
             if (!valid || ispending) {
                 novalidText = errortext || field.props.errortext || statusText[novalidName] || '';
             }
 
             var showicon = parentComponent ? parentComponent.props.showicon : field.props.showicon;
-            if (showicon != 'all' && status != showicon && !ispending) {
+            if (showicon && showicon != 'all' && status != showicon && !ispending) {
                 //ispending始终显示
                 return null;
             }
@@ -710,7 +734,7 @@ var VerifyStatus = _nojsReact.React.createClass({
 
 var formRules = {
     required: function required(value) {
-        return !!value;
+        return typeof value == 'number' ? true : !!value;
     },
     minlength: function minlength(value, target) {
         return value && value.length >= parseInt(target);
@@ -762,9 +786,10 @@ var formRules = {
         var instances = formDirectives['input'].instances;
         var self = this;
         var field;
+        var parentComponent = this.state.parentComponent;
         for (var i = 0, n = instances.length; i < n; i++) {
             field = instances[i].handle;
-            if (field.props.name == target) {
+            if (field.props.name == target && field.state.parentComponent === parentComponent) {
                 if (!field.state.addConfirmEvent) {
                     //当target组件被重新修改时 清空当前组件的验证状态
                     field.onVerify(function () {
@@ -802,13 +827,18 @@ Form.addAsyncRule = function (name, fn, errortext) {
     formRules[name] = function (value, target) {
         var _this7 = this;
 
-        var async_delay = this.state.async_delay;
+        var _state4 = this.state,
+            async_delay = _state4.async_delay,
+            parentComponent = _state4.parentComponent;
 
+        var action = parentComponent && parentComponent.state.action;
         window.clearTimeout(async_delay);
 
         this.state.async_delay = setTimeout(function (e) {
             var options = target ? eval('({' + target + '})') : {};
-            fn.call(_this7, value, options);
+            var callback = _this7.fetchCompleteEvent.complete;
+            options.action = action;
+            fn.call(_this7, value, options, callback);
         }, 500);
         return 'pending';
     };
@@ -821,22 +851,18 @@ Form.addAsyncRule = function (name, fn, errortext) {
 Form.verifyCode = function (verify, refresh) {
     verify = verify || 'verify_img';
     refresh = refresh || 'verify_refresh';
-    verify = document.getElementById(verify);
-    refresh = document.getElementById(refresh);
+    verify = typeof verify == 'string' ? document.getElementById(verify) : verify;
+    refresh = typeof refresh == 'string' ? document.getElementById(refresh) : refresh;
     if (!verify) {
         return {};
     }
+    var _src = verify.src;
     verify.onclick = function () {
-        var _src = this.src.split('?'),
-            ver = _src[1] || '',
-            r = /((\?|&)t=)[\d]+/;
-        if (r.test(ver)) {
-            ver = _src[0] + '?' + ver.replace(r, '$1' + +new Date());
-        } else {
-            ver = 't=' + +new Date();
+        var src = _src + '?t=' + +new Date();
+        if (src.indexOf('?') > 0) {
+            src = _src + '&t=' + +new Date();
         }
-        this.src = _src[0] + '?' + ver;
-        //this.src= domain.login+'/Index-loginverify.html?t='+(+new Date);
+        this.src = src;
     };
     if (refresh) {
         refresh.onclick = function () {
@@ -875,7 +901,7 @@ var directive = new _directiveComponent2.default({
     exports: exports
 });
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start();
+// directive.start()
 
 /*填充表单数据*/
 Form.fill = function (options) {
@@ -893,48 +919,58 @@ Form.fill = function (options) {
     }
 
     for (i in data) {
-        item = Form.find('[name="' + i + '"]');
+        value = data[i];
+        var dataType = _jquery2.default.type(value);
+        item = Form.find('[name="' + i + (dataType == 'array' ? '[]' : '') + '"]');
 
         if (!item.length) {
-            if (options.always) {
+            if (!options.always) continue;
+            if (dataType != 'array') {
                 //当options.always为true时 已隐藏域的形式填充到表单中
                 Form.append('<input name="' + i + '" type="hidden" value="' + data[i] + '" />');
             }
-            continue;
         }
-        type = item[0].type;
-        value = data[i];
-        var handle = item[0].$handle;
+
+        var handle = item[0] && item[0].$handle;
         var _item;
+        type = item[0] && item[0].type;
 
         if (type == 'radio') {
             _item = item.filter('[value="' + value + '"]');
             _item.click();
             _item.attr('checked', true);
-            handle && handle.setState({ value: value }, function (e) {
-                return handle.verify(false);
-            });
+            _item[0] && function (handle) {
+                handle && handle.setState({ value: value, status: null }, function (e) {
+                    return handle.verify(false);
+                });
+            }(_item[0].$handle);
         } else if (type == 'checkbox' && _jquery2.default.type(value) == 'array') {
             _jquery2.default.each(value, function (i, v) {
                 _item = item.filter('[value="' + v + '"]');
-                handle = _item[0].$handle;
-                handle && handle.setState({ value: v }, function (e) {
-                    return handle.verify(false);
-                });
+                // handle = _item[0].$handle
+                // handle && handle.setState({value:v}, e=>handle.verify(false))
+                (function (handle) {
+                    handle && handle.setState({ value: v, status: null }, function (e) {
+                        return handle.verify(false);
+                    });
+                })(_item[0].$handle);
                 _item.click();
             });
         } else if (typeof value == 'string' || typeof value == 'number') {
             item.val(value);
-            handle && handle.setState({ value: value }, function (e) {
-                return handle.verify(false);
-            });
-        } else if (_jquery2.default.type(value) == 'array') {
+            (function (handle) {
+                handle && handle.setState({ value: value, status: null }, function (e) {
+                    return handle.verify(false);
+                });
+            })(handle);
+        } else if (dataType == 'array') {
             //填充数组
             value.forEach(function (v, j) {
                 if (item[j]) {
                     item[j].value = v;
+                    item[j].name = i + '[]';
                 } else {
-                    Form.append('<input name="' + i + '" type="hidden" value="' + v + '" />');
+                    Form.append('<input name="' + i + '[]" type="hidden" value="' + v + '" />');
                 }
             });
             //dom个数大于数组个数时 移除

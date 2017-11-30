@@ -73,7 +73,7 @@ module.exports = {
         //某些场景 在事件列表执行完成之后需要清空队列
         function end() {
             queue.length = 0;
-            return this;
+            return self;
         }
         this[eventName] = add.bind(this);
         typeof when == 'function' && when.call(this, complete);
@@ -432,7 +432,7 @@ module.exports = {
          */
         var c = {};
         return function (s, d) {
-            var fn = !/\W/.test(s) ? c[s] = c[s] || $.tmpl(document.getElementById(s).innerHTML) : new Function("o", "var p=[];" + "with(o){p.push('" + s
+            var fn = !/\W/.test(s) ? c[s] = c[s] || module.exports.tmpl(document.getElementById(s).innerHTML) : new Function("o", "var p=[];" + "with(o){p.push('" + s
             //.replace(/\\/g,"\\\\")//解决转义符bug
             .replace(/[\r\t\n]/g, " ").split("<%").join("\t").replace(/((^|%>)[^\t]*)'/g, "$1\r")
 
@@ -461,7 +461,8 @@ module.exports = {
             'defaultvalue': 'defaultValue',
             'defaultchecked': 'defaultChecked',
             'enctype': 'encType',
-            'readonly': 'readOnly'
+            'readonly': 'readOnly',
+            'checked': 'defaultChecked'
         }, 'enctype', 'encType');
         for (var i = 0, n = attrs.length; i < n; i++) {
             var attr = attrs[i];
@@ -494,7 +495,7 @@ module.exports = {
         options = options || {};
         // console.log(options.date,new Date(Number(options.date)))
         var date = options.date ? new Date(options.date) : new Date();
-        var format = options.format || 'yy/mm/dd hh:mm:ss';
+        var format = options.format || 'yy-mm-dd hh:mm:ss';
         var arr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
         var strMaps = {
             'yy': '0',
@@ -576,7 +577,7 @@ module.exports = {
         };
     },
     getOptions: function getOptions(target, key) {
-        var options = $.trim($(target).data(key || 'options'));
+        var options = $.trim($(target).data(key || 'options')).replace(/[\r\n]/g, '');
         options = options ? eval('({' + options + '})') : {};
         return options;
     }

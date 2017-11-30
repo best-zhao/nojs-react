@@ -4,7 +4,7 @@
 var nj = require('./nojs-react'), {React, ReactDOM, mixins} = nj
 var $ = require('jquery')
 
-var Directive = require('../mixins/directiveComponent').default
+var Directive = require('../mixins/directiveComponent')
 
 var Switch = React.createClass({  
     mixins : [mixins.childComponents.config],
@@ -100,4 +100,4 @@ var directive = new Directive({
     },
     exports : exports
 })
-directive.start()
+// directive.start()

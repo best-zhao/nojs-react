@@ -18,3 +18,33 @@ new WebpackDevServer(webpack(config), {
 });
 
 
+
+// const taobaoApi = function(data, callback){
+//     //http://open.taobao.com/docs/api.htm?apiId=28625
+//     var client = new TopClient({
+//       'appkey': '23625628',
+//       'appsecret': '555ce3296f9249e43107c3209b628970',
+//       'REST_URL': 'http://gw.api.taobao.com/router/rest'
+//     });
+    
+//     var pid = data.pid.split('_')
+//     client.execute('taobao.tbk.privilege.get', {
+//         'item_id':data.itemid,//'530538710076',
+//         'adzone_id':pid[3],//'74486047',
+//         'platform':1,
+//         'site_id':pid[2],//'22474057',
+//         'session' : window.global.access_token              
+//     })
+//     .then(function(result){
+//         callback(null, result)
+//     })
+//     .catch(function(error){
+//         callback(error)
+//     })
+// }
+// taobaoApi({
+//     pid : 'mm_10560722_23172164_76850695',
+//     itemid : '556506259838'
+// }, function(error, result) {
+//     console.log(error, result)
+// })

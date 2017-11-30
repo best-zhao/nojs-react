@@ -11,7 +11,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 require('../../css/react.css');
 
 //引入React和ReactDOM
-var React = exports.React = require('react/lib/ReactWithAddons');
+var React = exports.React = require('react');
 var ReactDOM = exports.ReactDOM = require('react-dom');
 var $ = require('jquery');
 exports.render = ReactDOM.render;
@@ -67,7 +67,7 @@ function addMui(e) {
 
     muiTimer && window.clearTimeout(muiTimer);
     muiTimer = window.setTimeout(function (e) {
-        self.removeClass(className).children('.nj-mui').remove();
+        self.removeClass(className).find('.nj-mui').remove();
     }, 2500);
 }
 

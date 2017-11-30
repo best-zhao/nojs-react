@@ -9,7 +9,8 @@ import 'quill/dist/quill.snow.css'
 
 const {Component, isValidElement} = React
 
-export default class Editor extends Component {
+
+class Editor extends Component {
     constructor (props) {
         super(props)
         this.state = {
@@ -23,6 +24,7 @@ export default class Editor extends Component {
         let editor = this.editor = new Quill(this.refs.editor, {
             modules: { toolbar: `#${this.state.id}` },
             placeholder,
+            // debug: 'info',
             // readOnly,
             theme
         })
@@ -64,7 +66,7 @@ export default class Editor extends Component {
     }
     renderToolbar (toolbar, index) {
         if (typeof toolbar === 'string') {
-          return <button key={toolbar} className={`ql-${toolbar}`} />
+          return <button key={toolbar} title={toolbar} className={`ql-${toolbar}`} />
         }
 
         if (Array.isArray(toolbar)) {
@@ -100,6 +102,7 @@ export default class Editor extends Component {
         </div>
     }
 }
+module.exports = Editor
 
 Editor.propTypes = {
   height: PropTypes.number,
@@ -123,8 +126,10 @@ Editor.defaultProps = {
         // [{ 'script': 'sub'}, { 'script': 'super' }],
         // [{ 'indent': '-1'}, { 'indent': '+1' }],
         // [{ 'direction': 'rtl' }],
-        [{ 'size': ['small', false, 'large', 'huge'] }],
+        // [{ 'size': ['small', false, 'large', 'huge'] }],
         // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['video'],
+        [{'size': ['0.26rem', '0.31rem', '0.37rem', '0.41rem', '0.47rem', '0.52rem']}],
         [{ 'color': [] }, { 'background': [] }],
         // [{ 'font': [] }],
         [{ 'align': [] }],

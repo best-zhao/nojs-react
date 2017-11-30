@@ -29,10 +29,10 @@ score.prototype = {
         this.element.prepend(html);
         this.item = this.element.children('i');
         width = this.item.width();
-        this.element.width(this.level * width);
+        // this.element.width(this.level*width);
         this.item.each(function (i) {
             $(this).css({
-                'width': width * (i + 1),
+                'width': 100 * (i + 1) / self.level + '%',
                 'z-index': self.level - i
             });
         });

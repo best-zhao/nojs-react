@@ -69,12 +69,12 @@ var Statics = {
   alert: function alert(options) {
     options = Object.assign({
       title: '提示：',
-      name: 'popup-alert popup-tip',
       bindEsc: false,
       buttons: [{ text: '确定', className: 'nj-button nj-button-red', handle: function handle(e) {
           return true;
         } }]
     }, options);
+    options.name = nj.utils.joinClass('popup-alert popup-tip', options.name);
     var pop = Popup.create(options);
     //隐藏后销毁弹窗
     pop.onHide(function () {
@@ -165,7 +165,7 @@ var Statics = {
 var Popup = React.createClass({
   displayName: 'Popup',
 
-  mixins: [align, mixins.setDisplay, React.addons.LinkedStateMixin],
+  mixins: [align, mixins.setDisplay],
   statics: Statics,
   getDefaultProps: function getDefaultProps() {
     return { effect: 'drop', showMask: true, bindEsc: true };
@@ -223,7 +223,7 @@ var Popup = React.createClass({
       //调用preventDefault阻止关闭弹窗事件
       return;
     }
-    this.setDisplay(false, event);
+    this.setDisplay(false);
   },
   cancel: function cancel() {
     this.res = false;
@@ -265,7 +265,7 @@ var Popup = React.createClass({
           }
           return React.createElement(
             'button',
-            { key: i, type: 'button', className: btnClass, onClick: this.buttonHandle.bind(this, btn.handle) },
+            { key: i, ref: 'button' + i, type: 'button', className: btnClass, onClick: this.buttonHandle.bind(this, btn.handle) },
             btn.text
           );
         }.bind(this))

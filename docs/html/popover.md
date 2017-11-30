@@ -17,3 +17,8 @@ import Popover from 'nj/popover' //引入组件
 111111111111111111111111
 222222222222222222222222
 <div id="demo-popover-wrap"></div>
+
+
+<style>
+    .nj-popover-nearby{color:red;}
+</style>

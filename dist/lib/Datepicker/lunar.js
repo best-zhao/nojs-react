@@ -1,8 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 /**
 * @1900-2100区间内的公历、农历互转
 * @公历转农历：calendar.solar2lunar(1987,11,01); //[you can ignore params of prefix 0]
@@ -463,7 +460,7 @@ var calendar = {
     }
 };
 
-exports.default = {
+module.exports = {
     solar2lunar: calendar.solar2lunar,
     lunar2solar: calendar.lunar2solar
 };

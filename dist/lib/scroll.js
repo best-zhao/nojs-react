@@ -490,9 +490,11 @@ var ScrollPage = _nojsReact.React.createClass({
     getDefaultProps: function getDefaultProps() {
         return { pages: 0 };
     },
-    handleClick: function handleClick(index) {
+    handleClick: function handleClick(page) {
         var parentComponent = this.state.parentComponent;
+        var step = parentComponent.state.step;
 
+        var index = page * step;
         parentComponent.stop();
         parentComponent.scroll(index);
     },
@@ -510,12 +512,15 @@ var ScrollPage = _nojsReact.React.createClass({
         var parentComponent = this.state.parentComponent;
         var _parentComponent$stat = parentComponent.state,
             length = _parentComponent$stat.length,
-            index = _parentComponent$stat.index;
+            index = _parentComponent$stat.index,
+            step = _parentComponent$stat.step;
 
         var items = [];
-        for (var i = 0; i < length; i++) {
+        var pages = Math.ceil(length / step);
+        for (var i = 0; i < pages; i++) {
             items.push(i + 1);
         }
+        var page = Math.ceil((index + 1) / step) - 1;
         var _props5 = this.props,
             trigger = _props5.trigger,
             className = _props5.className;
@@ -533,14 +538,14 @@ var ScrollPage = _nojsReact.React.createClass({
                     var child = tmpl || n;
                     var options = {
                         ref: 'item' + i,
-                        className: _nojsReact2.default.utils.joinClass('-page-item', n - 1 == index && '-page-active'),
+                        className: _nojsReact2.default.utils.joinClass('-page-item', page == i && '-page-active'),
                         key: n
                     };
                     if (typeof tmpl == 'string') {
                         options.dangerouslySetInnerHTML = { __html: tmpl };
                         child = null;
                     }
-                    options[trigger == 'hover' ? 'onMouseEnter' : 'onClick'] = _this4.handleClick.bind(_this4, n - 1);
+                    options[trigger == 'hover' ? 'onMouseEnter' : 'onClick'] = _this4.handleClick.bind(_this4, i);
                     return _nojsReact.React.createElement(
                         'span',
                         options,
@@ -582,4 +587,4 @@ var directive = new _directiveComponent2.default({
 });
 
 //当脚本在页面底部运行时 直接运行一次可以后续代码中立即获取实例
-directive.start();
+// directive.start()
