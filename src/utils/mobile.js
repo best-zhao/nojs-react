@@ -64,11 +64,11 @@ function checkFontsize(){
     for( var i=0,n=tags.length;i<n;i++ ){
         var el = tags[i]
         var style = el.getAttribute('style')
-        var testFont = /font-size\s?:\s?(\d+)px/.exec(style)
+        var testFont = /font-size\s?:\s?([\d\.]+)px/.exec(style)
         if( testFont && testFont[1] ){
             el.style.fontSize = testFont[1]*dpr + 'px'
         }
-        var testLine = /line-height\s?:\s?(\d+)px/.exec(style)
+        var testLine = /line-height\s?:\s?([\d\.]+)px/.exec(style)
         if( testLine && testLine[1] ){
             el.style.lineHeight = testLine[1]*dpr + 'px'
         }

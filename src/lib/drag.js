@@ -96,6 +96,7 @@ drag.prototype = {
 			y = s ? m.offset().top : (parseInt(m.css("top"),10)||0);
 			
 			if( this.wrap && this.wrap.length ){
+				console.log(1, this.wrap.scrollLeft(), this.wrap.scrollTop())
 				x -= this.wrap.offset().left - this.wrap.scrollLeft();
 				y -= this.wrap.offset().top - this.wrap.scrollTop();
 			}

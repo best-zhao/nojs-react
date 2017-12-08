@@ -55,7 +55,8 @@ const options = {
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
         'form/input-group.html' : 'demo/form',
-        'tree/linkTree' : 'demo/tree'
+        'tree/linkTree' : 'demo/tree',
+        'app/page' : 'page/index'
     },
     // loadScript (pageName, callback) {
     //     // require('bundle!./'+pageName)(callback)
