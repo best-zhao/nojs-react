@@ -3,6 +3,7 @@ import {React, render, ReactDOM, utils} from 'nj'
 import {Switch, SwitchMenu, SwitchItem} from 'nj/switch'
 import Color from './color'
 import Drag from './drag'
+import Banner from './banner'
 import drag from 'nj/drag'
 import {Input} from 'nj/form'
 
@@ -41,25 +42,43 @@ export default class Side extends React.Component {
                     root.canvas.target = area.addClass('drag-active')
                 }
             },
-            onDragUp (x, y) {
+            onDragUp : (x, y)=>{
                 let {el, target, areas} = root.canvas
                 areas.removeClass('drag-active')
                 if( target ){
                     let $layer = $(`<div class="layer"></div>`)
-                    target.append($layer)
+                    // target.append($layer)
                     //计算出相对画布的位置
                     let top = y - canvas_top - $layer.innerHeight()/2
                     let left = x - canvas_left - $layer.innerWidth()/2
-                    $layer.css({top, left})
+                    // $layer.css({top, left})
 
-                    new drag($layer, null, {
-                        limit : el
+                    this.bannerLayer.push({
+                        x : left,
+                        y : top
                     })
+                    // new drag($layer, null, {
+                    //     limit : el,
+                    //     onDragDown () {
+                    //         this.drag.addClass('drag-active')
+                    //     },
+                    //     UpEvent () {
+                    //         //this.drag.removeClass('drag-active')
+                    //     }
+                    // })
                 }
             }
         }
 
         this.state = {}
+    }
+    componentDidMount () {
+        let {root} = this.props
+        setTimeout(()=>{
+            let $banner = root.canvas.areas.filter('[data-dragarea="banner"]')
+            let bannerRoot = $('<div></div>').appendTo($banner)
+            this.bannerLayer = render(<Banner layers={[]}/>, bannerRoot[0])
+        }, 1)
     }
     setStyle (module, key, value) {
         let {root} = this.props
@@ -95,7 +114,7 @@ export default class Side extends React.Component {
                     this.setStyle('banner', 'height', `${e.target.value}px`)
                 }}/></div>
             </div>
-            
+
             <Drag {...this.dragOptions}><button>test</button></Drag>
             <Drag {...this.dragOptions}><button>test</button></Drag>
         </div>
