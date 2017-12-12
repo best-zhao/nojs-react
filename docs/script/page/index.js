@@ -34,7 +34,8 @@ class Page extends React.Component {
                     .banner{height:300px;background:#f2f2f2;margin-bottom:20px} 
                     .page-main{height:500px;background:#f2f2f2;width:1200px;margin:0 auto}
                     .drag-active{border:1px solid #f90}
-                    .layer{position:absolute;width:90px;height:90px;background:#ccc}
+                    .layer{position:absolute;}
+                    .layer .inner{width:90px;height:90px;background:#ccc;margin:-50% 0 0 -50%}
                 </style>
                 <div>1<br />12</div>
                 <div class="banner" data-dragarea="banner"></div>

@@ -46,11 +46,11 @@ export default class Side extends React.Component {
                 let {el, target, areas} = root.canvas
                 areas.removeClass('drag-active')
                 if( target ){
-                    let $layer = $(`<div class="layer"></div>`)
+                    // let $layer = $(`<div class="layer"></div>`)
                     // target.append($layer)
                     //计算出相对画布的位置
-                    let top = y - canvas_top - $layer.innerHeight()/2
-                    let left = x - canvas_left - $layer.innerWidth()/2
+                    let top = y - canvas_top //- $layer.innerHeight()/2
+                    let left = x - canvas_left// - $layer.innerWidth()/2
                     // $layer.css({top, left})
 
                     this.bannerLayer.push({

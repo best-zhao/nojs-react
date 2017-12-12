@@ -20,7 +20,7 @@ export default class Banner extends React.Component {
     render () {
         let {layers} = this.state
         return <div>
-            {layers.map(ly=><div className="layer" style={{top:ly.y, left:ly.x}}></div>)}
+            {layers.map(ly=><div className="layer" style={{top:ly.y, left:ly.x}}> <div className="inner"></div></div>)}
         </div>
     }
 }
