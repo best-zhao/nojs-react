@@ -12,27 +12,34 @@ class Page extends React.Component {
     constructor (props) {
         super(props)
         let pageid = 'page-index'
+        let data = {
+            body : {
+                pageid,
+                selector : `#${pageid}`
+            },
+            banner : {
+                selector : `#${pageid} .banner`
+            },
+            content : {
+                selector : `#${pageid} .page-main`
+            }
+        }
+        for( let i in data ){
+            data[i].css = {}
+        }
         this.state = {
-            pageid,
-            styles : '',
-            // maskVisible : false,
-            template : `<html>
-                <head>
-                    <title>12</title>
-                    <link rel="stylesheet" href="css/base.css">
-                    <style>
-                        .banner{height:300px;background:#f2f2f2;margin-bottom:20px} 
-                        .page-main{height:500px;background:#f2f2f2;width:1200px;margin:0 auto}
-                        .drag-active{border:1px solid #f90}
-                        .layer{position:absolute;width:90px;height:90px;background:#ccc}
-                    </style>
-                </head>
-                <body class="pageid">
-                    <div>1<br />12</div>
-                    <div class="banner" data-dragarea="banner"></div>
-                    <div class="page-all page-main" data-dragarea="content"></div>
-                </body>
-            </html>`
+            data,
+            template : `
+                <style>
+                    .banner{height:300px;background:#f2f2f2;margin-bottom:20px} 
+                    .page-main{height:500px;background:#f2f2f2;width:1200px;margin:0 auto}
+                    .drag-active{border:1px solid #f90}
+                    .layer{position:absolute;width:90px;height:90px;background:#ccc}
+                </style>
+                <div>1<br />12</div>
+                <div class="banner" data-dragarea="banner"></div>
+                <div class="page-all page-main" data-dragarea="content"></div>
+            `
         }        
     }
     componentDidMount () {
@@ -49,13 +56,30 @@ class Page extends React.Component {
             areas : el.find('[data-dragarea]')
         }        
     }
+    componentDidUpdate (prevProps, prevState) {
+        // this.canvas.areas = this.canvas.el.find('[data-dragarea]')
+    }
+    getStyle () {
+        let {data} = this.state
+        let styles = []
+        for( let i in data ){
+            let css = data[i].css
+            for( let j in css ){
+                styles.push(`${data[i].selector} {${j} : ${css[j]} }`)
+            }
+        }
+        styles = `<style>${styles.join('\n')}</style>`
+        return styles
+    }
     render () {
-        let {template, styles, pageid} = this.state
-        template += `<style>${styles}</style>`
+        let {template, styles, data} = this.state
+        let {pageid} = data.body
+        
         return <div className="page-container">
             <div className="page-body" ref="body">
                 <div className="_inner">
                     <div className="page-canvas">
+                        <div dangerouslySetInnerHTML={{__html:this.getStyle()}}></div>
                         <div ref="canvas" className="canvas-content" id={pageid} dangerouslySetInnerHTML={{__html:template}}></div>
                     </div>
                 </div>

@@ -6,11 +6,13 @@ export default class Color extends React.Component {
     componentDidMount () {
         let {onChange} = this.props
         color(ReactDOM.findDOMNode(this), pos=>{
-            console.log(pos)
             onChange && onChange('#'+pos.color)
         })
-    }
+    }    
     render () {
-        return <span>12</span>
+        let {value} = this.props
+        return <span data-value={value} className="color-picker" style={{backgroundColor:value}}>
+            <span className={value?'':'transparent'}></span>
+        </span>
     }
 }

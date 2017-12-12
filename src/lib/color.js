@@ -174,7 +174,7 @@ function color(obj) {
             'left': left,
             'top': top
         }); //.find('.ok').focus();
-        reset(m.val());
+        reset(m.val()||m.data('value'));
     }
     function hide() {
         box.hide();

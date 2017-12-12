@@ -4,6 +4,7 @@ import {Switch, SwitchMenu, SwitchItem} from 'nj/switch'
 import Color from './color'
 import Drag from './drag'
 import drag from 'nj/drag'
+import {Input} from 'nj/form'
 
 export default class Side extends React.Component {
     constructor (props) {
@@ -31,7 +32,7 @@ export default class Side extends React.Component {
 
                 let top = area.offset().top
                 let height = area.outerHeight()
-                
+
                 //x方向只要在画布区域即可
                 let left = canvas_left
                 let width = el.outerWidth()
@@ -58,32 +59,43 @@ export default class Side extends React.Component {
             }
         }
 
-        this.state = {
-            styles : {}
-        }
+        this.state = {}
     }
-    setStyle (key, value) {
+    setStyle (module, key, value) {
         let {root} = this.props
-        let {styles} = this.state
-        styles[key] = `#${root.state.pageid} ${value}`
-        styles = Object.keys(styles).map(k=>styles[k]).join('')
-        root.setState({styles})
+        let {data} = root.state
+        data[module].css[key] = value
+        root.setState({data})
     }
     render () {
         let {root} = this.props
+        let {data:{body, banner}} = root.state
+
         return <div className="page-side">
+
             <h6>页面</h6>
             <div className="mb15 side-body">
-                <div>背景色 <Color onChange={color=>{
-                    this.setStyle('body', `{background:${color}}`)
+                <div>背景色 <Color value={body.css['background-color']} onChange={color=>{
+                    this.setStyle('body', 'background-color', color)
+                }}/></div>
+                <div>背景图片 <Input defaultValue={body.css['background-image']} onChange={e=>{
+                    this.setStyle('body', 'background-image', `url(${e.target.value})`)
                 }}/></div>
             </div>
+
             <h6>Banner</h6>
             <div className="mb10 side-body">
-                <div>背景色 <Color onChange={color=>{
-                    this.setStyle('banner', `.banner{background:${color}}`)
+                <div>背景色 <Color value={banner.css['background-color']} onChange={color=>{
+                    this.setStyle('banner', 'background-color', color)
+                }}/></div>
+                <div>背景图片 <Input defaultValue={banner.css['background-image']} onChange={e=>{
+                    this.setStyle('banner', 'background-image', `url(${e.target.value})`)
+                }}/></div>
+                <div>高度:<Input defaultValue={400} onChange={e=>{
+                    this.setStyle('banner', 'height', `${e.target.value}px`)
                 }}/></div>
             </div>
+            
             <Drag {...this.dragOptions}><button>test</button></Drag>
             <Drag {...this.dragOptions}><button>test</button></Drag>
         </div>
