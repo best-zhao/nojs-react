@@ -126,9 +126,12 @@ function color(obj) {
         num.b.val(Math.round(pos.b));
         num.s.val(Math.round(pos.s));
         _color = color.HsbToRgb(pos.h, pos.s, pos.b);
-        num.R.val(Math.round(_color.R));
-        num.G.val(Math.round(_color.G));
-        num.B.val(Math.round(_color.B));
+        var R = pos.R = Math.round(_color.R)
+        var G = pos.G = Math.round(_color.G)
+        var B = pos.B = Math.round(_color.B)
+        num.R.val(R);
+        num.G.val(G);
+        num.B.val(B);
         pos.color = color.RgbToHex(_color.R, _color.G, _color.B); //16进制的颜色值
         num.color.val(pos.color);
         preview.css('background', '#' + pos.color);
@@ -159,8 +162,13 @@ function color(obj) {
         box = $('#nj_color');
         !box.length && init();
         box[0].target = m
-        var left = m.offset().left + 'px',
-            top = m.offset().top + m.outerHeight() + 'px';
+        var left = m.offset().left,
+            top = m.offset().top + m.outerHeight() + 'px',
+            boxwidth = box.innerWidth();
+
+        if( left+boxwidth>$(window).width() ){
+            left = left+m.innerWidth() - boxwidth
+        }
         box.css({
             'display': 'block',
             'left': left,
