@@ -140,10 +140,17 @@ drag.prototype = {
 			this.maxSize.h = this.limit.innerHeight()-this.maxSize.H+this.maxSize.t;
 			
 			if(this.overflow){//边界溢出
-				this.maxSize.l -= this.overflow;
-				this.maxSize.t -= this.overflow;
-				this.maxSize.w += this.overflow;
-				this.maxSize.h += this.overflow;
+				
+				if( typeof this.overflow=='object' ){//分别控制四边
+					var {x, y, width, height} = this.overflow
+				}else{//统一向外扩张或内收缩
+					var x,y,width,height
+					x = y= width = height = this.overflow
+				}
+				this.maxSize.l -= x;
+				this.maxSize.t -= y;
+				this.maxSize.w += width;
+				this.maxSize.h +=  height;
 			}
 		}
 		
@@ -211,7 +218,9 @@ drag.prototype = {
 						x : cx,
 						y : cy,
 						w : T.maxSize.W,
-						h : T.maxSize.H
+						h : T.maxSize.H,
+						left : pos.x+cx,
+						top : pos.y+cy
 					}, e);
 				}, T.delay);
 			}

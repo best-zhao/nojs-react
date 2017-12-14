@@ -3,8 +3,7 @@ import {React, render, ReactDOM, utils} from 'nj'
 import {Switch, SwitchMenu, SwitchItem} from 'nj/switch'
 import Color from './color'
 import Drag from './drag'
-import Banner from './banner'
-import drag from 'nj/drag'
+// import drag from 'nj/drag'
 import {Input} from 'nj/form'
 
 export default class Side extends React.Component {
@@ -17,9 +16,9 @@ export default class Side extends React.Component {
         let {root} = this.props
 
         this.dragOptions = {
-            flow : 'float',
-            target : 'banner',
-            onDragDown : ()=>{
+            // flow : 'float',
+            // target : 'banner',
+            onDragDown () {                
                 let {el, areas} = root.canvas
                 let {top, left} = el.offset()
                 canvas_top = top
@@ -42,44 +41,28 @@ export default class Side extends React.Component {
                     root.canvas.target = area.addClass('drag-active')
                 }
             },
-            onDragUp : (x, y)=>{
+            onDragUp : (x, y, props)=>{
                 let {el, target, areas} = root.canvas
                 areas.removeClass('drag-active')
-                if( target ){
-                    // let $layer = $(`<div class="layer"></div>`)
-                    // target.append($layer)
+                if( target ){                    
                     //计算出相对画布的位置
-                    let top = y - canvas_top //- $layer.innerHeight()/2
-                    let left = x - canvas_left// - $layer.innerWidth()/2
-                    // $layer.css({top, left})
+                    let top = y - canvas_top
+                    let left = x - canvas_left                   
 
-                    this.bannerLayer.push({
+                    root.bannerLayer.push(Object.assign({
                         x : left,
                         y : top
-                    })
-                    // new drag($layer, null, {
-                    //     limit : el,
-                    //     onDragDown () {
-                    //         this.drag.addClass('drag-active')
-                    //     },
-                    //     UpEvent () {
-                    //         //this.drag.removeClass('drag-active')
-                    //     }
-                    // })
+                    }, props.module))
                 }
             }
         }
 
-        this.state = {}
-    }
-    componentDidMount () {
-        let {root} = this.props
-        setTimeout(()=>{
-            let $banner = root.canvas.areas.filter('[data-dragarea="banner"]')
-            let bannerRoot = $('<div></div>').appendTo($banner)
-            this.bannerLayer = render(<Banner layers={[]}/>, bannerRoot[0])
-        }, 1)
-    }
+        let bannerModules = [
+            {name:'h1', style:{width:500,height:40,fontSize:20}, html:'<p>输入大标题……</p>'},
+            {name:'h2', style:{width:400,height:32,fontSize:16}, html:'<p>输入小标题……</p>'}
+        ]
+        this.state = {bannerModules}
+    }    
     setStyle (module, key, value) {
         let {root} = this.props
         let {data} = root.state
@@ -88,6 +71,7 @@ export default class Side extends React.Component {
     }
     render () {
         let {root} = this.props
+        let {bannerModules} = this.state
         let {data:{body, banner}} = root.state
 
         return <div className="page-side">
@@ -115,8 +99,10 @@ export default class Side extends React.Component {
                 }}/></div>
             </div>
 
-            <Drag {...this.dragOptions}><button>test</button></Drag>
-            <Drag {...this.dragOptions}><button>test</button></Drag>
+            {bannerModules.map(item=>
+                <Drag key={item.name} {...this.dragOptions} module={item}><button>test</button></Drag>
+            )}
+            
         </div>
     }
 }

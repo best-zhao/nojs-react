@@ -38,7 +38,7 @@ export default class Drag extends React.Component {
         this.drag.UpEvent = function(e){
             self.holder.remove();
             el.removeClass('drag_target').removeAttr('style')
-            onDragUp && onDragUp.call(this, x, y)
+            onDragUp && onDragUp.call(this, x, y, self.props)
         }
     }
     componentWillReceiveProps (nextProps) {
