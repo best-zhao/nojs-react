@@ -61,7 +61,7 @@ class Page extends React.Component {
         let bannerRoot = $('<div></div>').appendTo($banner)
         this.bannerLayer = render(<Banner layers={[]} root={this}/>, bannerRoot[0])   
     }
-    componentDidUpdate (prevProps, prevState) {
+    componentDidUpdate (prevProps, prevState) { 
         // this.canvas.areas = this.canvas.el.find('[data-dragarea]')
     }
     getStyle () {
