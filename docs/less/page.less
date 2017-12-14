@@ -21,12 +21,21 @@
 
 .drag-active{border:1px solid #f90}
 .layer, .layer-mask{position:absolute;height:90px;text-align:left;font:14px/1.8 'microsoft yahei';
-    .inner{width:100%;height:100%;top:-50%;left:-50%;position:relative;}
+    .inner{width:100%;height:100%;top:-50%;left:-50%;position:relative;border:1px solid transparent}
     p{margin:0}
 }
 .layer-mask{
-    .inner{background:#fff;border:1px solid #ccc;height:auto;min-height:100%;}
+    .inner{background:#fff;border-color:#ccc;height:auto;min-height:100%;}
 }
 .drag-focus{
-    .inner{border:1px solid #f40;background:rgba(255,255,255,.5);}
+    .inner{border-color:#f40;background:rgba(255,255,255,.5);}
+}
+
+.banner-module{width:30px;height:30px;position:relative;border:1px solid #ccc;
+    .layer{display:none;top:50%;left:50%}
+}
+.drag_target{border-color:transparent;
+    .name{display:none}
+    .layer{display:block;}
+    .inner{background:rgba(255,255,255,.5)}
 }

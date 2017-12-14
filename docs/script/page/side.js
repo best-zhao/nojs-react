@@ -14,6 +14,8 @@ export default class Side extends React.Component {
         let canvas_top
         let canvas_left
         let {root} = this.props
+        let side_x
+        let self = this
 
         this.dragOptions = {
             // flow : 'float',
@@ -24,6 +26,7 @@ export default class Side extends React.Component {
                 canvas_top = top
                 canvas_left = left
                 area = areas.filter('[data-dragarea="banner"]')
+                side_x = $(ReactDOM.findDOMNode(self)).offset().left 
             },
             onDragMove : (x, y)=>{
                 let {el, areas} = root.canvas
@@ -37,7 +40,7 @@ export default class Side extends React.Component {
                 let left = canvas_left
                 let width = el.outerWidth()
 
-                if( x>left && x<(left+width) && y>top && y<(top+height) ){
+                if( x>left && x<(left+width) && y>top && y<(top+height) && x<side_x ){
                     root.canvas.target = area.addClass('drag-active')
                 }
             },
@@ -49,11 +52,13 @@ export default class Side extends React.Component {
                     let top = y - canvas_top
                     let left = x - canvas_left                   
 
-                    root.bannerLayer.push(Object.assign({
+                    let item = Object.assign({
                         x : left,
                         y : top
-                    }, props.module))
+                    }, props.module)
+                    root.bannerLayer.push(item)
                 }
+                root.canvas.target = null
             }
         }
 
@@ -100,7 +105,14 @@ export default class Side extends React.Component {
             </div>
 
             {bannerModules.map(item=>
-                <Drag key={item.name} {...this.dragOptions} module={item}><button>test</button></Drag>
+                <Drag key={item.name} {...this.dragOptions} module={item}>
+                    <div className="banner-module">
+                        <div className="name">{item.name}</div>
+                        <div className="layer" style={item.style}>
+                            <div className="inner" dangerouslySetInnerHTML={{__html:item.html}}></div>
+                        </div>
+                    </div>
+                </Drag>
             )}
             
         </div>

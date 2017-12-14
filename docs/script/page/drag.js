@@ -13,7 +13,9 @@ export default class Drag extends React.Component {
             wrap : $('div.page-side')
         })
 
-        this.drag.onDragDown = function(){
+        let x
+        let y
+        this.drag.onDragDown = function(e){
             let offset = el.offset()
             el.css({
                 'position':'absolute',
@@ -24,10 +26,17 @@ export default class Drag extends React.Component {
             })
             .addClass('drag_target').after(self.holder)
             onDragDown && onDragDown.call(this)
-        }
 
-        let x
-        let y
+            //计算鼠标点击初始位置相对于el的百分比 来重新定位内部layer位置 保证layer落地时位置不发生偏移
+            el.find('.layer').css({
+                top : (e.clientY - offset.top)*100/el.innerHeight()+'%',
+                left : (e.clientX - offset.left)*100/el.innerWidth()+'%'
+            })
+
+            x = e.clientX;//鼠标位置
+            y = e.clientY;
+        }
+        
         this.drag.MoveEvent = function(pos, e){
             // console.log(pos, e.clientX, e.clientY)
             x = e.clientX;//鼠标位置
