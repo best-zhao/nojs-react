@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import nj, {React, render} from 'nj'
-import Frame from 'nj/Frame/index'
+import Frame from 'nj/Frame'
 import {Form} from 'nj/form'
 import Marked from 'marked'
 import Menu from 'json-loader!../menu.json'
@@ -52,6 +52,7 @@ const options = {
         'popover' : 'demo/popup',
         'datepicker' : 'demo/datepicker',
         'editor' : 'demo/editor',
+        'colorpicker' : 'demo/colorpicker',
         'form/normal.html' : 'demo/form',
         'form/component.html' : 'demo/form',
         'form/input-group.html' : 'demo/form',

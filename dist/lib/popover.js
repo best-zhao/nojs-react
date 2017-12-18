@@ -219,13 +219,15 @@ var Popover = React.createClass({
                     });
                 }, 0);
             } else {
-                _this3.setAlign(Object.assign({}, _this3.props, {
-                    nearby: _this3.state.nearby,
-                    element: $(_this3.wrap),
-                    onTurn: function onTurn(turnPosition) {
-                        self.getOrigin(turnPosition);
-                    }
-                }));
+                setTimeout(function () {
+                    _this3.setAlign(Object.assign({}, _this3.props, {
+                        nearby: _this3.state.nearby,
+                        element: $(_this3.wrap),
+                        onTurn: function onTurn(turnPosition) {
+                            self.getOrigin(turnPosition);
+                        }
+                    }));
+                });
             }
 
             clearTimeout(delayHideClass);
@@ -292,15 +294,16 @@ var docWatch = function () {
     var pops = [];
     var delay;
     var hide = function hide(e) {
-        window.clearTimeout(delay);
-        delay = window.setTimeout(function (i) {
-            pops.forEach(function (pop) {
-                if (pop.state.trigger == 'focus' && e.target === pop.state.nearby) {
-                    return;
-                }
-                pop.setDisplay(false);
-            });
-        }, 0);
+        // console.log(e.isDefaultPrevented())
+        // window.clearTimeout(delay)
+        // delay = window.setTimeout(i=>{
+        pops.forEach(function (pop) {
+            if (e.target === pop.state.nearby) {
+                return;
+            }
+            pop.setDisplay(false);
+        });
+        // }, 0)
     };
     return {
         push: function push(pop) {

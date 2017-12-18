@@ -17,6 +17,7 @@
             {"id":10, "name":"Auto-complete", "parentid":1, "link":"autocomplete"},
             {"id":11,"name":"Datepicker", "parentid":1, "link":"datepicker"},
             {"id":12,"name":"Editor", "parentid":1, "link":"editor"},
+            {"id":13,"name":"ColorPicker", "parentid":1, "link":"colorpicker"},
         {"id":101, "name":"Utils","open":1},           
             {"id":102, "name":"utils", "parentid":101,"link":"utils/index"},
             {"id":103, "name":"async Actions", "parentid":101,"link":"utils/asyncActions"},

@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 /*
  * 对象拖拽
  */
@@ -109,7 +111,6 @@ drag.prototype = {
 			y = s ? m.offset().top : parseInt(m.css("top"), 10) || 0;
 
 			if (this.wrap && this.wrap.length) {
-				console.log(1, this.wrap.scrollLeft(), this.wrap.scrollTop());
 				x -= this.wrap.offset().left - this.wrap.scrollLeft();
 				y -= this.wrap.offset().top - this.wrap.scrollTop();
 			}
@@ -156,10 +157,23 @@ drag.prototype = {
 
 			if (this.overflow) {
 				//边界溢出
-				this.maxSize.l -= this.overflow;
-				this.maxSize.t -= this.overflow;
-				this.maxSize.w += this.overflow;
-				this.maxSize.h += this.overflow;
+
+				if (_typeof(this.overflow) == 'object') {
+					//分别控制四边
+					var _overflow = this.overflow,
+					    x = _overflow.x,
+					    y = _overflow.y,
+					    width = _overflow.width,
+					    height = _overflow.height;
+				} else {
+					//统一向外扩张或内收缩
+					var x, y, width, height;
+					x = y = width = height = this.overflow;
+				}
+				this.maxSize.l -= x;
+				this.maxSize.t -= y;
+				this.maxSize.w += width;
+				this.maxSize.h += height;
 			}
 		}
 
@@ -235,7 +249,9 @@ drag.prototype = {
 						x: cx,
 						y: cy,
 						w: T.maxSize.W,
-						h: T.maxSize.H
+						h: T.maxSize.H,
+						left: pos.x + cx,
+						top: pos.y + cy
 					}, e);
 				}, T.delay);
 			}

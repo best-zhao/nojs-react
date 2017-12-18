@@ -201,13 +201,15 @@ var Popover = React.createClass({
                     })
                 }, 0)
             }else{
-                this.setAlign(Object.assign({}, this.props, {
-                  nearby : this.state.nearby,
-                  element : $(this.wrap),
-                  onTurn (turnPosition) {
-                    self.getOrigin(turnPosition)
-                  }
-                }))
+                setTimeout(()=>{
+                    this.setAlign(Object.assign({}, this.props, {
+                      nearby : this.state.nearby,
+                      element : $(this.wrap),
+                      onTurn (turnPosition) {
+                        self.getOrigin(turnPosition)
+                      }
+                    }))
+                })
             }
             
             clearTimeout(delayHideClass)
@@ -266,15 +268,16 @@ var docWatch = (function(){
     var pops = []
     var delay
     var hide = (e)=>{
-        window.clearTimeout(delay)
-        delay = window.setTimeout(i=>{
+        // console.log(e.isDefaultPrevented())
+        // window.clearTimeout(delay)
+        // delay = window.setTimeout(i=>{
             pops.forEach(pop=>{
-                if( pop.state.trigger=='focus' && e.target===pop.state.nearby ){
+                if( e.target===pop.state.nearby ){
                     return
                 }
                 pop.setDisplay(false)
             })
-        }, 0)
+        // }, 0)
     }
     return {
         push (pop) {
