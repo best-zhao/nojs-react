@@ -156,7 +156,7 @@ export default class Color extends React.Component {
         let {onSubmit, onCancel} = this.props
         let {hue, data, pos} = this.state
 
-        return <div className="color-picker-box">
+        return <div className="color-picker-box clearfix">
             <div className="mask" ref="mask" style={{background:hue}} onMouseDown={this.startChoose.bind(this, 'mask')}>
                 <div className="b"></div>
                 <div className="c" style={{top:pos.top, left:pos.left}}></div>
@@ -180,8 +180,8 @@ export default class Color extends React.Component {
                     <input onChange={this.changeHandle.bind(this,'color')} value={data.color} />
                 </dd> 
             </dl> 
-            <button onClick={e=>onSubmit(data, e)} className="ok" >确定</button> 
-            <button onClick={e=>onCancel(data, e)} className="close">取消</button> 
+            <button onClick={e=>onSubmit(data, e)} className="nj-button nj-button-red nj-button-small ok" >确定</button> 
+            <button onClick={e=>onCancel(data, e)} className="nj-button nj-button-small close">取消</button> 
             </div> 
         </div>
     }

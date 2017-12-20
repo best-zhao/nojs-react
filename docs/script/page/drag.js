@@ -25,7 +25,7 @@ export default class Drag extends React.Component {
                 // 'height' : el.height()
             })
             .addClass('drag_target').after(self.holder)
-            onDragDown && onDragDown.call(this)
+            onDragDown && onDragDown.call(this, self.props)
 
             //计算鼠标点击初始位置相对于el的百分比 来重新定位内部layer位置 保证layer落地时位置不发生偏移
             el.find('.layer').css({
@@ -41,7 +41,7 @@ export default class Drag extends React.Component {
             // console.log(pos, e.clientX, e.clientY)
             x = e.clientX;//鼠标位置
             y = e.clientY;
-            onDragMove && onDragMove.call(this, x, y)
+            onDragMove && onDragMove.call(this, x, y, self.props)
         }
 
         this.drag.UpEvent = function(e){

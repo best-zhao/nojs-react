@@ -3,6 +3,7 @@ import $ from 'jquery'
 import {React, render, utils} from 'nj'
 import Side from './side'
 import Banner from './banner'
+import Content from './content'
 import '../../css/page.css'
 
 export const init = ()=>{
@@ -47,6 +48,7 @@ class Page extends React.Component {
         $inner.width($inner.children().outerWidth(true))
         $body.scrollLeft(($inner.innerWidth()-$body.width())/2).scrollTop(90)
 
+        let {data} = this.state
         let {canvas} = this.refs
         let el = $(canvas)
         let areas = el.find('[data-dragarea]')
@@ -59,11 +61,16 @@ class Page extends React.Component {
         //在banner区域创建一个占位元素来渲染banner图层
         let $banner = areas.filter('[data-dragarea="banner"]')
         let bannerRoot = $('<div></div>').appendTo($banner)
-        this.bannerLayer = render(<Banner layers={[]} root={this}/>, bannerRoot[0])   
+        data.banner.layers = render(<Banner layers={[]} root={this}/>, bannerRoot[0])
+
+        //content
+        let $content = areas.filter('[data-dragarea="content"]')
+        let contentRoot = $('<div></div>').appendTo($content)
+        data.content.layers = render(<Content layers={[]} root={this}/>, contentRoot[0])   
     }
-    componentDidUpdate (prevProps, prevState) { 
-        // this.canvas.areas = this.canvas.el.find('[data-dragarea]')
-    }
+    // componentDidUpdate (prevProps, prevState) { 
+    //     this.canvas.areas = this.canvas.el.find('[data-dragarea]')
+    // }
     getStyle () {
         let {data} = this.state
         let styles = []

@@ -233,7 +233,7 @@ var Color = function (_React$Component) {
 
             return _nojsReact.React.createElement(
                 'div',
-                { className: 'color-picker-box' },
+                { className: 'color-picker-box clearfix' },
                 _nojsReact.React.createElement(
                     'div',
                     { className: 'mask', ref: 'mask', style: { background: hue }, onMouseDown: this.startChoose.bind(this, 'mask') },
@@ -339,14 +339,14 @@ var Color = function (_React$Component) {
                         'button',
                         { onClick: function onClick(e) {
                                 return onSubmit(data, e);
-                            }, className: 'ok' },
+                            }, className: 'nj-button nj-button-red nj-button-small ok' },
                         '确定'
                     ),
                     _nojsReact.React.createElement(
                         'button',
                         { onClick: function onClick(e) {
                                 return onCancel(data, e);
-                            }, className: 'close' },
+                            }, className: 'nj-button nj-button-small close' },
                         '取消'
                     )
                 )

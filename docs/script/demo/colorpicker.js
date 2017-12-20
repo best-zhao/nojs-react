@@ -19,8 +19,7 @@ export const init = ()=>{
     // }
 
     render(
-        <ColorPicker color="999" _onChange={data=>console.log(data)}>
-        </ColorPicker>, 
+        <ColorPicker color="369" _onChange={data=>console.log(data)}></ColorPicker>, 
         document.getElementById('mounted')
     )
 

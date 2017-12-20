@@ -41,10 +41,10 @@ var drag = function drag(_drag, move, opt) {
 	this.delay = this.opt.delay || 9;
 	if (!this.delegat) {
 		if (move) {
-			this.move.css("cursor", "move");
+			//this.move.css("cursor","move");
 		} else {
-			this.drag.css("cursor", "move");
-		}
+				//this.drag.css("cursor","move");
+			}
 	}
 	var T = this;
 

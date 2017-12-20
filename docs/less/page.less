@@ -20,7 +20,7 @@
 }
 
 .drag-active{border:1px solid #f90}
-.layer, .layer-mask{position:absolute;height:90px;text-align:left;font:14px/1.8 'microsoft yahei';
+.layer, .layer-mask{position:absolute;width:90px;height:90px;text-align:left;font:14px/1.8 'microsoft yahei';
     .inner{width:100%;height:100%;top:-50%;left:-50%;position:relative;border:1px solid transparent}
     p{margin:0}
 }
@@ -32,11 +32,20 @@
     .inner{border-color:#f40!important;background:rgba(255,255,255,.5);}
 }
 
-.banner-module{width:30px;height:30px;position:relative;border:1px solid #ccc;
+.banner-module, .content-module{
+    width:30px;height:30px;position:relative;border:1px solid #ccc;cursor: default;
     .layer{display:none;top:50%;left:50%}
 }
-.drag_target{border-color:transparent;
-    .name{display:none}
+.drag_target{
     .layer{display:block;}
     .inner{background:rgba(255,255,255,.5)}
+}
+.banner-module.drag_target{border-color:transparent;
+    .name{display:none}
+}
+
+
+.content-item{border:1px solid #ccc;min-height:150px;background:#fff}
+.drag-active {
+    .content-item{height:90px;overflow:hidden;background:#E2F3F7;min-height:auto;border:none;}
 }
