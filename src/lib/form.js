@@ -208,7 +208,7 @@ var Form = formDirectives['form'] = React.createClass({
         this.submitEvent = nj.utils.addEventQueue.call(this, 'onSubmit')
         this.verifyEvent = nj.utils.addEventQueue.call(this, 'onVerify')
 
-        this.state.verfiyCode = Form.verifyCode(
+        this.state.verifyCode = Form.verifyCode(
             $(this.refs.wrap).find('#verify_img')[0],
             $(this.refs.wrap).find('#verify_refresh')[0]
         )

@@ -236,7 +236,7 @@ var Form = formDirectives['form'] = _nojsReact.React.createClass({
         this.submitEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onSubmit');
         this.verifyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onVerify');
 
-        this.state.verfiyCode = Form.verifyCode((0, _jquery2.default)(this.refs.wrap).find('#verify_img')[0], (0, _jquery2.default)(this.refs.wrap).find('#verify_refresh')[0]);
+        this.state.verifyCode = Form.verifyCode((0, _jquery2.default)(this.refs.wrap).find('#verify_img')[0], (0, _jquery2.default)(this.refs.wrap).find('#verify_refresh')[0]);
 
         var parentComponent = this.props.parentComponent; //form表单所处的父组件
 
