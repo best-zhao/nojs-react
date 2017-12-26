@@ -323,6 +323,7 @@ var Autocomplete = module.exports = React.createClass({
             null,
             React.createElement(Input, _extends({}, this.props, {
                 ref: 'text',
+                value: value,
                 onChange: this.change,
                 onKeyDown: this.keydown,
                 onKeyUp: !disable && this.keyup })),

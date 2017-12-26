@@ -241,6 +241,7 @@ var Autocomplete = module.exports = React.createClass({
         <span>
             <Input {...this.props} 
                 ref="text" 
+                value={value}
                 onChange={this.change} 
                 onKeyDown={this.keydown} 
                 onKeyUp={!disable && this.keyup} />

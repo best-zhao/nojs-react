@@ -31,6 +31,7 @@ export default class Content extends React.Component {
     }
 }
 
+
 class Drag extends React.Component {
     componentDidMount () {
         let el = $(ReactDOM.findDOMNode(this))        
@@ -46,7 +47,7 @@ class Drag extends React.Component {
     //     return {x:-w/2, y:-h/2, width:w/2, height:h/2}
     // }
     componentWillReceiveProps (nextProps) {
-        this.drag.overflow = this.getSize()
+        //this.drag.overflow = this.getSize()
     }
     render(){
         return this.props.children

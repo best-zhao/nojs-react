@@ -4,8 +4,8 @@ import {Switch, SwitchMenu, SwitchItem} from 'nj/switch'
 import ColorPicker from 'nj/ColorPicker'
 import Drag from './drag'
 import {Input} from 'nj/form'
-import Banner, {getBannerOptions} from './banner'
-import Content, {getContentOptions} from './content'
+import {getBannerOptions} from './banner'
+import {getContentOptions} from './content'
 
 export default class Side extends React.Component {
     constructor (props) {
