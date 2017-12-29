@@ -54,6 +54,13 @@ var Statics = {
     return pop;
   },
 
+  //隐藏所有弹窗
+  hide: function hide() {
+    instances.forEach(function (p, i) {
+      p.setDisplay(false);
+    });
+  },
+
   //销毁弹窗
   destory: function destory(pop) {
     instances.forEach(function (p, i) {
