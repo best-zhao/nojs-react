@@ -18,13 +18,20 @@ var Mask = React.createClass({
   },
 
   statics: function () {
-    var mask, wrap;
+    var mask,
+        wrap,
+        first = true;
     return {
       show: function show(name) {
         wrap = wrap || nj.utils.createContainer('nj-mask ng-layer-wrap');
         this.mask = mask = ReactDOM.render(React.createElement(Mask, null), wrap);
         mask.setState({ name: name });
         mask.setDisplay(true);
+
+        if (first) {
+          initEvents.complete(mask);
+        }
+        first = null;
       },
       hide: function hide() {
         if (mask) {
@@ -49,3 +56,5 @@ var Mask = React.createClass({
 });
 
 module.exports = Mask;
+
+var initEvents = utils.addEventQueue.call(Mask, 'onInit');

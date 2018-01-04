@@ -4,13 +4,14 @@ var {React,ReactDOM,utils} = nj
  * 遮罩层组件
  * 提供show/hide 2个事件 
  */
+
 var Mask = React.createClass({
   mixins: [nj.mixins.setDisplay],
   getDefaultProps () {
     return {effect : 'fade'};
   },  
   statics : (function(){
-    var mask, wrap;
+    var mask, wrap, first = true;
     return {
       show (name){
         wrap = wrap || nj.utils.createContainer('nj-mask ng-layer-wrap')
@@ -20,6 +21,11 @@ var Mask = React.createClass({
         );
         mask.setState({name})
         mask.setDisplay(true)
+
+        if( first ){
+          initEvents.complete(mask)
+        }
+        first = null
       },
       hide (){
         if( mask ){
@@ -43,5 +49,7 @@ var Mask = React.createClass({
 });
 
 module.exports = Mask
+
+let initEvents = utils.addEventQueue.call(Mask, 'onInit')
 
   
