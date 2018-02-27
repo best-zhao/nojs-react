@@ -17,24 +17,32 @@ class Page extends React.Component {
         let data = {
             body : {
                 pageid,
+                css : {
+                    'background-color':'#fff'
+                },
                 selector : `#${pageid}`
             },
             banner : {
+                css : {
+                    'background-color':'#f2f2f2',
+                    'height' : '300px',
+                    'margin-bottom' : '20px'
+                },
                 selector : `#${pageid} .banner`
             },
             content : {
+                css : {
+                    'background-color':'#f2f2f2'
+                },
                 selector : `#${pageid} .page-main`
             }
         }
-        for( let i in data ){
-            data[i].css = {}
-        }
+        
         this.state = {
             data,
             template : `
                 <style>
-                    .banner{height:300px;background:#f2f2f2;margin-bottom:20px} 
-                    .page-main{min-height:500px;background:#f2f2f2;width:1200px;margin:0 auto}
+                    .page-main{min-height:500px;width:1200px;margin:0 auto}
                 </style>
                 <div>1<br />12</div>
                 <div class="banner" data-dragarea="banner"></div>

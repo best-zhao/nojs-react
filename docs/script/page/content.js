@@ -13,20 +13,24 @@ export default class Content extends React.Component {
     push (layer) {
         let {layers} = this.state
         layers.push(layer)
+        layer.id = layers.length
         this.setState({layers})
     }
     render () {
         let {layers, focus, editor} = this.state
         let {root} = this.props
+        console.log(1)
         return <div>
             {layers.map((ly,i)=>
-                <Drag key={i}>
-                    <div className={'content-item'}> 
-                        <div className="inner" dangerouslySetInnerHTML={{__html:ly.html}}></div>
+                <Drag key={ly.id} layers={layers} parent={this} index={i}>
+                    <div className={'content-item'} ref={'layer-'+i}> 
+                        <div className="inner">{ly.id}</div>
                     </div>
                 </Drag>
             )}
-            
+            <div className="content-item d_hide drag-holder drag-newholder" ref="holder"> 
+                <div className="inner"></div>
+            </div>
         </div>
     }
 }
@@ -34,25 +38,82 @@ export default class Content extends React.Component {
 
 class Drag extends React.Component {
     componentDidMount () {
-        let el = $(ReactDOM.findDOMNode(this))        
-        // let options = Object.assign({
-        //     overflow : this.getSize()
-        // }, this.props)
-        this.drag = new drag(el, el.children())
+        let self = this
+        let el = $(ReactDOM.findDOMNode(this))
+        let {onDragDown, onDragMove, onDragUp, parent} = this.props
+        let wrap = $('div.canvas-content')
+        let $body = $('div.page-body')
+        let index
+
+        this.holder = el.clone().addClass('drag-holder')
+        this.drag = new drag(el, null, {
+            wrap,
+        })
+
+        this.drag.onDragDown = function(e){
+            let offset = el.offset()
+            el.css({
+                'position':'absolute',
+                'top' : offset.top,
+                'left' : offset.left,
+                'width' : el.width(),
+            })
+            .addClass('drag-target').after(self.holder)
+            wrap.addClass('drag-active')
+            onDragDown && onDragDown.call(this, self.props)   
+            index = self.props.index
+        }
+        
+        this.drag.MoveEvent = function(pos, e){
+            var m, y, Y, H; 
+
+            y = e.clientY;
+
+            let {layers} = self.props
+
+            for( var i=0; i<layers.length+1; i++ ){
+                m = $(parent.refs['layer-'+i])
+                if( !m.length ){
+                    continue;
+                }
+                //元素位置
+                Y = m.offset().top;
+                // console.log(y, Y)
+
+                H = m.outerHeight(true);
+               
+                if( m[0] === el[0] || m[0] === self.holder[0] ){
+                    continue;
+                }
+                if( y>Y && y<(Y+H) ){
+                    if( index>i ){
+                        self.holder.insertBefore(m);
+                        index--;
+                    }else{
+                        self.holder.insertAfter(m);
+                        index++;
+                    }
+                    break;
+                }
+            }
+        }
+
+        this.drag.UpEvent = function(e){
+            self.holder.after(el)
+            self.holder.remove()
+            el.removeClass('drag-target').removeAttr('style')
+            wrap.removeClass('drag-active')
+            onDragUp && onDragUp.call(this)
+        }
     }
-    // getSize () {
-    //     let el = $(ReactDOM.findDOMNode(this))
-    //     let w = el.width()
-    //     let h = el.height()
-    //     return {x:-w/2, y:-h/2, width:w/2, height:h/2}
-    // }
     componentWillReceiveProps (nextProps) {
-        //this.drag.overflow = this.getSize()
+        //console.log(nextProps)
     }
-    render(){
+    render () {
         return this.props.children
     }
 }
+
 
 //side区域拖拽模块选项
 export const getContentOptions = _this=>{
@@ -85,6 +146,7 @@ export const getContentOptions = _this=>{
 
             if( x>left && x<(left+width) && y>top && y<(top+height) && x<side_x ){
                 root.canvas.target = area.addClass('drag-active')
+                area.find('div.drag-newholder').show()
             }
         },
         onDragUp : (x, y, props)=>{
@@ -100,6 +162,7 @@ export const getContentOptions = _this=>{
                     y : top
                 }, props.module)
                 root.state.data[props.target].layers.push(item)
+                target.find('div.drag-newholder').hide()
             }
             root.canvas.target = null
         }

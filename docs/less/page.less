@@ -13,6 +13,10 @@
         background:#fff;border:1px solid #c4c4c4;min-height:1000px;width:1600px;vertical-align:top;
         position:relative;box-shadow: inset 0 0 2px rgba(0,0,0,.1);
     }
+    .banner:before, .page-main:before{
+        content:'banner区域';font-size:24px;color:#ccc;line-height:3;position: absolute;
+    }
+    .page-main:before{content:'内容区域'}
 }
 
 .color-picker{display:inline-block;border:1px solid #ccc;border-radius:2px;background:#fff;width:12px;height:12px;vertical-align:middle;position:relative;
@@ -45,7 +49,11 @@
 }
 
 
-.content-item{border:1px solid #ccc;min-height:150px;background:#fff}
+.content-item{border:1px solid #ccc;background:#fff;position: relative;margin:0 0 15px;
+    .inner{min-height:150px;}
+}
 .drag-active {
-    .content-item{height:90px;overflow:hidden;background:#E2F3F7;min-height:auto;border:none;margin: 0 0 9px}
+    .content-item{height:90px;overflow:hidden;background:#E2F3F7;min-height:auto;margin: 0 0 9px}
+    .drag-holder{border:2px dashed #f90;background:#FBFAF7}
+    .drag-target{opacity: .8}
 }

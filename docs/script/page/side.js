@@ -53,8 +53,8 @@ export default class Side extends React.Component {
                 <div>背景图片 <Input defaultValue={banner.css['background-image']} onChange={e=>{
                     this.setStyle('banner', 'background-image', `url(${e.target.value})`)
                 }}/></div>
-                <div>高度:<Input defaultValue={400} onChange={e=>{
-                    this.setStyle('banner', 'height', `${e.target.value}px`)
+                <div>高度:<Input defaultValue={parseFloat(banner.css['height'])} onChange={e=>{
+                    this.setStyle('banner', 'height', `${parseFloat(e.target.value)}px`)
                 }}/></div>
             </div>
 

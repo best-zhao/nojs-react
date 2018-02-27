@@ -4,9 +4,10 @@ var js = rs+'/script'
 var debug = process.env.NODE_ENV!='production'
 
 var entry = {
-    "seed" : "/seed.js",
-    "index" : "/index.js",
-    "examples/index" : "/examples/index.js"  
+    "seed" : "seed.js",
+    "index" : "index.js",
+    "control" : "control.js",
+    "examples/index" : "examples/index.js"  
 }
 for( var i in entry ){
   var e = entry[i] = [js+'/'+entry[i]]  

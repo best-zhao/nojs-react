@@ -18,9 +18,27 @@ export default class Banner extends React.Component {
                 this.setState({focus:null})
             }            
         })
-    }    
+
+        $(document).keydown(e=>{
+            let {keyCode} = e
+            let {layers, focus} = this.state
+            
+            //delete layer
+            if( keyCode==46 && focus ){
+                let index = layers.indexOf(focus)
+                layers.splice(index, 1)
+                console.log(keyCode, index)
+                this.setState({layers})
+            }
+        })
+    }  
+    //分配一个唯一的key  
+    getKey () {
+        return (+new Date)+'_'+parseInt(Math.random()*100000)
+    }
     push (layer) {
         let {layers} = this.state
+        layer.key = this.getKey()
         layers.push(layer)
         this.setState({layers, focus:layer})
     }
@@ -38,8 +56,8 @@ export default class Banner extends React.Component {
         let {layers, focus, editor} = this.state
         let {root} = this.props
         return <div>
-            {layers.map((ly,i)=>
-                <Drag key={i} limit={root.canvas.el} 
+            {layers.map(ly=>
+                <Drag key={ly.key} limit={root.canvas.el} 
                     onDragDown={this.setFocus.bind(this, ly)}
                     MoveEvent={pos=>{
                         ly.x = pos.left
