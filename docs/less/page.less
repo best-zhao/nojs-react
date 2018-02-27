@@ -16,14 +16,14 @@
     .banner:before, .page-main:before{
         content:'banner区域';font-size:24px;color:#ccc;line-height:3;position: absolute;
     }
-    .page-main:before{content:'内容区域'}
+    .page-main{padding-bottom: 200px;margin-bottom:50px;background: #f6f6f6}
+    .page-main:before{content:'内容区域';}
 }
 
 .color-picker{display:inline-block;border:1px solid #ccc;border-radius:2px;background:#fff;width:12px;height:12px;vertical-align:middle;position:relative;
     .transparent{border-top: 1px solid #eb5648;transform: translateY(-50%) rotate(45deg);transform-origin: 0 0;width: 150%;position:absolute;top:0;left:0;}
 }
 
-.drag-active{border:1px solid #f90}
 .layer, .layer-mask{position:absolute;width:90px;height:90px;text-align:left;font:14px/1.8 'microsoft yahei';
     .inner{width:100%;height:100%;top:-50%;left:-50%;position:relative;border:1px solid transparent}
     p{margin:0}
@@ -49,11 +49,14 @@
 }
 
 
-.content-item{border:1px solid #ccc;background:#fff;position: relative;margin:0 0 15px;
-    .inner{min-height:150px;}
+.content-item{border:1px solid #ddd;background:#fff;position: relative;margin:0 0 15px;text-align:left;
+    &:hover{border-color: #bbb;}
+    .inner{min-height:300px;}
+    .ct-head{height: 29px;line-height: 29px;padding: 0 1em;border-bottom: 1px solid #ddd;}
 }
-.drag-active {
-    .content-item{height:90px;overflow:hidden;background:#E2F3F7;min-height:auto;margin: 0 0 9px}
-    .drag-holder{border:2px dashed #f90;background:#FBFAF7}
-    .drag-target{opacity: .8}
+.drag-active {box-shadow: 0 0 2px #f30;
+    .content-item{overflow:hidden;}
+    .drag-holder{border:1px dashed #f30;background:#FBF1E8}
+    .drag-target{opacity: .8;border-color:#065FCD}
+    .drag-newholder{min-height:90px;}
 }

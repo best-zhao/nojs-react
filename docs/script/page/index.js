@@ -18,7 +18,7 @@ class Page extends React.Component {
             body : {
                 pageid,
                 css : {
-                    'background-color':'#fff'
+                    'background-color':'transparent'
                 },
                 selector : `#${pageid}`
             },
@@ -31,9 +31,7 @@ class Page extends React.Component {
                 selector : `#${pageid} .banner`
             },
             content : {
-                css : {
-                    'background-color':'#f2f2f2'
-                },
+                css : {},
                 selector : `#${pageid} .page-main`
             }
         }
@@ -44,7 +42,7 @@ class Page extends React.Component {
                 <style>
                     .page-main{min-height:500px;width:1200px;margin:0 auto}
                 </style>
-                <div>1<br />12</div>
+                <div>1</div>
                 <div class="banner" data-dragarea="banner"></div>
                 <div class="page-all page-main" data-dragarea="content"></div>
             `
@@ -99,8 +97,10 @@ class Page extends React.Component {
             <div className="page-body" ref="body">
                 <div className="_inner">
                     <div className="page-canvas">
-                        <div dangerouslySetInnerHTML={{__html:this.getStyle()}}></div>
-                        <div ref="canvas" className="canvas-content" id={pageid} dangerouslySetInnerHTML={{__html:template}}></div>
+                        <div ref="canvas" className="canvas-content">
+                            <div dangerouslySetInnerHTML={{__html:this.getStyle()}}></div>
+                            <div id={pageid} dangerouslySetInnerHTML={{__html:template}}></div>
+                        </div>
                     </div>
                 </div>
             </div>

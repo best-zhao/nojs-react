@@ -10,27 +10,27 @@ export default class Content extends React.Component {
             layers
         }
     }
-    push (layer) {
+    push (layer, index) {
         let {layers} = this.state
-        layers.push(layer)
+        index>=layers.length ? layers.push(layer) : layers.splice(index, 0, layer)
         layer.id = layers.length
         this.setState({layers})
     }
     render () {
         let {layers, focus, editor} = this.state
         let {root} = this.props
-        console.log(1)
         return <div>
             {layers.map((ly,i)=>
                 <Drag key={ly.id} layers={layers} parent={this} index={i}>
                     <div className={'content-item'} ref={'layer-'+i}> 
-                        <div className="inner">{ly.id}</div>
+                        <div className="inner">
+                            <div className="ct-head">{ly.id}</div>
+                            <div className="ct-body"></div>
+                        </div>
                     </div>
                 </Drag>
             )}
-            <div className="content-item d_hide drag-holder drag-newholder" ref="holder"> 
-                <div className="inner"></div>
-            </div>
+            <div className="content-item d_hide drag-holder drag-newholder" ref="holder"></div>
         </div>
     }
 }
@@ -42,7 +42,6 @@ class Drag extends React.Component {
         let el = $(ReactDOM.findDOMNode(this))
         let {onDragDown, onDragMove, onDragUp, parent} = this.props
         let wrap = $('div.canvas-content')
-        let $body = $('div.page-body')
         let index
 
         this.holder = el.clone().addClass('drag-holder')
@@ -65,20 +64,18 @@ class Drag extends React.Component {
         }
         
         this.drag.MoveEvent = function(pos, e){
-            var m, y, Y, H; 
-
-            y = e.clientY;
+            let y = e.clientY;
+            let m, Y, H; 
 
             let {layers} = self.props
 
-            for( var i=0; i<layers.length+1; i++ ){
+            for( let i=0; i<layers.length+1; i++ ){
                 m = $(parent.refs['layer-'+i])
                 if( !m.length ){
                     continue;
                 }
                 //元素位置
                 Y = m.offset().top;
-                // console.log(y, Y)
 
                 H = m.outerHeight(true);
                
@@ -88,11 +85,13 @@ class Drag extends React.Component {
                 if( y>Y && y<(Y+H) ){
                     if( index>i ){
                         self.holder.insertBefore(m);
-                        index--;
                     }else{
                         self.holder.insertAfter(m);
-                        index++;
                     }
+                    let ly = layers[index]
+                    layers.splice(index, 1)
+                    layers.splice(i, 0, ly)
+                    index = i;
                     break;
                 }
             }
@@ -104,6 +103,7 @@ class Drag extends React.Component {
             el.removeClass('drag-target').removeAttr('style')
             wrap.removeClass('drag-active')
             onDragUp && onDragUp.call(this)
+            parent.forceUpdate()
         }
     }
     componentWillReceiveProps (nextProps) {
@@ -122,6 +122,8 @@ export const getContentOptions = _this=>{
     let canvas_left
     let side_x
     let {root} = _this.props
+    let renderContent = root.state.data.content.layers
+    let index
 
     return {
         onDragDown (props) {                
@@ -131,6 +133,8 @@ export const getContentOptions = _this=>{
             canvas_left = left
             area = areas.filter('[data-dragarea="'+props.target+'"]')
             side_x = $(ReactDOM.findDOMNode(_this)).offset().left 
+
+            renderContent = root.state.data.content.layers
         },
         onDragMove : (x, y)=>{
             let {el, areas} = root.canvas
@@ -144,9 +148,31 @@ export const getContentOptions = _this=>{
             let left = canvas_left
             let width = el.outerWidth()
 
+
             if( x>left && x<(left+width) && y>top && y<(top+height) && x<side_x ){
                 root.canvas.target = area.addClass('drag-active')
-                area.find('div.drag-newholder').show()
+                let holder = area.find('div.drag-newholder').show()
+
+                //选择插入新模块的位置
+                let m, Y, H; 
+                let {layers} = renderContent.props
+
+                for( let i=0; i<layers.length+1; i++ ){
+                    m = $(renderContent.refs['layer-'+i])
+                    
+                    //元素位置
+                    Y = m.offset().top;
+                    H = m.outerHeight(true);
+                   
+                    if( y<(Y+H/2) ){
+                        holder.insertBefore(m);
+                        index = i
+                        break
+                    }else{
+                        holder.insertAfter(m);
+                        index = i+1
+                    }
+                }
             }
         },
         onDragUp : (x, y, props)=>{
@@ -161,9 +187,9 @@ export const getContentOptions = _this=>{
                     x : left,
                     y : top
                 }, props.module)
-                root.state.data[props.target].layers.push(item)
-                target.find('div.drag-newholder').hide()
+                renderContent.push(item, index)
             }
+            target && target.find('div.drag-newholder').hide()
             root.canvas.target = null
         }
     }
