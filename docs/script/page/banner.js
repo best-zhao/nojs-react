@@ -1,6 +1,8 @@
 import $ from 'jquery'
 import {React, render, ReactDOM, utils} from 'nj'
 import drag from 'nj/drag'
+import Popover from 'nj/popover'
+import PropsForm from './props' 
 
 export default class Banner extends React.Component {
     constructor (props) {
@@ -28,8 +30,26 @@ export default class Banner extends React.Component {
                 let index = layers.indexOf(focus)
                 layers.splice(index, 1)
                 console.log(keyCode, index)
-                this.setState({layers})
+                this.setState({layers, focus:null})
             }
+        })
+
+        //创建一个共享属性面板层
+        this.propsPanel = Popover.create({
+            trigger : 'click',
+            effect : 'normal',
+            delegate : ['div.layer', root.canvas.areas],
+            position : {left:80,top:'-100'}
+        })
+        .onShow(()=>{
+            let {focus} = this.state
+            render(
+                <PropsForm data={this.state.focus} onChange={data=>{
+                    Object.assign(this.state.focus, data)
+                    this.forceUpdate()
+                }}/>, 
+                this.propsPanel.wrap.childNodes[0]
+            )
         })
     }  
     //分配一个唯一的key  
@@ -40,9 +60,9 @@ export default class Banner extends React.Component {
         let {layers} = this.state
         layer.key = this.getKey()
         layers.push(layer)
-        this.setState({layers, focus:layer})
+        this.setState({layers, focus:layer}, ()=>this.refs.focus.click())
     }
-    setFocus (layer) {
+    setFocus (layer, e) {
         this.setState({focus:layer})
     }
     componentDidUpdate (prevProps, prevState) {
@@ -51,6 +71,10 @@ export default class Banner extends React.Component {
             editor.focus()
             selectText(editor)
         }
+    }
+    componentDidUpdate (prevProps, prevState) {
+        //其他操作失去焦点后隐藏属性面板
+        !this.state.focus && this.propsPanel.setDisplay(false)
     }
     render () {
         let {layers, focus, editor} = this.state
@@ -104,7 +128,7 @@ class Drag extends React.Component {
     componentDidMount () {
         let el = $(ReactDOM.findDOMNode(this))        
         let options = Object.assign({
-            overflow : this.getSize()
+            // overflow : this.getSize()
         }, this.props)
         this.drag = new drag(el, el.children(), options)
     }
@@ -115,7 +139,7 @@ class Drag extends React.Component {
         return {x:-w/2, y:-h/2, width:w/2, height:h/2}
     }
     componentWillReceiveProps (nextProps) {
-        this.drag.overflow = this.getSize()
+        // this.drag.overflow = this.getSize()
     }
     render(){
         return this.props.children
@@ -156,17 +180,18 @@ export const getBannerOptions = _this=>{
                 root.canvas.target = area.addClass('drag-active')
             }
         },
-        onDragUp : (x, y, props)=>{
+        onDragUp : function(x, y, props){
             let {el, target, areas} = root.canvas
             areas.removeClass('drag-active')
             if( target ){                    
                 //计算出相对画布的位置
                 let top = y - canvas_top
                 let left = x - canvas_left                   
+                let {module:{style}} = props
 
                 let item = Object.assign({
-                    x : left,
-                    y : top
+                    x : left-style.width/2,
+                    y : top-style.height/2
                 }, props.module)
                 root.state.data[props.target].layers.push(item)
             }

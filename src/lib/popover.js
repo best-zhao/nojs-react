@@ -147,7 +147,12 @@ var Popover = React.createClass({
                 setTimeout(function(){
                     self.keepVisible = null;
                 }, 100)
-                self.state.visible && trigger=='click' ? self.setDisplay(false) : setTimeout(()=>show(this), 5)
+                if( self.state.visible && trigger=='click' ){
+                    self.setDisplay(false)
+                    delegate && setTimeout(()=>show(this), 5)
+                }else{
+                    setTimeout(()=>show(this), 5)
+                }
                 e.preventDefault()
             }
             if( bindTarget ){
