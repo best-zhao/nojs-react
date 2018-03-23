@@ -1,22 +1,28 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
+                                                                                                                                                                                                                                                                   * Switch组件
+                                                                                                                                                                                                                                                                   */
 
-/**
- * Switch组件
- */
-var nj = require('./nojs-react'),
-    React = nj.React,
-    ReactDOM = nj.ReactDOM,
-    mixins = nj.mixins;
-var $ = require('jquery');
 
-var Directive = require('../mixins/directiveComponent');
+var _jquery = require('jquery');
 
-var Switch = React.createClass({
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _nojsReact = require('./nojs-react');
+
+var _nojsReact2 = _interopRequireDefault(_nojsReact);
+
+var _directiveComponent = require('../mixins/directiveComponent');
+
+var _directiveComponent2 = _interopRequireDefault(_directiveComponent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Switch = _nojsReact.React.createClass({
     displayName: 'Switch',
 
-    mixins: [mixins.childComponents.config],
+    mixins: [_nojsReact.mixins.childComponents.config],
     getInitialState: function getInitialState() {
         return { index: 0, trigger: this.props.trigger || 'click' };
     },
@@ -31,9 +37,9 @@ var Switch = React.createClass({
             _this.change(++_this.state.index);
         }, interval);
 
-        this.changeEvent = nj.utils.addEventQueue.call(this, 'onChange'); //.add(this.props.onChange)
+        this.changeEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onChange'); //.add(this.props.onChange)
 
-        this.readyEvent = nj.utils.addEventQueue.call(this, 'onReady');
+        this.readyEvent = _nojsReact2.default.utils.addEventQueue.call(this, 'onReady');
         setTimeout(function (e) {
             return _this.readyEvent.complete();
         }, 1);
@@ -51,8 +57,8 @@ var Switch = React.createClass({
         this.changeEvent.complete(index, e);
     },
     render: function render() {
-        var className = nj.utils.joinClass('nj-switch', this.props.className);
-        return React.createElement(
+        var className = _nojsReact2.default.utils.joinClass('nj-switch', this.props.className);
+        return _nojsReact.React.createElement(
             'div',
             _extends({}, this.props, { className: className }),
             this.props.children
@@ -60,17 +66,17 @@ var Switch = React.createClass({
     }
 });
 
-var SwitchMenu = React.createClass({
+var SwitchMenu = _nojsReact.React.createClass({
     displayName: 'SwitchMenu',
 
-    mixins: [mixins.childComponents.setParents([Switch], 1)],
+    mixins: [_nojsReact.mixins.childComponents.setParents([Switch], 1)],
     componentDidMount: function componentDidMount() {
         directive.getChildComponents(this);
     },
     render: function render() {
         var parentComponent = this.state.parentComponent;
         var index = parentComponent.state.index;
-        var className = nj.utils.joinClass('nj-switch-menu', index == this.state.index && 'nj-switch-menu-active');
+        var className = _nojsReact2.default.utils.joinClass('nj-switch-menu', index == this.state.index && 'nj-switch-menu-active');
 
         var options = { className: className };
 
@@ -81,7 +87,7 @@ var SwitchMenu = React.createClass({
 
         options = Object.assign({}, this.props, options);
 
-        return React.createElement(
+        return _nojsReact.React.createElement(
             'div',
             options,
             this.props.children
@@ -89,10 +95,10 @@ var SwitchMenu = React.createClass({
     }
 });
 
-var SwitchItem = React.createClass({
+var SwitchItem = _nojsReact.React.createClass({
     displayName: 'SwitchItem',
 
-    mixins: [mixins.childComponents.setParents([Switch], 1)],
+    mixins: [_nojsReact.mixins.childComponents.setParents([Switch], 1)],
     componentDidMount: function componentDidMount() {
         directive.getChildComponents(this);
         //以SwitchItem的数量来更新Switch组件的切换子项个数
@@ -100,8 +106,8 @@ var SwitchItem = React.createClass({
     },
     render: function render() {
         var index = this.state.parentComponent.state.index;
-        var className = nj.utils.joinClass('nj-switch-item', index == this.state.index ? 'nj-switch-item-active' : 'd_hide');
-        return React.createElement(
+        var className = _nojsReact2.default.utils.joinClass('nj-switch-item', index == this.state.index ? 'nj-switch-item-active' : 'd_hide');
+        return _nojsReact.React.createElement(
             'div',
             _extends({}, this.props, { className: className }),
             this.props.children
@@ -109,7 +115,7 @@ var SwitchItem = React.createClass({
     }
 });
 
-var directive = new Directive({
+var directive = new _directiveComponent2.default({
     elementGroups: {
         'switch': { children: ['switch-menu', 'switch-item'], component: Switch },
         'switch-menu': { component: SwitchMenu },

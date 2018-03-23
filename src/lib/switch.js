@@ -1,10 +1,9 @@
 /**
  * Switch组件
  */
-var nj = require('./nojs-react'), {React, ReactDOM, mixins} = nj
-var $ = require('jquery')
-
-var Directive = require('../mixins/directiveComponent')
+import $ from 'jquery'
+import nj, {React, ReactDOM, mixins} from './nojs-react'
+import Directive from '../mixins/directiveComponent'
 
 var Switch = React.createClass({  
     mixins : [mixins.childComponents.config],

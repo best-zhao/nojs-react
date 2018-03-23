@@ -884,10 +884,10 @@ var statusText = {
     url: 'url格式错误',
     confirm: '2次输入不一致',
     minlength: function minlength(rule) {
-        return '不能少于' + rule.target + '位';
+        return '\u4E0D\u80FD\u5C11\u4E8E' + rule.target + '\u4F4D';
     },
     maxlength: function maxlength(rule) {
-        return '不能超过' + rule.target + '位';
+        return '\u4E0D\u80FD\u8D85\u8FC7' + rule.target + '\u4F4D';
     }
 };
 

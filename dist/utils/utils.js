@@ -1,6 +1,6 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -134,9 +134,8 @@ module.exports = {
             'HTMLEvents': 'initEvent',
             'MouseEvents': 'initMouseEvent',
             'UIEvents': 'initUIEvent'
-        };
-        //IE fire event  
-        if (element.fireEvent) {
+            //IE fire event  
+        };if (element.fireEvent) {
             result = element.fireEvent('on' + type);
             //DOM2 fire event  
         } else if (document.createEvent) {

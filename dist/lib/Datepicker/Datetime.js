@@ -255,14 +255,14 @@ var Datetime = function (_React$Component) {
                 this.jumpTo(prevMonth ? -1 : 1);
             }
 
-            var currentDate = { year: year, month: month, date: date, day: day };
+            var currentDate = { year: year, month: month, date: date, day: day
 
-            /**
-             * 重置时间选择 当设置了min选项时
-             * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
-             * 因为这一天9点之前不能被选中
-             */
-            if ((min || max) && hasTime) {
+                /**
+                 * 重置时间选择 当设置了min选项时
+                 * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
+                 * 因为这一天9点之前不能被选中
+                 */
+            };if ((min || max) && hasTime) {
                 hoursItems.map(function (h, i) {
                     var d = Object.assign({}, currentDate, { hours: i });
                     var timestamp = (0, _utils.getTimestamp)(d, 4);
@@ -539,9 +539,9 @@ var Datetime = function (_React$Component) {
                         'div',
                         { className: '_head clearfix', key: '_head' },
                         year,
-                        '年 ',
+                        '\u5E74 ',
                         (0, _utils.parseNumber)(month),
-                        '月'
+                        '\u6708'
                     ),
                     weekEl,
                     _nojsReact.React.createElement(
@@ -596,7 +596,7 @@ var Datetime = function (_React$Component) {
                     _nojsReact.React.createElement(
                         'button',
                         { onClick: this.setNow.bind(this), className: 'nj-button nj-button-flat set-now' },
-                        '现在'
+                        '\u73B0\u5728'
                     )
                 ) : null,
                 _nojsReact.React.createElement(
@@ -630,7 +630,7 @@ var Datetime = function (_React$Component) {
                     hasTime ? _nojsReact.React.createElement(
                         'div',
                         { className: '_times' },
-                        '时间：',
+                        '\u65F6\u95F4\uFF1A',
                         _nojsReact.React.createElement(
                             'select',
                             {

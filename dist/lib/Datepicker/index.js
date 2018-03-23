@@ -111,7 +111,7 @@ var Datepicker = function (_React$Component) {
                         _nojsReact.React.createElement(
                             'button',
                             { onClick: onSubmit, className: 'nj-button nj-button-small' },
-                            '确定'
+                            '\u786E\u5B9A'
                         )
                     )
                 );

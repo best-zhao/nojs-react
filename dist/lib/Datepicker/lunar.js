@@ -46,7 +46,7 @@ var calendar = {
       * @Array Of Property trans["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
       * @return Cn string 
       */
-    Gan: ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"],
+    Gan: ["\u7532", "\u4E59", "\u4E19", "\u4E01", "\u620A", "\u5DF1", "\u5E9A", "\u8F9B", "\u58EC", "\u7678"],
 
     /**
       * 天干地支之地支速查表
@@ -54,7 +54,7 @@ var calendar = {
       * @trans["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
       * @return Cn string 
       */
-    Zhi: ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"],
+    Zhi: ["\u5B50", "\u4E11", "\u5BC5", "\u536F", "\u8FB0", "\u5DF3", "\u5348", "\u672A", "\u7533", "\u9149", "\u620C", "\u4EA5"],
 
     /**
       * 天干地支之地支速查表<=>生肖
@@ -62,7 +62,7 @@ var calendar = {
       * @trans["鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"]
       * @return Cn string 
       */
-    Animals: ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"],
+    Animals: ["\u9F20", "\u725B", "\u864E", "\u5154", "\u9F99", "\u86C7", "\u9A6C", "\u7F8A", "\u7334", "\u9E21", "\u72D7", "\u732A"],
 
     /**
       * 24节气速查表
@@ -70,7 +70,7 @@ var calendar = {
       * @trans["小寒","大寒","立春","雨水","惊蛰","春分","清明","谷雨","立夏","小满","芒种","夏至","小暑","大暑","立秋","处暑","白露","秋分","寒露","霜降","立冬","小雪","大雪","冬至"]
       * @return Cn string 
       */
-    solarTerm: ["小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"],
+    solarTerm: ["\u5C0F\u5BD2", "\u5927\u5BD2", "\u7ACB\u6625", "\u96E8\u6C34", "\u60CA\u86F0", "\u6625\u5206", "\u6E05\u660E", "\u8C37\u96E8", "\u7ACB\u590F", "\u5C0F\u6EE1", "\u8292\u79CD", "\u590F\u81F3", "\u5C0F\u6691", "\u5927\u6691", "\u7ACB\u79CB", "\u5904\u6691", "\u767D\u9732", "\u79CB\u5206", "\u5BD2\u9732", "\u971C\u964D", "\u7ACB\u51AC", "\u5C0F\u96EA", "\u5927\u96EA", "\u51AC\u81F3"],
 
     /**
       * 1900-2100各年的24节气日期速查表
@@ -85,7 +85,7 @@ var calendar = {
       * @trans ['日','一','二','三','四','五','六','七','八','九','十']
       * @return Cn string 
       */
-    nStr1: ["日", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
+    nStr1: ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341"],
 
     /**
       * 日期转农历称呼速查表
@@ -93,7 +93,7 @@ var calendar = {
       * @trans ['初','十','廿','卅']
       * @return Cn string 
       */
-    nStr2: ["初", "十", "廿", "卅"],
+    nStr2: ["\u521D", "\u5341", "\u5EFF", "\u5345"],
 
     /**
       * 月份转农历称呼速查表
@@ -101,7 +101,7 @@ var calendar = {
       * @trans ['正','一','二','三','四','五','六','七','八','九','十','冬','腊']
       * @return Cn string 
       */
-    nStr3: ["正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "冬", "腊"],
+    nStr3: ["\u6B63", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u51AC", "\u814A"],
 
     /**
       * 返回农历y年一整年的总天数
@@ -194,9 +194,9 @@ var calendar = {
      * @return Cn string
      */
     toAstro: function toAstro(cMonth, cDay) {
-        var s = "魔羯水瓶双鱼白羊金牛双子巨蟹狮子处女天秤天蝎射手魔羯";
+        var s = "\u9B54\u7FAF\u6C34\u74F6\u53CC\u9C7C\u767D\u7F8A\u91D1\u725B\u53CC\u5B50\u5DE8\u87F9\u72EE\u5B50\u5904\u5973\u5929\u79E4\u5929\u874E\u5C04\u624B\u9B54\u7FAF";
         var arr = [20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22];
-        return s.substr(cMonth * 2 - (cDay < arr[cMonth - 1] ? 2 : 0), 2) + "座"; //座
+        return s.substr(cMonth * 2 - (cDay < arr[cMonth - 1] ? 2 : 0), 2) + "\u5EA7"; //座
     },
 
     /**
@@ -239,7 +239,7 @@ var calendar = {
             return -1;
         } //若参数错误 返回-1
         var s = calendar.nStr3[m - 1];
-        s += "月"; //加上月字
+        s += "\u6708"; //加上月字
         return s;
     },
 
@@ -254,12 +254,12 @@ var calendar = {
         var s;
         switch (d) {
             case 10:
-                s = "初十";break;
+                s = "\u521D\u5341";break;
             case 20:
-                s = "二十";break;
+                s = "\u4E8C\u5341";break;
                 break;
             case 30:
-                s = "三十";break;
+                s = "\u4E09\u5341";break;
                 break;
             default:
                 s = calendar.nStr2[Math.floor(d / 10)];
@@ -393,7 +393,7 @@ var calendar = {
         //该日期所属的星座
         var astro = calendar.toAstro(m, d);
 
-        return { 'lYear': year, 'lMonth': month, 'lDay': day, 'Animal': calendar.getAnimal(year), 'IMonthCn': (isLeap ? "闰" : '') + calendar.toChinaMonth(month), 'IDayCn': calendar.toChinaDay(day), 'cYear': y, 'cMonth': m, 'cDay': d, 'gzYear': gzY, 'gzMonth': gzM, 'gzDay': gzD, 'isToday': isToday, 'isLeap': isLeap, 'nWeek': nWeek, 'ncWeek': "星期" + cWeek, 'isTerm': isTerm, 'Term': Term, 'astro': astro };
+        return { 'lYear': year, 'lMonth': month, 'lDay': day, 'Animal': calendar.getAnimal(year), 'IMonthCn': (isLeap ? "\u95F0" : '') + calendar.toChinaMonth(month), 'IDayCn': calendar.toChinaDay(day), 'cYear': y, 'cMonth': m, 'cDay': d, 'gzYear': gzY, 'gzMonth': gzM, 'gzDay': gzD, 'isToday': isToday, 'isLeap': isLeap, 'nWeek': nWeek, 'ncWeek': "\u661F\u671F" + cWeek, 'isTerm': isTerm, 'Term': Term, 'astro': astro };
     },
 
     /**

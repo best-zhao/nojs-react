@@ -46,7 +46,8 @@ if (!metaEl) {
         wrap.appendChild(metaEl);
         document.write(wrap.innerHTML);
     }
-    document.write('<style>body{font-size:' + 12 * dpr + 'px}</style>');
+    var rem = getDeviceWidth();
+    document.write('<style>html{font-size:' + rem + 'px} body{font-size:' + 12 * dpr + 'px}</style>');
 }
 
 var tid = void 0;

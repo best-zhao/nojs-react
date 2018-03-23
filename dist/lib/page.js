@@ -118,12 +118,12 @@ var Page = function (_React$Component) {
                 page > 1 && _nojsReact.React.createElement(
                     'a',
                     { href: '', onClick: this.handleChange.bind(this, 1) },
-                    '首页'
+                    '\u9996\u9875'
                 ),
                 page > 1 && _nojsReact.React.createElement(
                     'a',
                     { href: '', onClick: this.handleChange.bind(this, 'prev') },
-                    '上一页'
+                    '\u4E0A\u4E00\u9875'
                 ),
                 this.state.page,
                 '/',
@@ -131,12 +131,12 @@ var Page = function (_React$Component) {
                 page < pages && pages > 1 && _nojsReact.React.createElement(
                     'a',
                     { href: '', onClick: this.handleChange.bind(this, 'next') },
-                    '下一页'
+                    '\u4E0B\u4E00\u9875'
                 ),
                 page < pages && pages > 1 && _nojsReact.React.createElement(
                     'a',
                     { href: '', onClick: this.handleChange.bind(this, pages) },
-                    '尾页'
+                    '\u5C3E\u9875'
                 )
             );
         }

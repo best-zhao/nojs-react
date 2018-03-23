@@ -408,9 +408,9 @@ var Tree = React.createClass({
         return data ? React.createElement(
             'ul',
             { className: 'level' + level + visible },
-            (
+
             //对于父节点没有打开的暂时不渲染其子节点
-            !parentNode || parentNode.open || parentNode.complete) && data.map(function (item, i) {
+            (!parentNode || parentNode.open || parentNode.complete) && data.map(function (item, i) {
                 if (item.display === false) {
                     //隐藏节点
                     return;
@@ -519,10 +519,9 @@ var _keymap = {
     'id': 'id',
     'name': 'name',
     'parentid': 'parentid'
-};
 
-//显示一个层级select菜单
-var LevelSelect = React.createClass({
+    //显示一个层级select菜单
+};var LevelSelect = React.createClass({
     displayName: 'LevelSelect',
     getInitialState: function getInitialState() {
         var options = Object.assign({}, this.props);
@@ -934,7 +933,7 @@ Tree.LinkTree = React.createClass({
                         React.createElement(
                             'option',
                             { value: '' },
-                            '请选择'
+                            '\u8BF7\u9009\u62E9'
                         ),
                         level.map(function (item, i) {
                             if (id && item[KEY_ID] == id) {

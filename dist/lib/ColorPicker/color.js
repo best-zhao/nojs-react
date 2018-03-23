@@ -252,7 +252,7 @@ var Color = function (_React$Component) {
                         'span',
                         { className: 'preview' },
                         _nojsReact.React.createElement('i', { style: { background: '#' + data.color } }),
-                        '颜色'
+                        '\u989C\u8272'
                     ),
                     _nojsReact.React.createElement(
                         'dl',
@@ -263,10 +263,10 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'H：'
+                                'H\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 'h'), value: data.h }),
-                            '度'
+                            '\u5EA6'
                         ),
                         _nojsReact.React.createElement(
                             'dd',
@@ -274,7 +274,7 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'S：'
+                                'S\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 's'), value: data.s }),
                             '%'
@@ -285,7 +285,7 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'B：'
+                                'B\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 'b'), value: data.b }),
                             '%'
@@ -300,7 +300,7 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'R：'
+                                'R\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 'R'), value: data.R })
                         ),
@@ -310,7 +310,7 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'G：'
+                                'G\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 'G'), value: data.G })
                         ),
@@ -320,7 +320,7 @@ var Color = function (_React$Component) {
                             _nojsReact.React.createElement(
                                 'label',
                                 null,
-                                'B：'
+                                'B\uFF1A'
                             ),
                             _nojsReact.React.createElement('input', { onChange: this.changeHandle.bind(this, 'B'), value: data.B })
                         ),
@@ -340,14 +340,14 @@ var Color = function (_React$Component) {
                         { onClick: function onClick(e) {
                                 return onSubmit(data, e);
                             }, className: 'nj-button nj-button-red nj-button-small ok' },
-                        '确定'
+                        '\u786E\u5B9A'
                     ),
                     _nojsReact.React.createElement(
                         'button',
                         { onClick: function onClick(e) {
                                 return onCancel(data, e);
                             }, className: 'nj-button nj-button-small close' },
-                        '取消'
+                        '\u53D6\u6D88'
                     )
                 )
             );
