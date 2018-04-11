@@ -50,3 +50,4 @@ end()
 <nj-form>
     <nj-input readonly name="starttime"></nj-input>
 </nj-form>
+<span id="rootDatepicker2"></span>

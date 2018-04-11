@@ -106,7 +106,10 @@ var Statics = {
       options.template = (
         <div>
           <span className="nj-icon nj-icon-warn"></span>
-          <div className="_content">{options.template}</div>
+          {typeof options.template=='string' 
+            ? <div className="_content" dangerouslySetInnerHTML={{__html:options.template}}></div>
+            : <div className="_content">{options.template}</div>
+          }          
         </div>
         )
       var pop = Popup.create(options)

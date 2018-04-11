@@ -40,6 +40,15 @@ require('es6-promise').polyfill()
 const isMobile = exports.isMobile = screen.width<=640
 exports.clickEvent = isMobile ? 'tap' : 'click'
 
+
+exports.fetchStatus = (json)=>{
+    return json.status==1
+} 
+
+exports.setFetchStatus = (fn)=>{
+    exports.fetchStatus = fn
+} 
+
 window.noJS = window.noJS || {}
 window.noJS.ready = function(fn){
     fn(exports)

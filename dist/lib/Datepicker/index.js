@@ -45,6 +45,10 @@ var Datepicker = function (_React$Component) {
             var input = this.refs.input;
 
 
+            if (options.multiple) {
+                options.mode = 'date';
+            }
+
             input = options.input || input.refs.input;
 
             var pop = this.state.pop = _popover2.default.create({
@@ -116,9 +120,10 @@ var Datepicker = function (_React$Component) {
                     )
                 );
 
-                pop.setState({ template: template }, function () {
+                pop.setState({ template: template });
+                setTimeout(function () {
                     return pop.align.set();
-                });
+                }, 1);
             }).onHide(function () {
                 pop.setState({ template: null });
             });
@@ -128,7 +133,7 @@ var Datepicker = function (_React$Component) {
         value: function componentWillReceiveProps(nextProps) {
             var value = nextProps.value;
 
-            this.setState({ value: value });
+            value != undefined && this.setState({ value: value });
             Object.assign(this.state.options, nextProps);
         }
     }, {

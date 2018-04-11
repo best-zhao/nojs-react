@@ -304,7 +304,10 @@ formDirectives['input'] = React.createClass({
     getInitialState () {
         let {type, defaultValue, value, html} = this.props
         let isEditor = type=='editor'
-        defaultValue = defaultValue || value || html || ''
+        defaultValue = defaultValue || value || ''
+        if( isEditor || type=='textarea' ){
+            defaultValue = defaultValue || html || ''
+        }
         return {
             isEditor,
             dirty : false,
@@ -470,9 +473,13 @@ formDirectives['input'] = React.createClass({
             isEditor ? 'span' : 'label',
             {className: `nj-input-${type}`},
 
-            hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />,
-            (type=='checkbox' || type=='radio') && <span className="_holder"></span>,
-            !hasTextarea && <span className="_c">{options.text}</span>,
+            React.createElement(
+                'span',
+                {className:'input-inner'},            
+                hasTextarea ? <textarea {...options} style={isEditor?{display:'none'}:undefined} /> : <input {...options} />,
+                (type=='checkbox' || type=='radio') && <span className="_holder"></span>,
+                !hasTextarea && <span className="_c">{options.text}</span>,
+            ),
             Editor && <Editor {...editOptions}/>,
             <VerifyStatus field={this} />
         )
@@ -846,16 +853,21 @@ Form.fill = function(options){
                 handle && handle.setState({value, status:null}, e=>handle.verify(false))
             })(_item[0].$handle);
             
-        }else if( type=='checkbox' && $.type(value)=='array' ){
-            $.each(value, function(i,v){
-                _item = item.filter('[value="'+v+'"]');
-                // handle = _item[0].$handle
-                // handle && handle.setState({value:v}, e=>handle.verify(false))
-                (function(handle){
-                    handle && handle.setState({value:v, status:null}, e=>handle.verify(false))
-                })(_item[0].$handle);
-                _item.click();
-            })
+        }else if( type=='checkbox' ){
+            if( $.type(value)=='array' ){
+                $.each(value, function(i,v){
+                    _item = item.filter('[value="'+v+'"]');
+                    // handle = _item[0].$handle
+                    // handle && handle.setState({value:v}, e=>handle.verify(false))
+                    (function(handle){
+                        handle && handle.setState({value:v, status:null}, e=>handle.verify(false))
+                    })(_item[0].$handle);
+                    _item.click();
+                })
+            }else{
+                item[0].checked = !!value
+            }
+            
         }else if( typeof value=='string' || typeof value=='number' ){
             item.val(value);         
             (function(handle){

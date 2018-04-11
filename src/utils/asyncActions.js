@@ -6,6 +6,7 @@
  */
 
 var $ = require('jquery')
+var nj = require('../lib/nojs-react')
 
 var Actions = module.exports = function(context){
     var Events = {},
@@ -166,11 +167,12 @@ var Actions = module.exports = function(context){
             conf.data = $.extend(true, data_conf, data_outer)
                         
             target = $(target);
+            conf.state = target.data('state')
 
             //如果需要post跨域的情况  需要在onFetchBefore事件中阻止ajax提交 在post对应的success中调用conf._callback
             conf._callback = json=>{       
                 target.data('ajaxState', null)[0].disabled = false;
-                if( json.status == 1 && _config.reverse ){//还原反向动作状态
+                if( nj.fetchStatus(json) && _config.reverse ){//还原反向动作状态
                     conf.state = _config.state = reverse ? null : 1;
                     target.data('state', conf.state);
                 }

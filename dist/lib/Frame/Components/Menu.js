@@ -51,15 +51,17 @@ var Menu = function (_React$Component) {
 
             onReady && onReady(tree.state.dataFormat.databyid);
 
-            if (!parentSelect) {
-                //不允许父节点选中 点击展开
-                tree.onChange(function (node, e) {
-                    if (node.children.length) {
-                        e.preventDefault();
-                        tree.toggle(node);
-                    }
-                });
-            }
+            // if( !parentSelect ){//不允许父节点选中 点击展开
+            tree.onChange(function (node, e) {
+                if (node.children.length && !node.link) {
+                    // if ( node.open && node.link ){
+                    //     return
+                    // }
+                    e.preventDefault();
+                    tree.toggle(node);
+                }
+            });
+            // }
         }
     }, {
         key: 'componentWillReceiveProps',

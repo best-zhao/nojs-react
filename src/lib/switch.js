@@ -8,7 +8,7 @@ import Directive from '../mixins/directiveComponent'
 var Switch = React.createClass({  
     mixins : [mixins.childComponents.config],
     getInitialState () {
-        return {index:0, trigger:this.props.trigger||'click'}
+        return {index:this.props.index||0, trigger:this.props.trigger||'click'}
     },
     componentDidMount () {
         directive.getChildComponents(this)

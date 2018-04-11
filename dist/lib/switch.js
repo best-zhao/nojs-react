@@ -24,7 +24,7 @@ var Switch = _nojsReact.React.createClass({
 
     mixins: [_nojsReact.mixins.childComponents.config],
     getInitialState: function getInitialState() {
-        return { index: 0, trigger: this.props.trigger || 'click' };
+        return { index: this.props.index || 0, trigger: this.props.trigger || 'click' };
     },
     componentDidMount: function componentDidMount() {
         var _this = this;

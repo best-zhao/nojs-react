@@ -29,11 +29,14 @@ export const init = ()=>{
 
     let options = {
         // rootID : 1,
-        type : 'list',
+        // type : 'list',
         // selected:[1,5, 52, 101],
-        // maxlevel : 3,
+        maxlevel : 3,
+        // infos : [
+        //     {emptytext:'请选择组件'},
+        //     {name:'a'}
+        // ],
         onFetch : (promise, parentid) => {
-            
             // console.log(parentid)
             return promise.then(json=>json.data)
         },
@@ -41,40 +44,40 @@ export const init = ()=>{
         // checkbox : {
         //     name : 'ids[]'
         // },
-        onChecked (node, e) {
-            let parents = this.getParents(node)
-            let children = this.getChildren(node)
-            // parents.concat(children).forEach(item=>{
-            //     item.checked = false
-            // })
-            children.forEach(item=>{
-                item.checked = true
-            })
+        // onChecked (node, e) {
+        //     let parents = this.getParents(node)
+        //     let children = this.getChildren(node)
+        //     // parents.concat(children).forEach(item=>{
+        //     //     item.checked = false
+        //     // })
+        //     children.forEach(item=>{
+        //         item.checked = true
+        //     })
 
-            let {dataFormat} = this.state
-            console.log(node, dataFormat)
-        },
-        // data : 'http://nolure.github.io/nojs-react/docs/menu.json?parent_id='
-        data : [
-            {"id":111, "name":"index", "parentid":0},
-            {"id":1, "name":"Components", "parentid":0},
-            {"id":3, "name":"Popup", "parentid":1},
-            {"id":2, "name":"Mask", "parentid":1},
-                {"id":21, "name":"Mask1", "parentid":2},
+        //     let {dataFormat} = this.state
+        //     console.log(node, dataFormat)
+        // },
+        data : 'http://nolure.github.io/nojs-react/docs/menu.json?parent_id='
+        // data : [
+        //     {"id":111, "name":"index", "parentid":0},
+        //     {"id":1, "name":"Components", "parentid":0},
+        //     {"id":3, "name":"Popup", "parentid":1},
+        //     {"id":2, "name":"Mask", "parentid":1},
+        //         {"id":21, "name":"Mask1", "parentid":2},
             
-            {"id":5, "name":"Trees", "parentid":1},
-                {"id":51, "name":"Tree", "parentid":5, "link":"tree/tree"},
-                {"id":52, "name":"SelectTree", "parentid":5, "link":"tree/selectTree"},
-                {"id":53, "name":"LinkTree", "parentid":5, "link":"tree/linkTree"},
-                {"id":54, "name":"JsonTree", "parentid":5},
-            {"id":6, "name":"Form Verify", "parentid":1, "link":"form/form", "demo":"form"},
-            {"id":7, "name":"Switch", "parentid":1, "link":"switch"},
-            {"id":8, "name":"Scroll", "parentid":1, "link":"scroll"},
-            {"id":9, "name":"Face", "parentid":1, "link":"face"},
-            {"id":10, "name":"Auto-complete", "parentid":1, "link":"autocomplete"},
-            {"id":11,"name":"Datepicker", "parentid":1, "link":"datepicker"},
-            {"id":12,"name":"Editor", "parentid":1, "link":"editor"}
-        ]
+        //     {"id":5, "name":"Trees", "parentid":1},
+        //         {"id":51, "name":"Tree", "parentid":5, "link":"tree/tree"},
+        //         {"id":52, "name":"SelectTree", "parentid":5, "link":"tree/selectTree"},
+        //         {"id":53, "name":"LinkTree", "parentid":5, "link":"tree/linkTree"},
+        //         {"id":54, "name":"JsonTree", "parentid":5},
+        //     {"id":6, "name":"Form Verify", "parentid":1, "link":"form/form", "demo":"form"},
+        //     {"id":7, "name":"Switch", "parentid":1, "link":"switch"},
+        //     {"id":8, "name":"Scroll", "parentid":1, "link":"scroll"},
+        //     {"id":9, "name":"Face", "parentid":1, "link":"face"},
+        //     {"id":10, "name":"Auto-complete", "parentid":1, "link":"autocomplete"},
+        //     {"id":11,"name":"Datepicker", "parentid":1, "link":"datepicker"},
+        //     {"id":12,"name":"Editor", "parentid":1, "link":"editor"}
+        // ]
     }
 
     class MenuPicker extends React.Component{
@@ -116,7 +119,13 @@ export const init = ()=>{
         }
     } 
     render(
-        <MenuPicker />, 
+        <LinkTree {...options}/>, 
         document.getElementById('treeLink')
     )
+    setTimeout(()=>{
+        render(
+            <LinkTree {...options}/>, 
+            document.getElementById('treeLink')
+        )
+    }, 1000)
 }

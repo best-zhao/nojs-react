@@ -7,7 +7,7 @@ const {dateParse, joinClass} = utils
 class Datetime extends React.Component {
     constructor(props) {
         super(props)
-        let {value, min, max, months, mode, format, weeks, startWeekIndex} = this.props
+        let {value, min, max, months, mode, format, weeks, startWeekIndex, multiple} = this.props
         min = min && getMonthData(min, {startWeekIndex})
         max = max && getMonthData(max, {startWeekIndex})
 
@@ -15,6 +15,7 @@ class Datetime extends React.Component {
         let hasTime = /time$/.test(mode)//允许选择时间
         
         let currentMonth
+        let multiDates = [];
         if( mode=='time' ){
             let _times = value.match(/\b\d+\b/g) || [0, 0, 0]
             currentMonth = [Object.assign({
@@ -23,10 +24,15 @@ class Datetime extends React.Component {
                 seconds:parseInt(_times[2])
             }, today)]
         }else{
-            let startMonth = min && !value ? {year:min.year, month:min.month} : value
+            let startMonth = min && !value ? {year:min.year, month:min.month} : value.split(',')[0]
             currentMonth = this.getMonthGroups(startMonth)
+            if( value ){
+                multiDates = value.split(',').map(item=>{
+                    let {year, month, date} = getMonthData(item)
+                    return {year, month, date}
+                })
+            }
         }
-
 
         if( min ){
             min = {
@@ -71,6 +77,7 @@ class Datetime extends React.Component {
         
         let {year, month, date, hours, minutes, seconds} = currentMonth[0]
         let day = date && new Date(year, month-1, date).getDay()
+        let currentDate = mode=='time' ? today : (value && {year, month, date, day})
 
         this.state = {
             currentMonth,
@@ -80,11 +87,14 @@ class Datetime extends React.Component {
             weeks : _weeks,           
             hasDate,  hasTime,
             //当前所选 默认今天 {year, month, date}
-            currentDate : mode=='time' ? today : (value && {year, month, date, day}),            
+            currentDate, 
+            //存放多选的日期 
+            multiDates,
             hoursItems : Array.prototype.concat.apply([], new Array(24)),
             minutesItems : Array.prototype.concat.apply([], new Array(60)),
             secondsItems : Array.prototype.concat.apply([], new Array(60))
         }
+
     }   
     componentDidMount () {
         let {months, onReady} = this.props
@@ -166,15 +176,32 @@ class Datetime extends React.Component {
         this.state.animated = clearTimeout(this.state.animated)
     }
     changeDate ({year, month, date, day, current, prevMonth}, type) {
-        let {hours, minutes, seconds, hasDate, hasTime, format, hoursItems, minutesItems, secondsItems, min, max} = this.state
+        let {hours, minutes, seconds, hasDate, hasTime, format, hoursItems, minutesItems, secondsItems, min, max, multiDates} = this.state
         if( hasDate && !date ){//没有选择天
             return
         }
         if( !current ){//选择的日期是相邻的月份
             this.jumpTo(prevMonth?-1:1)
         }
+
+        let {multiple} = this.props
         
         let currentDate = {year, month, date, day}
+
+        if( multiple ){
+            //选中日期的时间戳
+            let currentTimestamp = getTimestamp(currentDate, 3)
+            let isadd = true
+            for( let i in multiDates ){
+                let timestamp = getTimestamp(multiDates[i], 3)
+                if( timestamp==currentTimestamp ){//存在相同的 则取消选中
+                    isadd = false
+                    multiDates.splice(i, 1)
+                    break;
+                }
+            }
+            isadd && multiDates.push(currentDate)
+        }
 
         /**
          * 重置时间选择 当设置了min选项时
@@ -237,6 +264,13 @@ class Datetime extends React.Component {
             date : [year, month, date].join('-')+' '+[hours, minutes, seconds].join(':'),
             format
         })
+
+        if( multiple ){
+            value = multiDates.map(date=>dateParse({
+                date : [date.year, date.month, date.date].join('-'),
+                format
+            })).join(',')
+        }
 
         this.setState({currentDate, value}, ()=>this.submit(type))
     }
@@ -304,19 +338,24 @@ class Datetime extends React.Component {
         return weeks[day] ? '星期'+weeks[day] : ''
     }
     render () {
-        let {months, mode, disableAnimation} = this.props
+        let {months, mode, disableAnimation, multiple} = this.props
         let {
             weeks, direction, animate,
             hours, minutes, seconds,
             hasDate, hasTime,
             hoursItems, minutesItems, secondsItems,
-            currentMonth, currentDate={}           
+            currentMonth, currentDate={}, multiDates         
         } = this.state
 
-        
+        let currentTimestamp = getTimestamp(currentDate, 3)
         //检查是否为当前选中日期
         const checkCurrentDate = (item,i)=>{
-            return item.current && item.timestamp==getTimestamp(currentDate, 3)
+            if( !item.current ) return false;
+            let _current = item.timestamp==currentTimestamp
+            if( multiple ){
+                _current = multiDates.filter(date=>getTimestamp(date, 3)==item.timestamp).length
+            }
+            return _current
         }
         
         let weekEl = <ul className="clearfix _weeks">{

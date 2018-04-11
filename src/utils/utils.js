@@ -407,6 +407,8 @@ module.exports = {
             new Function("o",
             "var p=[];"+"with(o){p.push('"+
             s
+            //转义单引号
+            .replace(/'/g, "\\'")
             //.replace(/\\/g,"\\\\")//解决转义符bug
             .replace(/[\r\t\n]/g," ")            
             .split("<%").join("\t")
@@ -419,6 +421,8 @@ module.exports = {
             .split("\t").join("');")
             .split("%>").join("p.push('")
             .split("\r").join("\\'")
+            //替换多余的转义符
+            .replace(/\\\\/, '\\')
             + "');}return p.join('');");
             return d?fn(d):fn;
         };
@@ -560,8 +564,16 @@ module.exports = {
     },
 
     getOptions (target, key){
-        var options = $.trim($(target).data(key||'options')).replace(/[\r\n]/g, '');
-        options = options ? eval('({'+options+'})') : {};
+        var options = $(target).data(key || 'options')
+        if( typeof options=='object' ){//自动解析为json对象
+            return options
+        }
+        options = $.trim(options).replace(/[\r\n]/g, '')
+        
+        if( /^{/.test(options) ){//取消外层花括号
+            options = options.replace(/^{|}$/g, '');
+        }        
+        options = options ? eval('({' + options + '})') : {};
         return options;
     }
 }

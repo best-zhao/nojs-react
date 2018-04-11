@@ -12,6 +12,10 @@ class Datepicker extends React.Component {
     componentDidMount () {
         let options = this.state.options = Object.assign({}, this.props)
         let {input} = this.refs
+        
+        if( options.multiple ){
+            options.mode = 'date'
+        }
 
         input = options.input || input.refs.input
 
@@ -74,7 +78,8 @@ class Datepicker extends React.Component {
                 }
             </div>
 
-            pop.setState({template}, ()=>pop.align.set())
+            pop.setState({template})
+            setTimeout(()=>pop.align.set(), 1)
             
         }).onHide(()=>{
             pop.setState({template:null})
@@ -82,7 +87,7 @@ class Datepicker extends React.Component {
     }
     componentWillReceiveProps(nextProps){
         let {value} = nextProps
-        this.setState({value})
+        value!=undefined && this.setState({value})
         Object.assign(this.state.options, nextProps)
     }
     render () {

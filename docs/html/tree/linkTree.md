@@ -11,6 +11,10 @@ import {LinkTree} from 'nj/tree' //引入组件
 <button id="menuTree">menu</button>
 <div id="treeLink" class="nj-tree mb15"></div>
 
+<select name="a" id="">
+	<option value="12"></option>
+</select>
+
 <pre><code class="language-javascript"><script type="text/code">
 var mytree = render(<LinkTree data={'./menu?parentid='}/>, container)
 </script></code>

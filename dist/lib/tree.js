@@ -494,7 +494,7 @@ var Tree = React.createClass({
                         className: nodeClass.join(' ')
                     }, rootScope.props.style != 'menu' && holder.map(function (h, j) {
                         return React.createElement('span', { key: j, className: '_line' + (j + 1 >= level ? ' _line_begin _line' + (j - level + 1) : '') });
-                    }), rootScope.props.style != 'menu' && React.createElement('span', { className: '_icon', onClick: !nochild && _this5.toggle.bind(_this5, item) }), checkbox ? React.createElement(
+                    }), rootScope.props.style != 'menu' && React.createElement('span', { className: utils.joinClass('_icon', item.icon && 'icon-' + item.icon), onClick: !nochild && _this5.toggle.bind(_this5, item) }), checkbox ? React.createElement(
                         'span',
                         { className: '_checkbox' },
                         React.createElement('input', { type: 'checkbox',
@@ -774,12 +774,13 @@ Tree.LinkTree = React.createClass({
         // console.log(selected)
         update = update === false ? false : true;
         this.state.ids = selected && selected.length ? selected : [];
+        // console.log('.select', selected,this.state.ids)
         selected = selected || [];
         if (!selected.length) {}
         selected = selected.map(function (id) {
             return { id: id };
         });
-        // console.log(selected,this.state.ids)
+
         this.state.selected = selected;
         update && this.setState({ selected: selected, ids: this.state.ids });
     },
@@ -872,15 +873,24 @@ Tree.LinkTree = React.createClass({
         var listCols = maxlevel || 3;
         //infos = infos || []//附加信息 如name
 
-        var className = nj.utils.joinClass('nj-tree-select clearfix', type == 'list-ios' && 'nj-tree-select-ios');
+        var className = nj.utils.joinClass('nj-tree-select', type == 'list-ios' && 'nj-tree-select-ios');
+        if (maxlevel) {
+            for (var i = 0; i < maxlevel; i++) {
+                if (!menuData[i]) {
+                    menuData.push([{}]);
+                }
+            }
+        }
+        // console.log(ids)
+
         return React.createElement(
-            'div',
+            'span',
             { className: className },
             menuData.map(function (level, i) {
                 if (maxlevel && i + 1 > maxlevel) {
                     return;
                 }
-                if (!level || !level.length) {
+                if (!level) {
                     return;
                 }
                 var id = ids[i]; //默认选中节点
@@ -888,7 +898,9 @@ Tree.LinkTree = React.createClass({
                 var info = infos[i] || {};
                 var valid;
 
-                var el = level && level.length ? React.createElement(
+                // console.log('each', id, selected[i], level[0])
+
+                var el = level ? React.createElement(
                     'span',
                     { key: i, className: style + '-item', style: type == 'list-ios' ? { width: 100 / listCols + '%' } : {} },
                     style == 'list' ? React.createElement(
@@ -925,6 +937,7 @@ Tree.LinkTree = React.createClass({
                         'select',
                         _extends({}, info, {
                             ref: 'select-' + i,
+                            'data-value': id || selected[i] && selected[i].id,
                             value: id || selected[i] && selected[i].id,
                             onChange: function onChange(e) {
                                 return _this10.handleChange(e.target.value, i, e);
@@ -933,9 +946,10 @@ Tree.LinkTree = React.createClass({
                         React.createElement(
                             'option',
                             { value: '' },
-                            '\u8BF7\u9009\u62E9'
+                            info.emptytext || '请选择'
                         ),
-                        level.map(function (item, i) {
+                        level.map(function (item) {
+                            // console.log(222, i, id, level)
                             if (id && item[KEY_ID] == id) {
                                 //检测被设置的默认选中id是否有效
                                 valid = true;
@@ -950,11 +964,11 @@ Tree.LinkTree = React.createClass({
                 ) : null;
 
                 var _el = el && el.props.children;
-                // console.log(el)
-
-                if (id && _el) {
+                // console.log('trigger0', id, valid, level[0])
+                if (valid && id && _el) {
                     ids[i] = null; //选中后清空 防止重复
-                    valid && setTimeout(function () {
+                    setTimeout(function () {
+                        // console.log('trigger', id, i)
                         _this10.handleChange(id, i);
                         // _el.props.onChange()
                     }, 1);

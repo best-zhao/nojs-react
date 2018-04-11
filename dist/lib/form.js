@@ -334,7 +334,10 @@ formDirectives['input'] = _nojsReact.React.createClass({
             html = _props.html;
 
         var isEditor = type == 'editor';
-        defaultValue = defaultValue || value || html || '';
+        defaultValue = defaultValue || value || '';
+        if (isEditor || type == 'textarea') {
+            defaultValue = defaultValue || html || '';
+        }
         return {
             isEditor: isEditor,
             dirty: false,
@@ -514,11 +517,11 @@ formDirectives['input'] = _nojsReact.React.createClass({
         }
         var editOptions = Object.assign({}, options);
 
-        return _nojsReact.React.createElement(isEditor ? 'span' : 'label', { className: 'nj-input-' + type }, hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options), (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }), !hasTextarea && _nojsReact.React.createElement(
+        return _nojsReact.React.createElement(isEditor ? 'span' : 'label', { className: 'nj-input-' + type }, _nojsReact.React.createElement('span', { className: 'input-inner' }, hasTextarea ? _nojsReact.React.createElement('textarea', _extends({}, options, { style: isEditor ? { display: 'none' } : undefined })) : _nojsReact.React.createElement('input', options), (type == 'checkbox' || type == 'radio') && _nojsReact.React.createElement('span', { className: '_holder' }), !hasTextarea && _nojsReact.React.createElement(
             'span',
             { className: '_c' },
             options.text
-        ), Editor && _nojsReact.React.createElement(Editor, editOptions), _nojsReact.React.createElement(VerifyStatus, { field: this }));
+        )), Editor && _nojsReact.React.createElement(Editor, editOptions), _nojsReact.React.createElement(VerifyStatus, { field: this }));
     }
 });
 
@@ -944,18 +947,22 @@ Form.fill = function (options) {
                     return handle.verify(false);
                 });
             }(_item[0].$handle);
-        } else if (type == 'checkbox' && _jquery2.default.type(value) == 'array') {
-            _jquery2.default.each(value, function (i, v) {
-                _item = item.filter('[value="' + v + '"]');
-                // handle = _item[0].$handle
-                // handle && handle.setState({value:v}, e=>handle.verify(false))
-                (function (handle) {
-                    handle && handle.setState({ value: v, status: null }, function (e) {
-                        return handle.verify(false);
-                    });
-                })(_item[0].$handle);
-                _item.click();
-            });
+        } else if (type == 'checkbox') {
+            if (_jquery2.default.type(value) == 'array') {
+                _jquery2.default.each(value, function (i, v) {
+                    _item = item.filter('[value="' + v + '"]');
+                    // handle = _item[0].$handle
+                    // handle && handle.setState({value:v}, e=>handle.verify(false))
+                    (function (handle) {
+                        handle && handle.setState({ value: v, status: null }, function (e) {
+                            return handle.verify(false);
+                        });
+                    })(_item[0].$handle);
+                    _item.click();
+                });
+            } else {
+                item[0].checked = !!value;
+            }
         } else if (typeof value == 'string' || typeof value == 'number') {
             item.val(value);
             (function (handle) {

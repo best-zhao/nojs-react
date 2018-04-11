@@ -15,14 +15,17 @@ class Menu extends React.Component{
         //组件渲染完毕后 向外传递格式化后的节点数据
         onReady && onReady(tree.state.dataFormat.databyid)
 
-        if( !parentSelect ){//不允许父节点选中 点击展开
+        // if( !parentSelect ){//不允许父节点选中 点击展开
             tree.onChange((node,e)=>{
-                if( node.children.length ){
+                if( node.children.length && !node.link ){
+                    // if ( node.open && node.link ){
+                    //     return
+                    // }
                     e.preventDefault()
                     tree.toggle(node)
                 }
             })
-        }
+        // }
     }
     componentWillReceiveProps (nextProps) {
         //通过props.defaultNode来更新当前选中节点

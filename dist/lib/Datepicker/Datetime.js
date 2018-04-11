@@ -33,7 +33,8 @@ var Datetime = function (_React$Component) {
             mode = _this$props.mode,
             format = _this$props.format,
             weeks = _this$props.weeks,
-            startWeekIndex = _this$props.startWeekIndex;
+            startWeekIndex = _this$props.startWeekIndex,
+            multiple = _this$props.multiple;
 
         min = min && (0, _utils.getMonthData)(min, { startWeekIndex: startWeekIndex });
         max = max && (0, _utils.getMonthData)(max, { startWeekIndex: startWeekIndex });
@@ -42,6 +43,7 @@ var Datetime = function (_React$Component) {
         var hasTime = /time$/.test(mode); //允许选择时间
 
         var currentMonth = void 0;
+        var multiDates = [];
         if (mode == 'time') {
             var _times = value.match(/\b\d+\b/g) || [0, 0, 0];
             currentMonth = [Object.assign({
@@ -50,8 +52,18 @@ var Datetime = function (_React$Component) {
                 seconds: parseInt(_times[2])
             }, _utils.today)];
         } else {
-            var startMonth = min && !value ? { year: min.year, month: min.month } : value;
+            var startMonth = min && !value ? { year: min.year, month: min.month } : value.split(',')[0];
             currentMonth = _this.getMonthGroups(startMonth);
+            if (value) {
+                multiDates = value.split(',').map(function (item) {
+                    var _getMonthData = (0, _utils.getMonthData)(item),
+                        year = _getMonthData.year,
+                        month = _getMonthData.month,
+                        date = _getMonthData.date;
+
+                    return { year: year, month: month, date: date };
+                });
+            }
         }
 
         if (min) {
@@ -103,6 +115,7 @@ var Datetime = function (_React$Component) {
             seconds = _currentMonth$.seconds;
 
         var day = date && new Date(year, month - 1, date).getDay();
+        var currentDate = mode == 'time' ? _utils.today : value && { year: year, month: month, date: date, day: day };
 
         _this.state = {
             currentMonth: currentMonth,
@@ -112,11 +125,14 @@ var Datetime = function (_React$Component) {
             weeks: _weeks,
             hasDate: hasDate, hasTime: hasTime,
             //当前所选 默认今天 {year, month, date}
-            currentDate: mode == 'time' ? _utils.today : value && { year: year, month: month, date: date, day: day },
+            currentDate: currentDate,
+            //存放多选的日期 
+            multiDates: multiDates,
             hoursItems: Array.prototype.concat.apply([], new Array(24)),
             minutesItems: Array.prototype.concat.apply([], new Array(60)),
             secondsItems: Array.prototype.concat.apply([], new Array(60))
         };
+
         return _this;
     }
 
@@ -244,7 +260,8 @@ var Datetime = function (_React$Component) {
                 minutesItems = _state2.minutesItems,
                 secondsItems = _state2.secondsItems,
                 min = _state2.min,
-                max = _state2.max;
+                max = _state2.max,
+                multiDates = _state2.multiDates;
 
             if (hasDate && !date) {
                 //没有选择天
@@ -255,14 +272,33 @@ var Datetime = function (_React$Component) {
                 this.jumpTo(prevMonth ? -1 : 1);
             }
 
-            var currentDate = { year: year, month: month, date: date, day: day
+            var multiple = this.props.multiple;
 
-                /**
-                 * 重置时间选择 当设置了min选项时
-                 * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
-                 * 因为这一天9点之前不能被选中
-                 */
-            };if ((min || max) && hasTime) {
+
+            var currentDate = { year: year, month: month, date: date, day: day };
+
+            if (multiple) {
+                //选中日期的时间戳
+                var currentTimestamp = (0, _utils.getTimestamp)(currentDate, 3);
+                var isadd = true;
+                for (var i in multiDates) {
+                    var timestamp = (0, _utils.getTimestamp)(multiDates[i], 3);
+                    if (timestamp == currentTimestamp) {
+                        //存在相同的 则取消选中
+                        isadd = false;
+                        multiDates.splice(i, 1);
+                        break;
+                    }
+                }
+                isadd && multiDates.push(currentDate);
+            }
+
+            /**
+             * 重置时间选择 当设置了min选项时
+             * 如 min='2017-05-31 09:00:00' 当选择了下月某天的8点后 再切换到5月31时 时间会自动切到9点
+             * 因为这一天9点之前不能被选中
+             */
+            if ((min || max) && hasTime) {
                 hoursItems.map(function (h, i) {
                     var d = Object.assign({}, currentDate, { hours: i });
                     var timestamp = (0, _utils.getTimestamp)(d, 4);
@@ -329,6 +365,15 @@ var Datetime = function (_React$Component) {
                 date: [year, month, date].join('-') + ' ' + [hours, minutes, seconds].join(':'),
                 format: format
             });
+
+            if (multiple) {
+                value = multiDates.map(function (date) {
+                    return dateParse({
+                        date: [date.year, date.month, date.date].join('-'),
+                        format: format
+                    });
+                }).join(',');
+            }
 
             this.setState({ currentDate: currentDate, value: value }, function () {
                 return _this3.submit(type);
@@ -430,7 +475,8 @@ var Datetime = function (_React$Component) {
             var _props2 = this.props,
                 months = _props2.months,
                 mode = _props2.mode,
-                disableAnimation = _props2.disableAnimation;
+                disableAnimation = _props2.disableAnimation,
+                multiple = _props2.multiple;
             var _state6 = this.state,
                 weeks = _state6.weeks,
                 direction = _state6.direction,
@@ -445,12 +491,21 @@ var Datetime = function (_React$Component) {
                 secondsItems = _state6.secondsItems,
                 currentMonth = _state6.currentMonth,
                 _state6$currentDate = _state6.currentDate,
-                currentDate = _state6$currentDate === undefined ? {} : _state6$currentDate;
+                currentDate = _state6$currentDate === undefined ? {} : _state6$currentDate,
+                multiDates = _state6.multiDates;
 
+
+            var currentTimestamp = (0, _utils.getTimestamp)(currentDate, 3);
             //检查是否为当前选中日期
-
             var checkCurrentDate = function checkCurrentDate(item, i) {
-                return item.current && item.timestamp == (0, _utils.getTimestamp)(currentDate, 3);
+                if (!item.current) return false;
+                var _current = item.timestamp == currentTimestamp;
+                if (multiple) {
+                    _current = multiDates.filter(function (date) {
+                        return (0, _utils.getTimestamp)(date, 3) == item.timestamp;
+                    }).length;
+                }
+                return _current;
             };
 
             var weekEl = _nojsReact.React.createElement(

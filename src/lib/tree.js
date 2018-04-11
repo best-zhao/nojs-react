@@ -451,7 +451,7 @@ var Tree = React.createClass({
                             rootScope.props.style!='menu' && holder.map((h,j) => 
                                 <span key={j} className={'_line'+(j+1>=level?' _line_begin _line'+(j-level+1):'')}></span>
                             ),
-                            rootScope.props.style!='menu' && <span className="_icon" onClick={!nochild&&this.toggle.bind(this,item)}></span>,
+                            rootScope.props.style!='menu' && <span className={utils.joinClass('_icon', item.icon&&'icon-'+item.icon)} onClick={!nochild&&this.toggle.bind(this,item)}></span>,
                             checkbox ? (
                                 <span className="_checkbox">
                                     <input type="checkbox" 
@@ -737,6 +737,7 @@ Tree.LinkTree = React.createClass({
         // console.log(selected)
         update = update===false ? false : true
         this.state.ids = selected && selected.length ? selected : []
+        // console.log('.select', selected,this.state.ids)
         selected = selected || [];
         if( !selected.length ){
 
@@ -744,7 +745,7 @@ Tree.LinkTree = React.createClass({
         selected = selected.map(function(id){
             return {id:id}
         })
-        // console.log(selected,this.state.ids)
+        
         this.state.selected = selected
         update && this.setState({selected:selected, ids:this.state.ids})
     },
@@ -810,16 +811,25 @@ Tree.LinkTree = React.createClass({
         //infos = infos || []//附加信息 如name
         
         let className = nj.utils.joinClass(
-            'nj-tree-select clearfix', 
+            'nj-tree-select', 
             type=='list-ios'&&'nj-tree-select-ios'
         )
+        if( maxlevel ){
+            for(let i=0;i<maxlevel;i++ ){
+                if( !menuData[i] ){
+                    menuData.push([{}])
+                }
+            }
+        }
+        // console.log(ids)
+
         return (
-        <div className={className}>
+        <span className={className}>
             {menuData.map((level,i)=>{
                 if( maxlevel && i+1>maxlevel ){
                     return
                 }
-                if( !level || !level.length ){
+                if( !level ){
                     return
                 }
                 var id = ids[i]//默认选中节点
@@ -827,7 +837,9 @@ Tree.LinkTree = React.createClass({
                 var info = infos[i] || {}
                 var valid
 
-                var el = level && level.length ? (
+                // console.log('each', id, selected[i], level[0])
+
+                var el = level ? (
                     <span key={i} className={style+'-item'} style={type=='list-ios' ? {width:100/listCols+'%'} : {}}>
                     {style=='list' ?
                     <div className="inner">
@@ -857,11 +869,13 @@ Tree.LinkTree = React.createClass({
                     <select 
                         {...info}
                         ref={'select-'+i} 
+                        data-value={id || selected[i] && selected[i].id} 
                         value={id || selected[i] && selected[i].id} 
                         onChange={e=>this.handleChange(e.target.value, i, e)}
                     >
-                        <option value="">请选择</option>
-                        {level.map((item,i)=>{
+                        <option value="">{info.emptytext||'请选择'}</option>
+                        {level.map((item)=>{
+                            // console.log(222, i, id, level)
                             if( id && item[KEY_ID]==id ){//检测被设置的默认选中id是否有效
                                 valid = true
                             }
@@ -873,18 +887,18 @@ Tree.LinkTree = React.createClass({
                 ) : null 
 
                 var _el = el && el.props.children
-                // console.log(el)
-
-                if( id && _el ){
+                // console.log('trigger0', id, valid, level[0])
+                if(valid &&  id && _el ){
                     ids[i] = null//选中后清空 防止重复
-                    valid && setTimeout(()=>{
+                    setTimeout(()=>{
+                        // console.log('trigger', id, i)
                         this.handleChange(id, i)
                         // _el.props.onChange()
                     }, 1)
                 }               
                 return el
             })}            
-        </div>
+        </span>
         )
     }
 })

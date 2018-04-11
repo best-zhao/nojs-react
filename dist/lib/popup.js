@@ -105,7 +105,7 @@ var Statics = {
       'div',
       null,
       React.createElement('span', { className: 'nj-icon nj-icon-warn' }),
-      React.createElement(
+      typeof options.template == 'string' ? React.createElement('div', { className: '_content', dangerouslySetInnerHTML: { __html: options.template } }) : React.createElement(
         'div',
         { className: '_content' },
         options.template

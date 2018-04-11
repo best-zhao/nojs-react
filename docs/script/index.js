@@ -15,6 +15,7 @@ const options = {
     // style : 2,
     defaultNode : "0",
     menu : Menu.data,
+    parentSelect : true,
     _sidebar : tree=><div>
         <h3 style={{padding:'1.5em 1em', fontWeight:'100', margin:0}}>nojs-react</h3>
         {tree}
@@ -69,11 +70,11 @@ let frame = window.rootFrame = render(
     document.getElementById('root')
 )
 
-frame.tree.onChange((node,e)=>{
-    if( node.children.length ){
-        e.preventDefault()
-        frame.tree.toggle(node)
-    }
-})
+// frame.tree.onChange((node,e)=>{
+//     if( node.children.length ){
+//         e.preventDefault()
+//         frame.tree.toggle(node)
+//     }
+// })
 
 

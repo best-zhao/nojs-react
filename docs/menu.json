@@ -1,7 +1,7 @@
 {
     "data" : [
-        {"id":0, "name":"Index", "link":"index"},
-        {"id":1, "name":"Components","open":1},
+        {"id":0, "name":"Index", "link":"index", "icon":"home"},
+        {"id":1, "name":"Components", "link":"mask","open":1},
             {"id":2, "name":"Mask", "parentid":1, "link":"mask"},
             {"id":3, "name":"Popup", "parentid":1, "link":"popup"},
             {"id":4, "name":"Popover", "parentid":1, "link":"popover"},
