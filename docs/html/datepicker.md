@@ -14,6 +14,16 @@ render(<Datepicker input={input}/>, input)
 </script></code>
 </pre>
 
+<span id="datepicker1"></span>
+<script id="date-item">
+    <div>
+        <h6><%=item.date%></h6>
+        <% if(item.current) {%>
+        <p>15:30—17:30 瑜伽塑形课</p>
+        <%}%>
+    </div>
+</script>
+
 ###  Props
 #### months <span>显示的月份数 默认1</span>
 #### onChange <span>切换日期时间事件，函数返回3个参数：value格式化后的字符串;data对应的数据对象;timestamp对应的时间戳</span>

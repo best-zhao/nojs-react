@@ -55,7 +55,7 @@ var Root = function (_React$Component) {
 
             if (params.url && !params.id) {
                 var node_url = menu.filter(function (n) {
-                    return n.link == params.url;
+                    return n.link == params.url || n.link == location.origin + params.url;
                 });
                 if (node_url.length > 1) {
                     //多个节点匹配的话 优先选择和当前选中id相同的

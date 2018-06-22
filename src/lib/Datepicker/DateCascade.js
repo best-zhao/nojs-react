@@ -2,10 +2,10 @@
  * 日期级联菜单
  */
 import {React, render} from '../nojs-react'
-import {parseNumber, today} from './utils'
+import {parseNumber, today, getTimestamp} from './utils'
 // import {Form, Input} from '../form'
 // import Tree, {LinkTree} from '../tree'
-
+// console.log(today)
 export default class Link extends React.Component {
     constructor (props) {
         super(props)
@@ -18,6 +18,14 @@ export default class Link extends React.Component {
         let seconds //= now.getSeconds()
 
         this.state = {
+            _today : {
+                year : now.getFullYear(),
+                month : now.getMonth()+1,
+                date : now.getDate(),
+                hours : now.getHours(),
+                minutes: now.getMinutes(),
+                seconds: now.getSeconds()
+            },
         	formdata:{},
         	year,
         	yearItems : this.getArray(today.year, 100),
@@ -41,53 +49,98 @@ export default class Link extends React.Component {
         }
         return data
     }
-    changeHandle (key, e) {
+    changeHandle (key, length, e) {
         let {onChange} = this.props
-    	let {year, month} = this.state
+    	let {year, month, _today} = this.state
     	let value = e.target.value
     	let newState = {[key]:value}
     	if( key=='month' ){
     		let days = new Date(year, value, 0).getDate()
     		newState.dates = this.getArray(days)    
     	}
+
+        let full = {}
+        Object.keys(_today).map(k=>{
+            full[k] = newState[k] || this.state[k] || _today[k]
+        })
+        let timestamp = newState.timestamp = getTimestamp(full, 6)
+
     	this.setState(newState, ()=>{
             onChange && onChange.call(this, this.state)
         })
     }
     render () {
-        let {ids, infos=[], format} = this.props
+        let {ids, infos=[], format, min, max} = this.props
         let {
             yearItems, monthItems, dateItems, hoursItems, minutesItems, secondsItems,
-            year, month, date ,hours, minutes, seconds
+            year, month, date ,hours, minutes, seconds, _today
         } = this.state
+
         let _infos = [].concat(infos)
+        let keys = Object.keys(_today)
+
         let arr = index=>{
             let info = _infos.shift() || {}
             let defaultValue  = info.defaultValue
-            if( info.defaultValue ){
+            let key = keys[index]
+            let stateValue = this.state[key]
+            if( defaultValue && !stateValue ){
+                this.state[keys[index]] = stateValue = defaultValue
                 info.defaultValue = null
             }
+
+            const checkDisabled = (item, length)=>{
+                let disabled
+                
+                let full = {}
+                keys.map((k,i)=>{
+                    full[k] = this.state[k] || _today[k]                    
+                })
+                full[keys[length-1]] = item
+
+                let timestamp = getTimestamp(full, 6)
+                
+                if( min && timestamp<min ){
+                    disabled = true
+                }
+                if( !disabled && max && timestamp>max ){
+                    disabled = true
+                }
+                return {disabled}
+            }
             return [
-                <select {...info} value={defaultValue||year} onChange={this.changeHandle.bind(this, 'year')}>
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'year', 1)}>
                     <option value="">请选择</option>
-                    {yearItems.map(item=><option value={item}>{item}{info.fix}</option>)}
+                    {yearItems.map(item=>
+                        <option {...checkDisabled(item,1)} value={item}>{item}{info.fix}</option>
+                    )}
                 </select>,
-                <select {...info} value={defaultValue||month} onChange={this.changeHandle.bind(this, 'month')}>
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'month', 2)}>
                     <option value="">请选择</option>
-                    {monthItems.map(item=><option value={item}>{item<10?('0'+item):item}{info.fix}</option>)}
+                    {monthItems.map(item=>
+                        <option {...checkDisabled(item,2)} value={item}>{item<10?('0'+item):item}{info.fix}</option>
+                    )}
                 </select>,
-                <select {...info} value={defaultValue||date} onChange={this.changeHandle.bind(this, 'date')}>
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'date', 3)}>
                     <option value="">请选择</option>
-                    {dateItems.map(item=><option value={item}>{item<10?('0'+item):item}{info.fix}</option>)}
+                    {dateItems.map(item=>
+                        <option {...checkDisabled(item, 3)} value={item}>{item<10?('0'+item):item}{info.fix}</option>
+                    )}
                 </select>,
-                <select {...info} value={defaultValue||hours} onChange={this.changeHandle.bind(this, 'hours')}>
-                    {hoursItems.map(item=><option value={item}>{item<10?('0'+item):item}{info.fix}</option>)}
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'hours', 4)}>
+                    {hoursItems.map(item=>
+                        <option {...checkDisabled(item,4)} value={item}>{item<10?('0'+item):item}{info.fix}</option>
+                    )}
                 </select>,
-                <select {...info} value={defaultValue||minutes} onChange={this.changeHandle.bind(this, 'minutes')}>
-                    {minutesItems.map(item=><option value={item}>{item<10?('0'+item):item}{info.fix}</option>)}
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'minutes', 5)}>
+                    {minutesItems.map(item=>
+                        <option {...checkDisabled(item,5)} value={item}>{item<10?('0'+item):item}{info.fix}</option>
+                    )}
                 </select>,
-                <select {...info} value={defaultValue||seconds} onChange={this.changeHandle.bind(this, 'seconds')}>
-                    {secondsItems.map(item=><option value={item}>{item<10?('0'+item):item}{info.fix}</option>)}
+                <select {...info} value={stateValue} onChange={this.changeHandle.bind(this, 'seconds', 6)}>
+                    {secondsItems.map(item=>
+                        <option {...checkDisabled(item,6)} value={item}>{item<10?('0'+item):item}{info.fix}</option>
+                    )}
                 </select>
             ][index]
         }

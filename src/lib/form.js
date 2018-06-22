@@ -593,7 +593,7 @@ formDirectives['select'] = React.createClass({
 
         //nj-select 获取的children 数组项为空的占位符
         var {children, _childNodes} = this.props        
-        children = children && children.filter(item=>item)
+        // children = children && children.filter(item=>item)
         
         return (
         <label className="nj-select">

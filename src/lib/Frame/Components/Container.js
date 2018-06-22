@@ -14,7 +14,7 @@ class Container extends React.Component{
             menuVisible:this.setVisible(),
             topbarItems : [
                 {content:<i className="nj-icon nj-icon-menu"></i>, type:'button', handle:this.toggleMenu.bind(this), align:'left'},
-                {content:<i className="nj-icon nj-icon-back"></i>, type:'button', handle:e=>this.context.router.goBack(), align:'left'}
+                // {content:<i className="nj-icon nj-icon-back"></i>, type:'button', handle:e=>this.context.router.goBack(), align:'left'}
             ]
         }
     }    
@@ -22,7 +22,7 @@ class Container extends React.Component{
         let self = this
         let {routes:[{props:rootProps}]} = this.props
         let {menu, root} = rootProps
-        root.tree = this.refs.menu.refs.tree
+        root.tree = this.refs.menu.props.menuVisible ? this.refs.menu.refs.tree : this.refs.menu.refs.menu
 
         $(document).delegate('div.grid-main a, div.grid-topbar a', 'click', function(e){
             let target = this.target
@@ -35,7 +35,7 @@ class Container extends React.Component{
                 let {params:{id, url}} = self.props
 
                 //如果url与另一个节点的link匹配 则直接跳都那个node
-                let node_url = menu.filter(n=>n.link==href&&n.id!=id)[0]
+                let node_url = menu.filter(n=>(n.link==href||n.link==location.origin+href)&&n.id!=id)[0]
                 if( node_url ){
                     self.context.router.push('/id/'+node_url.id)
                 }else{
@@ -70,7 +70,7 @@ class Container extends React.Component{
             style && 'app-style'+style
         )
         return <div className={className}>
-            <Menu defaultNode={params.id} menu={menu} sidebar={sidebar} ref="menu" parentSelect={parentSelect}/>
+            <Menu defaultNode={params.id} menuVisible={menuVisible} menu={menu} sidebar={sidebar} ref="menu" parentSelect={parentSelect}/>
             { showTopbar ?  <Topbar items={this.state.topbarItems.concat(topbarItems)}/> : null }
             {_children}
         </div>

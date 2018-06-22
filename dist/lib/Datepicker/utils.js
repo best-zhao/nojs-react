@@ -46,7 +46,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
     } else if (!params) {
         _date = new Date();
     } else if (type == 'string' || type == 'number') {
-        params = type == 'string' ? params.replace(/[\u4E00-\u9FA5]/g, '/') : params;
+        params = type == 'string' ? params.replace(/[\u4E00-\u9FA5\-]/g, '/') : params;
         //字符串或时间戳
         _date = new Date(params);
     }
@@ -89,11 +89,11 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
             //星期
             day: new Date(year, month - 1, i).getDay(),
             current: true,
+            format: [year, parseNumber(month), parseNumber(i)].join('-'),
             timestamp: new Date(year, month - 1, i).getTime(),
             isToday: today.date == i && today.month == month && today.year == year
         });
     }
-
     // let startWeekIndex = 1//起始星期索引
     var endWeekIndex = (startWeekIndex + 6) % 7; //结束星期索引
     var startDay = allDays[0].day; //月初天星期数
@@ -112,6 +112,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
                 year: prevMonth.year,
                 month: prevMonth.month,
                 date: prevDays - _i,
+                format: [prevMonth.year, parseNumber(prevMonth.month), parseNumber(prevDays - _i)].join('-'),
                 prevMonth: true,
                 timestamp: new Date(prevMonth.year, prevMonth.month - 1, prevDays - _i).getTime(),
                 day: new Date(prevMonth.year, prevMonth.month - 1, prevDays - _i).getDay()
@@ -132,6 +133,7 @@ var getMonthData = exports.getMonthData = function getMonthData(params, options)
                 year: nextMonth.year,
                 month: nextMonth.month,
                 date: _i2,
+                format: [nextMonth.year, parseNumber(nextMonth.month), parseNumber(_i2)].join('-'),
                 nextMonth: true,
                 timestamp: new Date(nextMonth.year, nextMonth.month - 1, _i2).getTime(),
                 day: endDay == 6 ? 0 : endDay + 1

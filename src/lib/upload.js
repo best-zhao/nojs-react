@@ -201,28 +201,35 @@ upload.prototype = {
 			//_file = _file.length && Array.prototype.slice.call(_file,0);
 			//_file.shift();
 			//console.log(val)
-			
+			var error 
+			T.Events('onChange');
+
 			if( T.count >= opt.limit ){
+				error = 1
 				T.tip( '超出数量', 'warn' );
 				this.value = '';
-				return;
+				// return;
 			}
 			if( T.fileItem[val] && !_file ){
+				error = 2
 				T.tip( '文件已存在', 'warn' );
 				this.value = '';
-				return;
+				// return;
 			}	
 			if ( opt.fileType ) {
 				type = val.substring( val.lastIndexOf('.'), val.length ).toLowerCase();
 				if ( opt.fileType.indexOf(type) < 0 ) {
+					error = 3
 					T.tip( '文件格式错误', 'warn' );
 					this.value = '';
-					return;
+					// return;
 				}
 			}
-			data = {};
-			data.name = val.substring( val.lastIndexOf('\\')+1, val.length );
-			T.push( _file, data );
+			if( !error ){
+				data = {};
+				data.name = val.substring( val.lastIndexOf('\\')+1, val.length );
+				T.push( _file, data );
+			}
 		})
 	},
 	push : function( _file, data ){
@@ -240,6 +247,7 @@ upload.prototype = {
 				m = _file[i];
 				size = m.size;
 				if( size > opt.fileSize ){//文件太大
+					T.tip('文件大小不能超过'+parseInt(opt.fileSize/1024/1024)+'M', 'warn');
 					continue;
 				}
 				data.size = upload.formatSize(size);

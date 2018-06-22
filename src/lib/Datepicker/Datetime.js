@@ -2,12 +2,12 @@ import {React, render, utils, Mui} from '../nojs-react'
 import {getMonthData, getNearMonth, parseNumber, getTimestamp, today} from './utils'
 import '../../../css/datepicker.css'
 
-const {dateParse, joinClass} = utils
+const {dateParse, joinClass, tmpl, addEventQueue} = utils
 
 class Datetime extends React.Component {
     constructor(props) {
         super(props)
-        let {value, min, max, months, mode, format, weeks, startWeekIndex, multiple} = this.props
+        let {value='', min, max, months, mode, format, weeks, startWeekIndex, multiple} = this.props
         min = min && getMonthData(min, {startWeekIndex})
         max = max && getMonthData(max, {startWeekIndex})
 
@@ -97,18 +97,22 @@ class Datetime extends React.Component {
 
     }   
     componentDidMount () {
-        let {months, onReady} = this.props
+        let {months, onReady, style} = this.props
         let {group, groups} = this.refs
 
         onReady && onReady.call(this)
 
-        if( !groups ){
+        this.changeGroupEvents = addEventQueue.call(this, 'onChangeGroup')
+
+        if( !groups || style=='flat' ){
             return
         }
         let groupsWidth = months*group.offsetWidth
         let groupHeight = group.offsetHeight
         groups.style.width = groupsWidth+'px'
         groups.style.height = groupHeight+'px'
+
+
     }    
     getMonthGroups (startMonth) {
         let {startWeekIndex} = this.props
@@ -170,6 +174,8 @@ class Datetime extends React.Component {
                 animated : null
             })
         }, 400)
+
+        this.changeGroupEvents.complete(nextMonths)
     }
     componentWillUnmount () {
         // console.log(21, this)
@@ -260,14 +266,16 @@ class Datetime extends React.Component {
             }
         }  
 
+
         let value = dateParse({
-            date : [year, month, date].join('-')+' '+[hours, minutes, seconds].join(':'),
+            date : [year, month, date].join('/')+' '+[hours||0, minutes||0, seconds||0].join(':'),
             format
         })
+        // console.log(value, format, year, month, date, hours, minutes, seconds)
 
         if( multiple ){
             value = multiDates.map(date=>dateParse({
-                date : [date.year, date.month, date.date].join('-'),
+                date : [date.year, date.month, date.date].join('/'),
                 format
             })).join(',')
         }
@@ -288,8 +296,12 @@ class Datetime extends React.Component {
         for( let i in data ){
             dataStr[i+'_str'] = parseNumber(data[i])
         }
-        let timestamp = getTimestamp(data, 6)        
-        onChange && onChange.call(this, value, Object.assign(data, dataStr), timestamp)
+        let timestamp = getTimestamp(data, 6)  
+        Object.assign(data, dataStr)
+
+        // this.changeDateEvents.complete(value, data, timestamp)     
+
+        onChange && onChange.call(this, value, data, timestamp)
     }
     setNow () {
         let {min, max} = this.state
@@ -338,7 +350,7 @@ class Datetime extends React.Component {
         return weeks[day] ? '星期'+weeks[day] : ''
     }
     render () {
-        let {months, mode, disableAnimation, multiple} = this.props
+        let {months, mode, disableAnimation, multiple, showSide, style, change_disabled, switch_year, switch_month} = this.props
         let {
             weeks, direction, animate,
             hours, minutes, seconds,
@@ -403,12 +415,24 @@ class Datetime extends React.Component {
                 disabled && 'disabled',
                 item.isToday && 'today'
             )
-            return <button data-mode="circle" type="button" disabled={disabled}
+            let {template} = this.props
+            template = typeof template=='function' ? template(item) : template
+
+            if( typeof template=='string' ){
+                template = tmpl(/^[\w-]+$/.test(template) ? document.getElementById(template).innerHTML : template , {item:item})
+                template = <span className="date" dangerouslySetInnerHTML={{__html:template}}></span>
+
+            }else{
+                template = template || item.date
+                template = <span className="date">{template}</span>
+            }
+            // console.log(item)
+            return <button data-mode={style=='pop'?'circle':'rect'} type="button" disabled={change_disabled||disabled}
                 key={[item.year, item.month, item.date].join('')}
                 onClick={this.changeDate.bind(this, item, 'date')}
                 className={className}
-            >
-                <span className="date">{item.date}</span>
+            >   
+                {template}
             </button>
         }
 
@@ -429,10 +453,10 @@ class Datetime extends React.Component {
             animate && 'animate-'+direction+'-active'
         )
 
-        let {year, month, date, day} = currentDate || today;
+        let {year, month, date, day} = multiple ? today : (currentDate || today);
 
-        return <div className={'nj-datepicker nj-datepicker-'+mode}>
-            {hasDate ? 
+        return <div className={joinClass('nj-datepicker nj-datepicker-'+mode, showSide&&'show-side', 'nj-datepicker-'+style)}>
+            {hasDate && showSide ? 
             <div className="pop-side">
                 <div className="year gray">{year}-{parseNumber(month)}</div>
                 <span className="date">{parseNumber(date)}</span>
@@ -449,12 +473,12 @@ class Datetime extends React.Component {
                 {hasDate ? 
                 <div className="_page">
                     <span className="_item">
-                        <Mui mode="circle" onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></Mui>
-                        <Mui mode="circle" onClick={this.jumpTo.bind(this, -months)} className="nj-icon nj-icon-left"></Mui>
+                        {switch_year&&<Mui mode="circle" onClick={this.jumpTo.bind(this, -12)} className="nj-icon nj-icon-left2"></Mui>}
+                        {switch_month&&<Mui mode="circle" onClick={this.jumpTo.bind(this, -months)} className="nj-icon nj-icon-left"></Mui>}
                     </span>
                     <span className="_item">
-                        <Mui mode="circle" onClick={this.jumpTo.bind(this, months)} className="nj-icon nj-icon-right"></Mui>
-                        <Mui mode="circle" onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></Mui>
+                        {switch_month&&<Mui mode="circle" onClick={this.jumpTo.bind(this, months)} className="nj-icon nj-icon-right"></Mui>}
+                        {switch_year&&<Mui mode="circle" onClick={this.jumpTo.bind(this, 12)} className="nj-icon nj-icon-right2"></Mui>}
                     </span>
                 </div> 
                 : null}
@@ -506,7 +530,12 @@ Datetime.defaultProps = {
     // format : 'yy-mm-dd hh:mm:ss',
     weeks : ['日', '一', '二', '三', '四', '五', '六'],
     //周一排在第一列 索引以weeks的排序为准
-    startWeekIndex : 1    
+    startWeekIndex : 1,
+    showSide : true,
+    //展示方式 pop flat
+    style : 'pop',
+    switch_year : true,
+    switch_month : true,
 }
 
 module.exports =  Datetime

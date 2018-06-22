@@ -100,7 +100,7 @@ var Autocomplete = module.exports = React.createClass({
         var {input} = text.refs
         var value = this.props.getItem(item)
         var onChange = this.props.onChange
-        onChange && onChange(value)
+        onChange && onChange(value, index)
         
         this.state.value = value
         this.state.index = index
@@ -173,7 +173,7 @@ var Autocomplete = module.exports = React.createClass({
             done(results)            
             return
         }
-        var {data, source, getItem, max} = this.props
+        var {data, source, getItem, max, params} = this.props
         data = data && typeof data=='string' ? JSON.parse(data) : data
 
         if( data ){
@@ -195,7 +195,10 @@ var Autocomplete = module.exports = React.createClass({
                 done(_data)
                 return
             }
-            var promise = $.getJSON(source+value)
+            if( typeof params=='function' ){
+                params = params(value)
+            }
+            var promise = $.getJSON(source+value, params)
             // var promise = fetch(source+value, {
             //     credentials: 'include',
             //     method : 'GET',
@@ -225,7 +228,7 @@ var Autocomplete = module.exports = React.createClass({
     },
     render () {
 
-        var {container, getItem, name} = this.props
+        var {container, getItem, name, itemKey} = this.props
         var {index, value, results, disable} = this.state
         var {text} = this.refs
         
@@ -233,7 +236,9 @@ var Autocomplete = module.exports = React.createClass({
             var list = <ul>{
                 results.map((item,i)=>{
                     item = getItem(item)
-                    return <li key={item} onClick={this.select.bind(this,i,'click')} className={i===index?'active nj-mui-active':''}><Mui>{item}</Mui></li>
+                    let key = typeof itemKey=='function' ? itemKey(item) : (itemKey ? item[itemKey] : item)
+
+                    return <li key={key} onClick={this.select.bind(this,i,'click')} className={i===index?'active nj-mui-active':''}><Mui>{item}</Mui></li>
                 })
             }</ul>
         }

@@ -42,7 +42,6 @@ class Page extends React.Component {
                 <style>
                     .page-main{min-height:500px;width:1200px;margin:0 auto}
                 </style>
-                <div>1</div>
                 <div class="banner" data-dragarea="banner"></div>
                 <div class="page-all page-main" data-dragarea="content"></div>
             `
@@ -90,7 +89,7 @@ class Page extends React.Component {
         return styles
     }
     render () {
-        let {template, styles, data} = this.state
+        let {template, data} = this.state
         let {pageid} = data.body
         
         return <div className="page-container">

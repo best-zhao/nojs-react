@@ -15,7 +15,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var dateParse = _nojsReact.utils.dateParse,
-    joinClass = _nojsReact.utils.joinClass;
+    joinClass = _nojsReact.utils.joinClass,
+    tmpl = _nojsReact.utils.tmpl,
+    addEventQueue = _nojsReact.utils.addEventQueue;
 
 var Datetime = function (_React$Component) {
     _inherits(Datetime, _React$Component);
@@ -26,7 +28,8 @@ var Datetime = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Datetime.__proto__ || Object.getPrototypeOf(Datetime)).call(this, props));
 
         var _this$props = _this.props,
-            value = _this$props.value,
+            _this$props$value = _this$props.value,
+            value = _this$props$value === undefined ? '' : _this$props$value,
             min = _this$props.min,
             max = _this$props.max,
             months = _this$props.months,
@@ -141,7 +144,8 @@ var Datetime = function (_React$Component) {
         value: function componentDidMount() {
             var _props = this.props,
                 months = _props.months,
-                onReady = _props.onReady;
+                onReady = _props.onReady,
+                style = _props.style;
             var _refs = this.refs,
                 group = _refs.group,
                 groups = _refs.groups;
@@ -149,7 +153,9 @@ var Datetime = function (_React$Component) {
 
             onReady && onReady.call(this);
 
-            if (!groups) {
+            this.changeGroupEvents = addEventQueue.call(this, 'onChangeGroup');
+
+            if (!groups || style == 'flat') {
                 return;
             }
             var groupsWidth = months * group.offsetWidth;
@@ -231,6 +237,8 @@ var Datetime = function (_React$Component) {
                     animated: null
                 });
             }, 400);
+
+            this.changeGroupEvents.complete(nextMonths);
         }
     }, {
         key: 'componentWillUnmount',
@@ -362,14 +370,15 @@ var Datetime = function (_React$Component) {
             }
 
             var value = dateParse({
-                date: [year, month, date].join('-') + ' ' + [hours, minutes, seconds].join(':'),
+                date: [year, month, date].join('/') + ' ' + [hours || 0, minutes || 0, seconds || 0].join(':'),
                 format: format
             });
+            // console.log(value, format, year, month, date, hours, minutes, seconds)
 
             if (multiple) {
                 value = multiDates.map(function (date) {
                     return dateParse({
-                        date: [date.year, date.month, date.date].join('-'),
+                        date: [date.year, date.month, date.date].join('/'),
                         format: format
                     });
                 }).join(',');
@@ -402,7 +411,11 @@ var Datetime = function (_React$Component) {
                 dataStr[i + '_str'] = (0, _utils.parseNumber)(data[i]);
             }
             var timestamp = (0, _utils.getTimestamp)(data, 6);
-            onChange && onChange.call(this, value, Object.assign(data, dataStr), timestamp);
+            Object.assign(data, dataStr);
+
+            // this.changeDateEvents.complete(value, data, timestamp)     
+
+            onChange && onChange.call(this, value, data, timestamp);
         }
     }, {
         key: 'setNow',
@@ -476,7 +489,12 @@ var Datetime = function (_React$Component) {
                 months = _props2.months,
                 mode = _props2.mode,
                 disableAnimation = _props2.disableAnimation,
-                multiple = _props2.multiple;
+                multiple = _props2.multiple,
+                showSide = _props2.showSide,
+                style = _props2.style,
+                change_disabled = _props2.change_disabled,
+                switch_year = _props2.switch_year,
+                switch_month = _props2.switch_month;
             var _state6 = this.state,
                 weeks = _state6.weeks,
                 direction = _state6.direction,
@@ -567,18 +585,30 @@ var Datetime = function (_React$Component) {
             var dateItem = function dateItem(item, i) {
                 var disabled = _this5.checkDisabled(item.timestamp, 'date');
                 var className = joinClass('date-item', checkCurrentDate(item, i) && 'active', !item.current && 'gray', disabled && 'disabled', item.isToday && 'today');
+                var template = _this5.props.template;
+
+                template = typeof template == 'function' ? template(item) : template;
+
+                if (typeof template == 'string') {
+                    template = tmpl(/^[\w-]+$/.test(template) ? document.getElementById(template).innerHTML : template, { item: item });
+                    template = _nojsReact.React.createElement('span', { className: 'date', dangerouslySetInnerHTML: { __html: template } });
+                } else {
+                    template = template || item.date;
+                    template = _nojsReact.React.createElement(
+                        'span',
+                        { className: 'date' },
+                        template
+                    );
+                }
+                // console.log(item)
                 return _nojsReact.React.createElement(
                     'button',
-                    { 'data-mode': 'circle', type: 'button', disabled: disabled,
+                    { 'data-mode': style == 'pop' ? 'circle' : 'rect', type: 'button', disabled: change_disabled || disabled,
                         key: [item.year, item.month, item.date].join(''),
                         onClick: _this5.changeDate.bind(_this5, item, 'date'),
                         className: className
                     },
-                    _nojsReact.React.createElement(
-                        'span',
-                        { className: 'date' },
-                        item.date
-                    )
+                    template
                 );
             };
 
@@ -611,7 +641,7 @@ var Datetime = function (_React$Component) {
 
             var groupClass = joinClass(!disableAnimation && 'animate-groups', direction && 'animate-' + direction, animate && 'animate-' + direction + '-active');
 
-            var _ref2 = currentDate || _utils.today,
+            var _ref2 = multiple ? _utils.today : currentDate || _utils.today,
                 year = _ref2.year,
                 month = _ref2.month,
                 date = _ref2.date,
@@ -619,8 +649,8 @@ var Datetime = function (_React$Component) {
 
             return _nojsReact.React.createElement(
                 'div',
-                { className: 'nj-datepicker nj-datepicker-' + mode },
-                hasDate ? _nojsReact.React.createElement(
+                { className: joinClass('nj-datepicker nj-datepicker-' + mode, showSide && 'show-side', 'nj-datepicker-' + style) },
+                hasDate && showSide ? _nojsReact.React.createElement(
                     'div',
                     { className: 'pop-side' },
                     _nojsReact.React.createElement(
@@ -663,14 +693,14 @@ var Datetime = function (_React$Component) {
                         _nojsReact.React.createElement(
                             'span',
                             { className: '_item' },
-                            _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -12), className: 'nj-icon nj-icon-left2' }),
-                            _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -months), className: 'nj-icon nj-icon-left' })
+                            switch_year && _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -12), className: 'nj-icon nj-icon-left2' }),
+                            switch_month && _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, -months), className: 'nj-icon nj-icon-left' })
                         ),
                         _nojsReact.React.createElement(
                             'span',
                             { className: '_item' },
-                            _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, months), className: 'nj-icon nj-icon-right' }),
-                            _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, 12), className: 'nj-icon nj-icon-right2' })
+                            switch_month && _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, months), className: 'nj-icon nj-icon-right' }),
+                            switch_year && _nojsReact.React.createElement(_nojsReact.Mui, { mode: 'circle', onClick: this.jumpTo.bind(this, 12), className: 'nj-icon nj-icon-right2' })
                         )
                     ) : null,
                     hasDate ? _nojsReact.React.createElement(
@@ -730,7 +760,12 @@ Datetime.defaultProps = {
     // format : 'yy-mm-dd hh:mm:ss',
     weeks: ['日', '一', '二', '三', '四', '五', '六'],
     //周一排在第一列 索引以weeks的排序为准
-    startWeekIndex: 1
+    startWeekIndex: 1,
+    showSide: true,
+    //展示方式 pop flat
+    style: 'pop',
+    switch_year: true,
+    switch_month: true
 };
 
 module.exports = Datetime;

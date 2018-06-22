@@ -3,16 +3,33 @@
     .pop-foot{padding:12px;text-align:right;border-top:1px dotted #e2e2e2;}
 }
 
-.nj-datepicker{padding-left:130px;color:#444;
+.nj-datepicker{color:#444;
+    &.show-side{ padding-left:130px;}
     .pop-side{width:130px;background:#00BCD4;color:#fff;height:100%;
         position:absolute;left:0;padding:15px 20px;box-sizing:border-box;font-size:14px;
         .date{font:50px/1.5 Impact,Helvetica Arial;letter-spacing:4px}
     }
     .set-now{position:absolute;bottom:.5em;width:100%;color:#fff;left:0;background: rgba(255,255,255,.1);padding:0 20px;}
     .pop-main{position:relative;padding:9px}
+    
+    ._group{float:left;padding:0 3px;width:282px;}
     ._groups{overflow:hidden;position:relative;}
-    ._group{width:282px;float:left;padding:0 3px}
     ._head{height:31px;line-height:31px;font-size:1.1667em;padding:0 6px;text-align: center;margin:0 0 6px}
+
+    &.nj-datepicker-pop{
+        ._dates{
+            .date{border-radius:100%;}
+            [disabled]{color:#ccc;cursor:not-allowed}
+        }
+    }
+    &.nj-datepicker-flat{
+        ._groups{min-height: 600px;}
+        ._group{width:50%;padding: 0}
+        ._dates{
+            .date{height:90px;}
+        }
+    }
+
 
     ._page{text-align:center;background:#fff;position:absolute;width:100%;height:33px;top:9px;left:0;
         .nj-mui span{background:#0078E7}
@@ -25,17 +42,16 @@
     }
     ._weeks{color:#999}
     ._weeks li, ._dates .date-item{
-        float:left;width:14.2%;padding:4px;cursor: default;text-align: center;box-sizing: border-box;
+        float:left;width:14.28%;padding:4px;cursor: default;text-align: center;box-sizing: border-box;
     }
     ._dates{
         .date-item{border:none;background:none;line-height:31px;position: relative;font-family: Roboto, sans-serif;}
-        .date{display:block;border-radius:100%;transition: all .4s;}
+        .date{display:block;transition: all .4s;}
         .date-item:hover:not([disabled]) .date{background:#00BCD4;opacity:.6;color:#fff}
         .gray .date{color:#ccc}
-        .gray:hover .date{color:#999}
+        .gray:hover:not([disabled]) .date{color:#999}
         .today .date{background:#e4e4e4}
         .active .date{background:#00BCD4!important;color:#fff}
-        [disabled]{color:#ccc;cursor:not-allowed}
         .nj-mui span{background:#000}
     }
     ._times{padding:12px;margin-bottom: -58px;
@@ -51,7 +67,7 @@
 }
 
 /*月份切换动画*/
-.animate-groups{position: absolute;left:0;right:0;width:200%}
+.animate-groups{position: relative;left:0;right:0;position: absolute;width:200%}
 .animate-left, .animate-right{transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);}
 .animate-left{right:auto;}
 .animate-left-active{left:-100%;}

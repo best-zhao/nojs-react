@@ -47,9 +47,7 @@ var Container = function (_React$Component) {
 
         _this.state = {
             menuVisible: _this.setVisible(),
-            topbarItems: [{ content: _.React.createElement('i', { className: 'nj-icon nj-icon-menu' }), type: 'button', handle: _this.toggleMenu.bind(_this), align: 'left' }, { content: _.React.createElement('i', { className: 'nj-icon nj-icon-back' }), type: 'button', handle: function handle(e) {
-                    return _this.context.router.goBack();
-                }, align: 'left' }]
+            topbarItems: [{ content: _.React.createElement('i', { className: 'nj-icon nj-icon-menu' }), type: 'button', handle: _this.toggleMenu.bind(_this), align: 'left' }]
         };
         return _this;
     }
@@ -65,7 +63,7 @@ var Container = function (_React$Component) {
             var menu = rootProps.menu,
                 root = rootProps.root;
 
-            root.tree = this.refs.menu.refs.tree;
+            root.tree = this.refs.menu.props.menuVisible ? this.refs.menu.refs.tree : this.refs.menu.refs.menu;
 
             (0, _jquery2.default)(document).delegate('div.grid-main a, div.grid-topbar a', 'click', function (e) {
                 var target = this.target;
@@ -83,7 +81,7 @@ var Container = function (_React$Component) {
                     //如果url与另一个节点的link匹配 则直接跳都那个node
 
                     var node_url = menu.filter(function (n) {
-                        return n.link == href && n.id != id;
+                        return (n.link == href || n.link == location.origin + href) && n.id != id;
                     })[0];
                     if (node_url) {
                         self.context.router.push('/id/' + node_url.id);
@@ -135,7 +133,7 @@ var Container = function (_React$Component) {
             return _.React.createElement(
                 'div',
                 { className: className },
-                _.React.createElement(_Menu2.default, { defaultNode: params.id, menu: menu, sidebar: sidebar, ref: 'menu', parentSelect: parentSelect }),
+                _.React.createElement(_Menu2.default, { defaultNode: params.id, menuVisible: menuVisible, menu: menu, sidebar: sidebar, ref: 'menu', parentSelect: parentSelect }),
                 showTopbar ? _.React.createElement(_Topbar2.default, { items: this.state.topbarItems.concat(topbarItems) }) : null,
                 _children
             );

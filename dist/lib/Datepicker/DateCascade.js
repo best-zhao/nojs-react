@@ -25,7 +25,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 // import {Form, Input} from '../form'
 // import Tree, {LinkTree} from '../tree'
-
+// console.log(today)
 var Link = function (_React$Component) {
     _inherits(Link, _React$Component);
 
@@ -42,8 +42,15 @@ var Link = function (_React$Component) {
         var minutes = void 0; //= now.getMinutes()
         var seconds = void 0; //= now.getSeconds()
 
-        console.log(_utils.today);
         _this.state = {
+            _today: {
+                year: now.getFullYear(),
+                month: now.getMonth() + 1,
+                date: now.getDate(),
+                hours: now.getHours(),
+                minutes: now.getMinutes(),
+                seconds: now.getSeconds()
+            },
             formdata: {},
             year: year,
             yearItems: _this.getArray(_utils.today.year, 100),
@@ -72,13 +79,14 @@ var Link = function (_React$Component) {
         }
     }, {
         key: 'changeHandle',
-        value: function changeHandle(key, e) {
+        value: function changeHandle(key, length, e) {
             var _this2 = this;
 
             var onChange = this.props.onChange;
             var _state = this.state,
                 year = _state.year,
-                month = _state.month;
+                month = _state.month,
+                _today = _state._today;
 
             var value = e.target.value;
             var newState = _defineProperty({}, key, value);
@@ -86,6 +94,13 @@ var Link = function (_React$Component) {
                 var days = new Date(year, value, 0).getDate();
                 newState.dates = this.getArray(days);
             }
+
+            var full = {};
+            Object.keys(_today).map(function (k) {
+                full[k] = newState[k] || _this2.state[k] || _today[k];
+            });
+            var timestamp = newState.timestamp = (0, _utils.getTimestamp)(full, 6);
+
             this.setState(newState, function () {
                 onChange && onChange.call(_this2, _this2.state);
             });
@@ -99,7 +114,9 @@ var Link = function (_React$Component) {
                 ids = _props.ids,
                 _props$infos = _props.infos,
                 infos = _props$infos === undefined ? [] : _props$infos,
-                format = _props.format;
+                format = _props.format,
+                min = _props.min,
+                max = _props.max;
             var _state2 = this.state,
                 yearItems = _state2.yearItems,
                 monthItems = _state2.monthItems,
@@ -112,18 +129,45 @@ var Link = function (_React$Component) {
                 date = _state2.date,
                 hours = _state2.hours,
                 minutes = _state2.minutes,
-                seconds = _state2.seconds;
+                seconds = _state2.seconds,
+                _today = _state2._today;
+
 
             var _infos = [].concat(infos);
+            var keys = Object.keys(_today);
+
             var arr = function arr(index) {
                 var info = _infos.shift() || {};
                 var defaultValue = info.defaultValue;
-                if (info.defaultValue) {
+                var key = keys[index];
+                var stateValue = _this3.state[key];
+                if (defaultValue && !stateValue) {
+                    _this3.state[keys[index]] = stateValue = defaultValue;
                     info.defaultValue = null;
                 }
+
+                var checkDisabled = function checkDisabled(item, length) {
+                    var disabled = void 0;
+
+                    var full = {};
+                    keys.map(function (k, i) {
+                        full[k] = _this3.state[k] || _today[k];
+                    });
+                    full[keys[length - 1]] = item;
+
+                    var timestamp = (0, _utils.getTimestamp)(full, 6);
+
+                    if (min && timestamp < min) {
+                        disabled = true;
+                    }
+                    if (!disabled && max && timestamp > max) {
+                        disabled = true;
+                    }
+                    return { disabled: disabled };
+                };
                 return [_nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || year, onChange: _this3.changeHandle.bind(_this3, 'year') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'year', 1) }),
                     _nojsReact.React.createElement(
                         'option',
                         { value: '' },
@@ -132,14 +176,14 @@ var Link = function (_React$Component) {
                     yearItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 1), { value: item }),
                             item,
                             info.fix
                         );
                     })
                 ), _nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || month, onChange: _this3.changeHandle.bind(_this3, 'month') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'month', 2) }),
                     _nojsReact.React.createElement(
                         'option',
                         { value: '' },
@@ -148,14 +192,14 @@ var Link = function (_React$Component) {
                     monthItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 2), { value: item }),
                             item < 10 ? '0' + item : item,
                             info.fix
                         );
                     })
                 ), _nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || date, onChange: _this3.changeHandle.bind(_this3, 'date') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'date', 3) }),
                     _nojsReact.React.createElement(
                         'option',
                         { value: '' },
@@ -164,40 +208,40 @@ var Link = function (_React$Component) {
                     dateItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 3), { value: item }),
                             item < 10 ? '0' + item : item,
                             info.fix
                         );
                     })
                 ), _nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || hours, onChange: _this3.changeHandle.bind(_this3, 'hours') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'hours', 4) }),
                     hoursItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 4), { value: item }),
                             item < 10 ? '0' + item : item,
                             info.fix
                         );
                     })
                 ), _nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || minutes, onChange: _this3.changeHandle.bind(_this3, 'minutes') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'minutes', 5) }),
                     minutesItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 5), { value: item }),
                             item < 10 ? '0' + item : item,
                             info.fix
                         );
                     })
                 ), _nojsReact.React.createElement(
                     'select',
-                    _extends({}, info, { value: defaultValue || seconds, onChange: _this3.changeHandle.bind(_this3, 'seconds') }),
+                    _extends({}, info, { value: stateValue, onChange: _this3.changeHandle.bind(_this3, 'seconds', 6) }),
                     secondsItems.map(function (item) {
                         return _nojsReact.React.createElement(
                             'option',
-                            { value: item },
+                            _extends({}, checkDisabled(item, 6), { value: item }),
                             item < 10 ? '0' + item : item,
                             info.fix
                         );

@@ -2,6 +2,10 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
 var _nojsReact = require('../nojs-react');
 
 var _popover = require('../popover');
@@ -50,6 +54,9 @@ var Datepicker = function (_React$Component) {
             }
 
             input = options.input || input.refs.input;
+            input.$datepicker = this;
+
+            this.changeEvents = _nojsReact.utils.addEventQueue.call(this, 'onChange');
 
             var pop = this.state.pop = _popover2.default.create({
                 nearby: input,
@@ -79,9 +86,12 @@ var Datepicker = function (_React$Component) {
                             $handle = _input.$handle;
 
                         $handle ? $handle.setState({ value: value }) : input.value = value;
+
+                        (0, _jquery2.default)(input).trigger('change');
                     } else {
                         self.setState({ value: value });
                     }
+                    self.changeEvents.complete(value, data, timestamp);
 
                     var hasTime = this.state.hasTime;
 

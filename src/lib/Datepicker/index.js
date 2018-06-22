@@ -1,4 +1,5 @@
-import {React, render} from '../nojs-react'
+import $ from 'jquery'
+import {React, render, utils} from '../nojs-react'
 import Popover from '../popover'
 import {Form, Input} from '../form'
 import Datetime from './Datetime'
@@ -18,6 +19,9 @@ class Datepicker extends React.Component {
         }
 
         input = options.input || input.refs.input
+        input.$datepicker = this
+
+        this.changeEvents = utils.addEventQueue.call(this, 'onChange')
 
         let pop = this.state.pop = Popover.create({
             nearby : input,
@@ -43,9 +47,12 @@ class Datepicker extends React.Component {
                     //兼容Input组件
                     let {$handle} = input
                     $handle ? $handle.setState({value}) : (input.value = value);
+
+                    $(input).trigger('change')
                 }else{
                     self.setState({value})
                 }
+                self.changeEvents.complete(value, data, timestamp)
 
                 let {hasTime} = this.state
                 !hasTime || data.type=='now' && pop.setDisplay(false)

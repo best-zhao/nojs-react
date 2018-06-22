@@ -33,7 +33,7 @@ class Root extends React.Component{
         let {state, router} = routers
         //如果url与另一个节点的link匹配 则直接跳都那个node
         if( params.url && !params.id ){
-            let node_url = menu.filter(n=>n.link==params.url)
+            let node_url = menu.filter(n=>n.link==params.url||n.link==location.origin+params.url)
             if( node_url.length>1 ){
                 //多个节点匹配的话 优先选择和当前选中id相同的
                 node_url = node_url.filter(n=>n.id==state.params.id)[0] || node_url[0]

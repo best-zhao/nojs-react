@@ -1,10 +1,8 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
 
@@ -15,6 +13,10 @@ var _jquery2 = _interopRequireDefault(_jquery);
 var _tree = require('nj/tree');
 
 var _tree2 = _interopRequireDefault(_tree);
+
+var _nojsReact = require('../../nojs-react');
+
+var _nojsReact2 = _interopRequireDefault(_nojsReact);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43,10 +45,10 @@ var Menu = function (_React$Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var tree = this.refs.tree;
-            var _props = this.props,
-                onReady = _props.onReady,
-                parentSelect = _props.parentSelect;
+            var tree = this.refs[this.props.menuVisible ? 'tree' : 'menu'];
+            var _props2 = this.props,
+                onReady = _props2.onReady,
+                parentSelect = _props2.parentSelect;
             //组件渲染完毕后 向外传递格式化后的节点数据
 
             onReady && onReady(tree.state.dataFormat.databyid);
@@ -67,52 +69,69 @@ var Menu = function (_React$Component) {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             //通过props.defaultNode来更新当前选中节点
-            var tree = this.refs.tree;
+            var _refs = this.refs,
+                tree = _refs.tree,
+                menu = _refs.menu;
             var defaultNode = nextProps.defaultNode;
 
-            defaultNode = tree.state.dataFormat.databyid[defaultNode];
-            defaultNode && tree.select(defaultNode);
+
+            var treeDefaultNode = tree.state.dataFormat.databyid[defaultNode];
+            treeDefaultNode && tree.select(treeDefaultNode);
+            var menuDefaultNode = menu.state.dataFormat.databyid[defaultNode];
+            menuDefaultNode && menu.select(menuDefaultNode);
         }
     }, {
         key: 'render',
         value: function render() {
-            var _props2 = this.props,
-                defaultNode = _props2.defaultNode,
-                menu = _props2.menu,
-                sidebar = _props2.sidebar,
-                parentSelect = _props2.parentSelect;
+            var _props3 = this.props,
+                defaultNode = _props3.defaultNode,
+                menu = _props3.menu,
+                sidebar = _props3.sidebar,
+                parentSelect = _props3.parentSelect,
+                menuVisible = _props3.menuVisible;
 
-            var tree = _react2.default.createElement(
-                'div',
-                { className: 'nj-tree' },
-                _react2.default.createElement(_tree2.default, { ref: 'tree',
-                    data: menu,
-                    onChange: this.changeHandle.bind(this),
-                    defaultNode: defaultNode
-                    //使用Link组件更新路由 css控制Link覆盖文字之上
-                    , defineName: function defineName(item) {
-                        var allowSelect = item.link;
-                        if (item.children.length && !parentSelect) {
-                            //不允许父节点选中
-                            allowSelect = false;
-                        }
-                        return _react2.default.createElement(
-                            'span',
-                            null,
-                            allowSelect ? _react2.default.createElement(_reactRouter.Link, { to: '/id/' + item.id }) : null,
-                            ' ',
-                            item.name
-                        );
+            var _props = {
+                data: menu,
+                onChange: this.changeHandle.bind(this),
+                defaultNode: defaultNode,
+                //使用Link组件更新路由 css控制Link覆盖文字之上
+                defineName: function defineName(item) {
+                    var allowSelect = item.link;
+                    if (item.children.length && !parentSelect) {
+                        //不允许父节点选中
+                        allowSelect = false;
                     }
-                })
+                    return _nojsReact.React.createElement(
+                        'span',
+                        null,
+                        allowSelect ? _nojsReact.React.createElement(_reactRouter.Link, { to: '/id/' + item.id }) : null,
+                        ' ',
+                        item.name
+                    );
+                }
+            };
+            var tree = _nojsReact.React.createElement(
+                'span',
+                null,
+                _nojsReact.React.createElement(
+                    'div',
+                    { className: _nojsReact.utils.joinClass('nj-tree', 'nj-max-tree', !menuVisible && 'd_hide') },
+                    _nojsReact.React.createElement(_tree2.default, _extends({}, _props, { ref: 'tree' }))
+                ),
+                _nojsReact.React.createElement(
+                    'div',
+                    { className: _nojsReact.utils.joinClass('nj-tree', 'nj-menu-tree', menuVisible && 'd_hide') },
+                    _nojsReact.React.createElement(_tree2.default, _extends({}, _props, { ref: 'menu', style: 'menu' }))
+                )
             );
+
             if (typeof sidebar == 'function') {
                 tree = sidebar(tree);
             }
-            return _react2.default.createElement(
+            return _nojsReact.React.createElement(
                 'div',
                 { className: 'grid-menu' },
-                _react2.default.createElement(
+                _nojsReact.React.createElement(
                     'div',
                     { className: 'grid-inner' },
                     tree
@@ -122,6 +141,6 @@ var Menu = function (_React$Component) {
     }]);
 
     return Menu;
-}(_react2.default.Component);
+}(_nojsReact.React.Component);
 
 module.exports = Menu;

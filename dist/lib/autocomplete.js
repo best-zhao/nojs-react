@@ -138,7 +138,7 @@ var Autocomplete = module.exports = React.createClass({
 
         var value = this.props.getItem(item);
         var onChange = this.props.onChange;
-        onChange && onChange(value);
+        onChange && onChange(value, index);
 
         this.state.value = value;
         this.state.index = index;
@@ -232,7 +232,8 @@ var Autocomplete = module.exports = React.createClass({
             data = _props2.data,
             source = _props2.source,
             getItem = _props2.getItem,
-            max = _props2.max;
+            max = _props2.max,
+            params = _props2.params;
 
         data = data && typeof data == 'string' ? JSON.parse(data) : data;
 
@@ -256,7 +257,10 @@ var Autocomplete = module.exports = React.createClass({
                 done(_data);
                 return;
             }
-            var promise = $.getJSON(source + value);
+            if (typeof params == 'function') {
+                params = params(value);
+            }
+            var promise = $.getJSON(source + value, params);
             // var promise = fetch(source+value, {
             //     credentials: 'include',
             //     method : 'GET',
@@ -291,7 +295,8 @@ var Autocomplete = module.exports = React.createClass({
         var _props3 = this.props,
             container = _props3.container,
             getItem = _props3.getItem,
-            name = _props3.name;
+            name = _props3.name,
+            itemKey = _props3.itemKey;
         var _state2 = this.state,
             index = _state2.index,
             value = _state2.value,
@@ -306,9 +311,11 @@ var Autocomplete = module.exports = React.createClass({
                 null,
                 results.map(function (item, i) {
                     item = getItem(item);
+                    var key = typeof itemKey == 'function' ? itemKey(item) : itemKey ? item[itemKey] : item;
+
                     return React.createElement(
                         'li',
-                        { key: item, onClick: _this4.select.bind(_this4, i, 'click'), className: i === index ? 'active nj-mui-active' : '' },
+                        { key: key, onClick: _this4.select.bind(_this4, i, 'click'), className: i === index ? 'active nj-mui-active' : '' },
                         React.createElement(
                             Mui,
                             null,

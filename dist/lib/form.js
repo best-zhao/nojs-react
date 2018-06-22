@@ -645,10 +645,7 @@ formDirectives['select'] = _nojsReact.React.createClass({
         var _props4 = this.props,
             children = _props4.children,
             _childNodes = _props4._childNodes;
-
-        children = children && children.filter(function (item) {
-            return item;
-        });
+        // children = children && children.filter(item=>item)
 
         return _nojsReact.React.createElement(
             'label',

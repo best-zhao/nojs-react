@@ -3,8 +3,8 @@
 .pd30{padding:30px}
 html, body, .app-container, #root{width:100%;height:100%;overflow:hidden;}
 .grid-menu{width:200px;background:#f2f2f2;z-index:50;box-shadow:1px 0 9px rgba(0,0,0,.3);left:0}
-.grid-main{left:200px;right:0}
-.grid-main, .grid-menu{overflow:auto;overflow-x:hidden;position:absolute;top:0;bottom:0;transition:left .2s;}
+.grid-main{left:200px;right:0;overflow:auto;overflow-x:hidden;}
+.grid-main, .grid-menu{position:absolute;top:0;bottom:0;transition:all .2s;}
 .grid-main .grid-inner{padding:30px;}
 .page-pending{position:absolute;}
 
@@ -26,9 +26,16 @@ html, body, .app-container, #root{width:100%;height:100%;overflow:hidden;}
 .grid-topbar .nj-icon{color:#888;}
 .grid-topbar .nj-icon:before{line-height:38px;vertical-align:top}
 
-.hide-menu .grid-menu{left:-201px}
-.hide-menu .grid-topbar ._inner{padding:0}
-.hide-menu .grid-main{left:0}
+.hide-menu{@min:80px;
+	.grid-menu{width:@min;
+		.nj-menu-tree{
+			.item{padding: 0}
+		}
+	}
+	.grid-topbar ._inner{padding-left:@min}
+	.grid-main{left:@min}
+
+}
 
 .show-topbar .grid-main{top:38px}
 

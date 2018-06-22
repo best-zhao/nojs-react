@@ -45,7 +45,7 @@ class Page extends React.Component{
                 break
             }
         }        
-        onChange && onChange(_page, page, this.setData(page))
+        onChange ? onChange(_page, page, this.setData(page)) : this.setData(page)
         e.preventDefault()        
     }
     setData (page) {
@@ -58,17 +58,67 @@ class Page extends React.Component{
         var _data = data.slice(start, start+perpage)
         return _data
     }
+    renderBar () {
+        var {page} = this.state
+        var pages = this.getPages()
+        var start
+        var end
+        var step = 3
+        if( page<=step+1 ){
+            start = 1
+            end = step*2+1
+        }else{
+            var last = pages - page//当前页后面剩余的页数
+            start = page - (last < step ? (step*2 - last) : step)
+            end = page + step
+        }
+        start = start<1 ? 1 : start
+        end = end>pages ? pages : end
+
+        var getItem = (i)=><button type="button" className={(page==i?'active ':'')+'page-item'} onClick={this.handleChange.bind(this,i)}>{i}</button>
+
+        var items = []
+        for( var i=start; i<=end; i++ ){
+            items.push(getItem(i))
+        }
+
+        //添加最前面2页
+        var front_pages = []
+        for( var i=1;i<4;i++ ){
+            if(i==start) break;
+            if( i==3 && start-i>1 ){
+                front_pages.push(<button type="button" className="page-item page-none">...</button>)
+            }else{
+                front_pages.push(getItem(i))
+            }            
+        }
+        items = front_pages.concat(items)
+
+        //添加最后2页
+        var end_pages = []
+        for( var i=pages-2;i<=pages;i++ ){
+            if( i<=end ) continue;
+            if( i==pages-2 && i-end>1 ){
+                end_pages.push(<button type="button" className="page-item page-none">...</button>)
+            }else{
+                end_pages.push(getItem(i))
+            }            
+        }
+        items = items.concat(end_pages)
+
+        return items
+    }
     render () {
+        var {count} = this.props
         var {page} = this.state
         var pages = this.getPages()//总页数
-        // console.log(page,pages,this.props.data.length,this.props.perpage)
+
         return (
             <div className={'nj-page '+this.props.className}>
-                {page>1&&(<a href="" onClick={this.handleChange.bind(this,1)}>首页</a>)}
-                {page>1&&(<a href="" onClick={this.handleChange.bind(this,'prev')}>上一页</a>)}
-                {this.state.page}/{pages}
-                {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,'next')}>下一页</a>}
-                {page<pages&&pages>1&&<a href="" onClick={this.handleChange.bind(this,pages)}>尾页</a>}
+                <button disabled={page<=1} type="button" className="page-item" onClick={this.handleChange.bind(this,'prev')}>上一页</button>
+                {this.renderBar()}
+                <button disabled={page>=pages || pages<=1} type="button" className="page-item" onClick={this.handleChange.bind(this,'next')}>下一页</button>
+                <span className="page-item">共{count}条记录</span>
             </div>
         )
     }

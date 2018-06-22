@@ -87,7 +87,7 @@ var Page = function (_React$Component) {
                         break;
                 }
             }
-            onChange && onChange(_page, page, this.setData(page));
+            onChange ? onChange(_page, page, this.setData(page)) : this.setData(page);
             e.preventDefault();
         }
     }, {
@@ -106,37 +106,102 @@ var Page = function (_React$Component) {
             return _data;
         }
     }, {
+        key: 'renderBar',
+        value: function renderBar() {
+            var _this3 = this;
+
+            var page = this.state.page;
+
+            var pages = this.getPages();
+            var start;
+            var end;
+            var step = 3;
+            if (page <= step + 1) {
+                start = 1;
+                end = step * 2 + 1;
+            } else {
+                var last = pages - page; //当前页后面剩余的页数
+                start = page - (last < step ? step * 2 - last : step);
+                end = page + step;
+            }
+            start = start < 1 ? 1 : start;
+            end = end > pages ? pages : end;
+
+            var getItem = function getItem(i) {
+                return _nojsReact.React.createElement(
+                    'button',
+                    { type: 'button', className: (page == i ? 'active ' : '') + 'page-item', onClick: _this3.handleChange.bind(_this3, i) },
+                    i
+                );
+            };
+
+            var items = [];
+            for (var i = start; i <= end; i++) {
+                items.push(getItem(i));
+            }
+
+            //添加最前面2页
+            var front_pages = [];
+            for (var i = 1; i < 4; i++) {
+                if (i == start) break;
+                if (i == 3 && start - i > 1) {
+                    front_pages.push(_nojsReact.React.createElement(
+                        'button',
+                        { type: 'button', className: 'page-item page-none' },
+                        '...'
+                    ));
+                } else {
+                    front_pages.push(getItem(i));
+                }
+            }
+            items = front_pages.concat(items);
+
+            //添加最后2页
+            var end_pages = [];
+            for (var i = pages - 2; i <= pages; i++) {
+                if (i <= end) continue;
+                if (i == pages - 2 && i - end > 1) {
+                    end_pages.push(_nojsReact.React.createElement(
+                        'button',
+                        { type: 'button', className: 'page-item page-none' },
+                        '...'
+                    ));
+                } else {
+                    end_pages.push(getItem(i));
+                }
+            }
+            items = items.concat(end_pages);
+
+            return items;
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var count = this.props.count;
             var page = this.state.page;
 
             var pages = this.getPages(); //总页数
-            // console.log(page,pages,this.props.data.length,this.props.perpage)
+
             return _nojsReact.React.createElement(
                 'div',
                 { className: 'nj-page ' + this.props.className },
-                page > 1 && _nojsReact.React.createElement(
-                    'a',
-                    { href: '', onClick: this.handleChange.bind(this, 1) },
-                    '\u9996\u9875'
-                ),
-                page > 1 && _nojsReact.React.createElement(
-                    'a',
-                    { href: '', onClick: this.handleChange.bind(this, 'prev') },
+                _nojsReact.React.createElement(
+                    'button',
+                    { disabled: page <= 1, type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'prev') },
                     '\u4E0A\u4E00\u9875'
                 ),
-                this.state.page,
-                '/',
-                pages,
-                page < pages && pages > 1 && _nojsReact.React.createElement(
-                    'a',
-                    { href: '', onClick: this.handleChange.bind(this, 'next') },
+                this.renderBar(),
+                _nojsReact.React.createElement(
+                    'button',
+                    { disabled: page >= pages || pages <= 1, type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'next') },
                     '\u4E0B\u4E00\u9875'
                 ),
-                page < pages && pages > 1 && _nojsReact.React.createElement(
-                    'a',
-                    { href: '', onClick: this.handleChange.bind(this, pages) },
-                    '\u5C3E\u9875'
+                _nojsReact.React.createElement(
+                    'span',
+                    { className: 'page-item' },
+                    '\u5171',
+                    count,
+                    '\u6761\u8BB0\u5F55'
                 )
             );
         }

@@ -32,7 +32,7 @@ var Tree = React.createClass({
                 }else{//子节点出现在父节点前面
                     noParent.push(item)
                 }
-                if( openLevel && level<openLevel ){
+                if( openLevel && level<openLevel && options.style!='menu' ){
                     item.open = true
                 }
 
@@ -142,6 +142,12 @@ var Tree = React.createClass({
             options.source = options.data
             options.data = []
         }else{
+            options.data = $.extend(true, [], options.data)
+            if( options.style=='menu' ){
+                options.data.forEach(n=>{
+                    n.open = false
+                })
+            }
             var data = Tree.parse(options)
             var children = data.databylevel[level]
             options.data = children
@@ -218,9 +224,18 @@ var Tree = React.createClass({
         if( _node ){//取消上个选中节点的select状态
             delete _node.select
         }
+        var rootScope = this.props.rootScope || this
+        var {dataFormat} = rootScope.state
+        for( var i in dataFormat.databyid ){
+            delete dataFormat.databyid[i]._select
+        }
         //打开所有父节点
         this.getParents(node).reverse().forEach((parent)=>{
-            !parent.open && this.toggle(parent)
+            if( this.props.style=='menu' ){
+                parent._select = true
+            }else{
+                !parent.open && this.toggle(parent)
+            }
         })
         // if( !node.select ){
         //     var allnodes = this.state.dataFormat.databyid
@@ -407,6 +422,7 @@ var Tree = React.createClass({
                         item.pending && nodeClass.push('pending')
                         item.open && nodeClass.push('open')
                         node && item.select && nodeClass.push('selected')
+                        item._select && nodeClass.push('_selected')
 
                         //节点显示名称可以通过函数自定义
                         var nodeName = item[keymap.name]
@@ -451,7 +467,7 @@ var Tree = React.createClass({
                             rootScope.props.style!='menu' && holder.map((h,j) => 
                                 <span key={j} className={'_line'+(j+1>=level?' _line_begin _line'+(j-level+1):'')}></span>
                             ),
-                            rootScope.props.style!='menu' && <span className={utils.joinClass('_icon', item.icon&&'icon-'+item.icon)} onClick={!nochild&&this.toggle.bind(this,item)}></span>,
+                            <span className={utils.joinClass('_icon', item.icon&&'icon-'+item.icon)} onClick={!nochild&&this.toggle.bind(this,item)}></span>,
                             checkbox ? (
                                 <span className="_checkbox">
                                     <input type="checkbox" 
@@ -806,7 +822,7 @@ Tree.LinkTree = React.createClass({
         var {keymap, ids, menuData, selected, style, listHeight} = this.state
         var KEY_ID = keymap.id
         var KEY_NAME = keymap.name
-        var {maxlevel, type, listRows, infos=[], trigger} = this.props
+        var {maxlevel, type, listRows, infos=[], trigger, selectValue} = this.props
         var listCols = maxlevel || 3
         //infos = infos || []//附加信息 如name
         
@@ -879,7 +895,7 @@ Tree.LinkTree = React.createClass({
                             if( id && item[KEY_ID]==id ){//检测被设置的默认选中id是否有效
                                 valid = true
                             }
-                            return (<option key={item[KEY_ID]} value={item[KEY_ID]}>{item[KEY_NAME]}</option>)
+                            return (<option key={item[KEY_ID]} value={selectValue ? item[selectValue]: item[KEY_ID]}>{item[KEY_NAME]}</option>)
                         })}
                     </select>
                     }

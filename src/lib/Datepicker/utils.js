@@ -32,7 +32,7 @@ export const getMonthData = (params, options)=>{
         _date = new Date()
 
     }else if( type=='string' || type=='number' ){
-        params = type=='string' ? params.replace(/[\u4E00-\u9FA5]/g, '/') : params
+        params = type=='string' ? params.replace(/[\u4E00-\u9FA5\-]/g, '/') : params
         //字符串或时间戳
         _date = new Date(params)
     }
@@ -74,11 +74,11 @@ export const getMonthData = (params, options)=>{
             //星期
             day : new Date(year, month-1, i).getDay(),
             current : true,
+            format : [year, parseNumber(month), parseNumber(i)].join('-'),
             timestamp : new Date(year, month-1, i).getTime(),
             isToday : today.date==i && today.month==month && today.year==year 
         })
     }
-
     // let startWeekIndex = 1//起始星期索引
     let endWeekIndex = (startWeekIndex+6)%7//结束星期索引
     let startDay = allDays[0].day   //月初天星期数
@@ -97,6 +97,7 @@ export const getMonthData = (params, options)=>{
                 year : prevMonth.year,
                 month : prevMonth.month,
                 date : prevDays-i,
+                format : [prevMonth.year, parseNumber(prevMonth.month), parseNumber(prevDays-i)].join('-'),
                 prevMonth : true,
                 timestamp : new Date(prevMonth.year, prevMonth.month-1, prevDays-i).getTime(),
                 day : new Date(prevMonth.year, prevMonth.month-1, prevDays-i).getDay()
@@ -117,6 +118,7 @@ export const getMonthData = (params, options)=>{
                 year : nextMonth.year,
                 month : nextMonth.month,
                 date : i,
+                format : [nextMonth.year, parseNumber(nextMonth.month), parseNumber(i)].join('-'),
                 nextMonth : true,
                 timestamp : new Date(nextMonth.year, nextMonth.month-1, i).getTime(),
                 day : endDay==6 ? 0 : endDay+1

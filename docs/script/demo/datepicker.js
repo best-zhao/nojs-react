@@ -3,7 +3,7 @@ import nj, {React, render} from 'nj'
 import Datepicker from 'nj/datepicker'
 import DateCascade from 'nj/datepicker/DateCascade'
 import {Form} from 'nj/form'
-
+import Datetime from 'nj/datepicker/Datetime'
 
 export const init = ()=>{
     let startVal = "2018-11-05"
@@ -44,12 +44,34 @@ export const init = ()=>{
             } 
             format="hh mm" 
             onChange={function(data){
-                console.log(this, data)
+                // console.log(this, data)
             }
         }/>, 
         document.getElementById('rootDatepicker2')
     )
-    console.log(date.state)
+    // console.log(date.state)
+
+
+    render(
+        <Datetime 
+            mode="date" 
+            showSide={false} 
+            style="flat" 
+            change_disabled={true}
+            switch_year={true}
+            onChangeGroup={nextMonth=>{
+                console.log(nextMonth)
+            }}
+            template={item=>{
+                // console.log(item)
+                return  <div>
+                    <h6>{item.date}</h6>
+                    {item.current && <p>15:30—17:30 瑜伽塑形课</p>}
+                </div>
+            }}
+        />, 
+        document.getElementById('datepicker1')
+    )
 
     // console.log(Datepicker.Datetime)
 }
