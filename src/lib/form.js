@@ -869,6 +869,7 @@ Form.fill = function(options){
             }
             
         }else if( typeof value=='string' || typeof value=='number' ){
+            if( item.val()==value ) continue;
             item.val(value);         
             (function(handle){
                 handle && handle.setState({value, status:null}, e=>handle.verify(false))

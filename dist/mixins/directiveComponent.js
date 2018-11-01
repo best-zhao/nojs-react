@@ -91,7 +91,7 @@ Directive.prototype = {
         }
         var formElements = _lib2.default.utils.toArray(context.getElementsByTagName('nj-' + type));
         formElements.forEach(function (node, i) {
-            var c = _this2.initial(node, type, parentComponent, i);
+            var c = _this2.initial(node, type, parentComponent, type == _this2.rootDirective ? 0 : i);
             if (c) {
                 components.push(c);
             }

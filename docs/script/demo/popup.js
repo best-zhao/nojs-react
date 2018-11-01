@@ -1,6 +1,8 @@
 import Popup from 'nj/popup'
 import $ from 'jquery'
 import Popover from 'nj/popover'
+import nj, {React, render, Mui} from 'nj'
+import Autocomplete from 'nj/autocomplete'
 
 export const init = ()=>{
     var popup = Popup.create({
@@ -35,4 +37,22 @@ export const init = ()=>{
         effect : 'normal',
         nearby : 'demo-popover-button'
     })
+
+
+
+
+    render(
+        <Autocomplete
+            data={[1,2,3]}
+            template={list=>{
+                return <div>
+                    {list}
+                    <ul className="list-operat">
+                        <li><Mui>add</Mui></li>
+                    </ul>
+                </div>
+            }}
+        />, 
+        document.getElementById('suggest')
+    )
 }

@@ -7,10 +7,10 @@
 var $ = require('jquery');
 
 function countdown(el, diff, options) {
-    if (!diff) {
+    options = options || {};
+    if (!diff && !options.plus) {
         return;
     }
-    options = options || {};
     var format = options.format || '{dd}天{hh}时{mm}分{ss}秒';
     var fix = options.fix || '';
 
@@ -50,7 +50,7 @@ function countdown(el, diff, options) {
 
         var html = '';
 
-        if (seconds < 0) {
+        if (seconds < 0 && !options.plus) {
             options.end && el.text(options.end);
             //倒计时结束 回调
             if (typeof options.timeup == 'function') {
@@ -93,7 +93,11 @@ function countdown(el, diff, options) {
 
         el.html(str + fix);
 
-        diff -= 1;
+        if (options.plus) {
+            diff += 1;
+        } else {
+            diff -= 1;
+        }
         _exports.delay = setTimeout(GetTime, 1000);
     }
     GetTime();

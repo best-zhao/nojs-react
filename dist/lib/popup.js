@@ -67,6 +67,9 @@ var Statics = {
       if (p === pop) {
         instances.splice(i, 1);
         document.body.removeChild(ReactDOM.findDOMNode(p).parentNode);
+
+        var index = focusPops.indexOf(pop);
+        index >= 0 && focusPops.splice(index, 1);
       }
     });
   },

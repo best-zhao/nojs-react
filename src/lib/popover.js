@@ -159,7 +159,7 @@ var Popover = React.createClass({
                 if( /text|textarea/.test(bindTarget[0].type) ){
                     trigger = 'focus'
                 }
-                bindTarget.on(clickEvent, _show)
+                bindTarget.on('click', _show)
 
             }else if( delegate ){
                 $(delegate[1]||document.body).delegate(delegate[0], trigger, _show)
@@ -206,14 +206,16 @@ var Popover = React.createClass({
                     })
                 }, 0)
             }else{
+                var alignOptions = Object.assign({}, this.props, {
+                  nearby : this.state.nearby,
+                  element : $(this.wrap),
+                  onTurn (turnPosition) {
+                    self.getOrigin(turnPosition)
+                  }
+                })
+                // this.setAlign(alignOptions)
                 setTimeout(()=>{
-                    this.setAlign(Object.assign({}, this.props, {
-                      nearby : this.state.nearby,
-                      element : $(this.wrap),
-                      onTurn (turnPosition) {
-                        self.getOrigin(turnPosition)
-                      }
-                    }))
+                    this.setAlign(alignOptions)
                 })
             }
             

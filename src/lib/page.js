@@ -113,14 +113,14 @@ class Page extends React.Component{
         var {page} = this.state
         var pages = this.getPages()//总页数
 
-        return (
+        return count && pages>1 ? (
             <div className={'nj-page '+this.props.className}>
-                <button disabled={page<=1} type="button" className="page-item" onClick={this.handleChange.bind(this,'prev')}>上一页</button>
+                <button type="button" className="page-item" onClick={this.handleChange.bind(this,'prev')}>上一页</button> 
                 {this.renderBar()}
-                <button disabled={page>=pages || pages<=1} type="button" className="page-item" onClick={this.handleChange.bind(this,'next')}>下一页</button>
+                {page<pages ? <button type="button" className="page-item" onClick={this.handleChange.bind(this,'next')}>下一页</button> : null}
                 <span className="page-item">共{count}条记录</span>
             </div>
-        )
+        ) : null
     }
 }
 

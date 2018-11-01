@@ -402,7 +402,10 @@ module.exports = {
          * http://ejohn.org/blog/javascript-micro-templating/
          */
         var c = {};
-        return function(s,d){
+        return function(s,d, opts){
+            opts = opts || {}
+            var startTag = opts.startTag || noJS.startTmplTag || '<%'
+            var endTag = opts.endTag || noJS.endTmplTag || '%>'
             var fn = !/\W/.test(s) ? c[s]=c[s]||module.exports.tmpl(document.getElementById(s).innerHTML):
             new Function("o",
             "var p=[];"+"with(o){p.push('"+
@@ -411,15 +414,15 @@ module.exports = {
             .replace(/'/g, "\\'")
             //.replace(/\\/g,"\\\\")//解决转义符bug
             .replace(/[\r\t\n]/g," ")            
-            .split("<%").join("\t")
-            .replace(/((^|%>)[^\t]*)'/g,"$1\r")
+            .split(startTag).join("\t")
+            .replace(new RegExp("((^|"+endTag+")[^\\t]*)'"), "$1\r")
             
             //.replace(/\t=(.*?)%>/g, "',$1,'")
             //将undefined的值置为''
-            .replace(/\t=(.*?)%>/g, "',(typeof $1=='undefined'?'':$1),'")
+            .replace(new RegExp("\\t=(.*?)"+endTag, 'g'), "',(typeof $1=='undefined'?'':$1),'")
             
             .split("\t").join("');")
-            .split("%>").join("p.push('")
+            .split(endTag).join("p.push('")
             .split("\r").join("\\'")
             //替换多余的转义符
             .replace(/\\\\/, '\\')
@@ -493,11 +496,13 @@ module.exports = {
             var i = 0
             format = format.replace(/\b(\w+)\b/g, function(a){
                 var index = (strMaps[a] || '').split(',')
-                while( index.indexOf(String(i))<0 ){
+                while( index.indexOf(String(i))<0 && arr.length ){
                     arr.shift()
                     i++;
                 }
-                var d = String(arr.shift());
+                var d = arr.shift()
+                if( d==undefined ) return a
+                d = String(d);
                 i++
                 return a.length>d.length ? ('0'+d) : d;
             })
