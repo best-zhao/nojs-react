@@ -55,6 +55,7 @@ var Datetime = function (_React$Component) {
                 seconds: parseInt(_times[2])
             }, _utils.today)];
         } else {
+            value = new Date(String(value)).getTime() ? value : '';
             var startMonth = min && !value ? { year: min.year, month: min.month } : value.split(',')[0];
             currentMonth = _this.getMonthGroups(startMonth);
             if (value) {

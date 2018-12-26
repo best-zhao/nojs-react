@@ -186,9 +186,8 @@ var Autocomplete = module.exports = React.createClass({
             }).onDisplayChange(function (visible) {
                 var results = _this2.state.results;
 
-                if (visible && (!results.length || !input.value)) {
-                    //没有结果 阻止显示
-                    return false;
+                if (visible && (!results.length || !input.value)) {//没有结果 阻止显示
+                    // return false
                 }
             });
         }
@@ -296,7 +295,9 @@ var Autocomplete = module.exports = React.createClass({
             container = _props3.container,
             getItem = _props3.getItem,
             name = _props3.name,
-            itemKey = _props3.itemKey;
+            itemKey = _props3.itemKey,
+            template = _props3.template,
+            noresult_visible = _props3.noresult_visible;
         var _state2 = this.state,
             index = _state2.index,
             value = _state2.value,
@@ -305,7 +306,7 @@ var Autocomplete = module.exports = React.createClass({
         var text = this.refs.text;
 
 
-        if (!container && value) {
+        if (!container) {
             var list = React.createElement(
                 'ul',
                 null,
@@ -324,6 +325,10 @@ var Autocomplete = module.exports = React.createClass({
                     );
                 })
             );
+
+            if (typeof template == 'function') {
+                list = template(list);
+            }
         }
         return React.createElement(
             'span',
@@ -333,11 +338,13 @@ var Autocomplete = module.exports = React.createClass({
                 value: value,
                 onChange: this.change,
                 onKeyDown: this.keydown,
+                autoComplete: 'off',
                 onKeyUp: !disable && this.keyup })),
             !container && text && !disable && React.createElement(Popover, {
                 nearby: text.refs.input,
                 trigger: 'click',
                 ref: 'container',
+
                 name: 'auto-complete-pop auto-complete-' + name,
                 template: list })
         );

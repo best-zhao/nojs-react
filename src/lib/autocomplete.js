@@ -140,7 +140,7 @@ var Autocomplete = module.exports = React.createClass({
             }).onDisplayChange(visible=>{
                 var {results} = this.state
                 if( visible && (!results.length || !input.value) ){//没有结果 阻止显示
-                    return false
+                    // return false
                 }
             })
         }
@@ -228,11 +228,11 @@ var Autocomplete = module.exports = React.createClass({
     },
     render () {
 
-        var {container, getItem, name, itemKey} = this.props
+        var {container, getItem, name, itemKey, template, noresult_visible} = this.props
         var {index, value, results, disable} = this.state
         var {text} = this.refs
         
-        if( !container && value ){
+        if( !container ){
             var list = <ul>{
                 results.map((item,i)=>{
                     item = getItem(item)
@@ -241,6 +241,10 @@ var Autocomplete = module.exports = React.createClass({
                     return <li key={key} onClick={this.select.bind(this,i,'click')} className={i===index?'active nj-mui-active':''}><Mui>{item}</Mui></li>
                 })
             }</ul>
+
+            if( typeof template=='function' ){
+                list = template(list)
+            }
         }
         return (
         <span>
@@ -249,6 +253,7 @@ var Autocomplete = module.exports = React.createClass({
                 value={value}
                 onChange={this.change} 
                 onKeyDown={this.keydown} 
+                autoComplete="off"
                 onKeyUp={!disable && this.keyup} />
 
             {!container && text && !disable &&
@@ -256,6 +261,7 @@ var Autocomplete = module.exports = React.createClass({
                     nearby={text.refs.input} 
                     trigger="click"
                     ref="container" 
+
                     name={'auto-complete-pop auto-complete-'+name}
                     template={list} />
             }

@@ -180,7 +180,7 @@ var Popover = React.createClass({
                 if (/text|textarea/.test(bindTarget[0].type)) {
                     trigger = 'focus';
                 }
-                bindTarget.on(clickEvent, _show2);
+                bindTarget.on('click', _show2);
             } else if (delegate) {
                 $(delegate[1] || document.body).delegate(delegate[0], trigger, _show2);
             }
@@ -226,14 +226,16 @@ var Popover = React.createClass({
                     });
                 }, 0);
             } else {
+                var alignOptions = Object.assign({}, _this3.props, {
+                    nearby: _this3.state.nearby,
+                    element: $(_this3.wrap),
+                    onTurn: function onTurn(turnPosition) {
+                        self.getOrigin(turnPosition);
+                    }
+                });
+                // this.setAlign(alignOptions)
                 setTimeout(function () {
-                    _this3.setAlign(Object.assign({}, _this3.props, {
-                        nearby: _this3.state.nearby,
-                        element: $(_this3.wrap),
-                        onTurn: function onTurn(turnPosition) {
-                            self.getOrigin(turnPosition);
-                        }
-                    }));
+                    _this3.setAlign(alignOptions);
                 });
             }
 

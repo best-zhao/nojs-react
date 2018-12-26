@@ -961,6 +961,7 @@ Form.fill = function (options) {
                 item[0].checked = !!value;
             }
         } else if (typeof value == 'string' || typeof value == 'number') {
+            if (item.val() == value) continue;
             item.val(value);
             (function (handle) {
                 handle && handle.setState({ value: value, status: null }, function (e) {

@@ -8,6 +8,7 @@ import Popup from 'nj/popup' //引入组件
 </code>
 </pre>
 
+<div id="suggest"></div>
 
 #### Popup.create(options)
 

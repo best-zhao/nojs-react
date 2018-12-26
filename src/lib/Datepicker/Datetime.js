@@ -24,6 +24,7 @@ class Datetime extends React.Component {
                 seconds:parseInt(_times[2])
             }, today)]
         }else{
+            value = new Date(String(value)).getTime() ? value : ''
             let startMonth = min && !value ? {year:min.year, month:min.month} : value.split(',')[0]
             currentMonth = this.getMonthGroups(startMonth)
             if( value ){

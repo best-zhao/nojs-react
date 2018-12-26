@@ -69,7 +69,7 @@ Directive.prototype = {
         }
         var formElements = nj.utils.toArray(context.getElementsByTagName('nj-'+type))
         formElements.forEach((node,i)=>{
-            var c = this.initial(node, type, parentComponent,i)
+            var c = this.initial(node, type, parentComponent, type==this.rootDirective?0:i)
             if( c ){
                 components.push(c)
             }

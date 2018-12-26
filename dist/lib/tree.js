@@ -787,8 +787,7 @@ Tree.LinkTree = React.createClass({
 
     //选中节点 selected 选中的节点id
     select: function select(selected, update) {
-        this.resetData(0);
-        // console.log(selected)
+        // this.resetData(0)
         update = update === false ? false : true;
         this.state.ids = selected && selected.length ? selected : [];
         // console.log('.select', selected,this.state.ids)

@@ -182,20 +182,20 @@ var Page = function (_React$Component) {
 
             var pages = this.getPages(); //总页数
 
-            return _nojsReact.React.createElement(
+            return count && pages > 1 ? _nojsReact.React.createElement(
                 'div',
                 { className: 'nj-page ' + this.props.className },
                 _nojsReact.React.createElement(
                     'button',
-                    { disabled: page <= 1, type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'prev') },
+                    { type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'prev') },
                     '\u4E0A\u4E00\u9875'
                 ),
                 this.renderBar(),
-                _nojsReact.React.createElement(
+                page < pages ? _nojsReact.React.createElement(
                     'button',
-                    { disabled: page >= pages || pages <= 1, type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'next') },
+                    { type: 'button', className: 'page-item', onClick: this.handleChange.bind(this, 'next') },
                     '\u4E0B\u4E00\u9875'
-                ),
+                ) : null,
                 _nojsReact.React.createElement(
                     'span',
                     { className: 'page-item' },
@@ -203,7 +203,7 @@ var Page = function (_React$Component) {
                     count,
                     '\u6761\u8BB0\u5F55'
                 )
-            );
+            ) : null;
         }
     }]);
 
