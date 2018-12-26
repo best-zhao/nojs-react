@@ -569,7 +569,10 @@ module.exports = {
     },
 
     getOptions (target, key){
-        var options = $(target).data(key || 'options')
+        target = $(target)[0]
+        if( !target ) return {};
+        var options = $(target)[0].getAttribute('data-'+(key || 'options'));
+        if( !options ) return {};
         if( typeof options=='object' ){//自动解析为json对象
             return options
         }

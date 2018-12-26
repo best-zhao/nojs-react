@@ -142,7 +142,7 @@ fixed.scroll = function(resize){
             options.end && options.end();
         }else{
             //还未开始固定 继续获取其初始top
-            top = options.top = options.element.offset().top;
+            // top = options.top = options.element.offset().top;
         }
         
         options.callback && options.callback();

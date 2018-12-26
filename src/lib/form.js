@@ -856,13 +856,14 @@ Form.fill = function(options){
         }else if( type=='checkbox' ){
             if( $.type(value)=='array' ){
                 $.each(value, function(i,v){
-                    _item = item.filter('[value="'+v+'"]');
+                    _item = item.filter('[value="'+v+'"]')[0];
+                    _item.checked = true;
                     // handle = _item[0].$handle
                     // handle && handle.setState({value:v}, e=>handle.verify(false))
                     (function(handle){
                         handle && handle.setState({value:v, status:null}, e=>handle.verify(false))
-                    })(_item[0].$handle);
-                    _item.click();
+                    })(_item.$handle);
+                    $(_item).trigger('change'); 
                 })
             }else{
                 item[0].checked = !!value
