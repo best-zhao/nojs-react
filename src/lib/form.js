@@ -857,6 +857,7 @@ Form.fill = function(options){
             if( $.type(value)=='array' ){
                 $.each(value, function(i,v){
                     _item = item.filter('[value="'+v+'"]')[0];
+                    if( !_item ) return;
                     _item.checked = true;
                     // handle = _item[0].$handle
                     // handle && handle.setState({value:v}, e=>handle.verify(false))
